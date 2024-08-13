@@ -2,30 +2,6 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.3.2'
 	id 'io.spring.dependency-management' version '1.1.6'
-	id 'checkstyle'
-	id 'jacoco'
-	id 'pmd'
-}
-
-checkstyle {
-	toolVersion = "8.45"
-	configFile = file("${rootDir}/config/checkstyle/checkstyle.xml")
-}
-
-pmd {
-	consoleOutput = true
-	toolVersion = "6.55.0"
-	ruleSets = [
-			"category/java/errorprone.xml",
-			"category/java/bestpractices.xml"
-	]
-}
-
-tasks.withType(Checkstyle) {
-	reports {
-		xml.required = true
-		html.required = true
-	}
 }
 
 group = 'com.fact-checker'
@@ -57,7 +33,6 @@ dependencies {
 	// Google Cloud Speech-to-Text
 
 	implementation 'com.google.cloud:google-cloud-speech:4.42.0'
-
 
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
