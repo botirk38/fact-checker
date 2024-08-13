@@ -1,0 +1,23 @@
+{
+  "name": "factchecker",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build-css": "tailwindcss build src/main/resources/static/tailwind-input.css -o src/main/resources/static/tailwind-output.css",
+    "watch-css": "nodemon --watch src/main/resources/templates --ext html --exec 'npm run build-css'"
+
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.41",
+    "tailwindcss": "^3.4.10"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.4"
+  }
+}
