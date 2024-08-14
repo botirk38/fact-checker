@@ -22,6 +22,8 @@ jobs:
         with:
           gradle-version: '8.9'
       - name: Build with Gradle
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: ./gradlew build
 
   dependency-submission:
@@ -34,6 +36,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK 21
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         uses: actions/setup-java@v4
         with:
           java-version: '21'
