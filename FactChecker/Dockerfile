@@ -11,6 +11,10 @@ COPY gradle ./gradle
 # Copy the source code
 COPY src ./src
 
+# Set OpenAI Key
+
+ENV OPENAI_KEY=${OPENAI_KEY:OPENAI_API_KEY}
+
 # Build the application
 RUN gradle build --no-daemon
 
@@ -29,5 +33,10 @@ EXPOSE 8080
 # Set environment variables
 ENV JAVA_OPTS="-XX:+UseContainerSupport -XX:MaxRAMPercentage=75"
 
+
 # Run the application
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]
+
+
+
+
