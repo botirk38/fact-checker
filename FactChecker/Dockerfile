@@ -1,4 +1,12 @@
 FROM eclipse-temurin:21
+
+WORKDIR /app
+
 ARG JAR_FILE=build/libs/*.jar
 COPY ${JAR_FILE} app.jar
-ENTRYPOINT ["java","-jar","/app.jar","--spring.profiles.active=prod"]
+
+EXPOSE 8080
+
+
+
+ENTRYPOINT ["java", "-jar", "/app/app.jar"]
