@@ -1,12 +1,23 @@
-FROM eclipse-temurin:21
+FROM eclipse-temurin:21-jre-jammy as builder
+WORKDIR /app
+COPY build/libs/*.jar app.jar
+RUN java -Djarmode=layertools -jar app.jar extract
 
+FROM eclipse-temurin:21-jre-jammy
 WORKDIR /app
 
-ARG JAR_FILE=build/libs/*.jar
-COPY ${JAR_FILE} app.jar
+# Copy layers from the builder stage
+COPY --from=builder app/dependencies/ ./
+COPY --from=builder app/spring-boot-loader/ ./
+COPY --from=builder app/snapshot-dependencies/ ./
+COPY --from=builder app/application/ ./
 
-EXPOSE 8080
+# Railway specific environment variable
+ENV PORT=8080
+
+# Expose the port
+EXPOSE ${PORT}
 
 
-
-ENTRYPOINT ["java", "-jar", "/app/app.jar"]
+# Start the application
+ENTRYPOINT ["java", "org.springframework.boot.loader.JarLauncher"]
