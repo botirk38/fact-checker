@@ -2,7 +2,9 @@ package com.fact_checker.FactChecker.service;
 
 import org.bytedeco.javacv.*;
 import org.bytedeco.ffmpeg.global.avcodec;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -19,6 +21,7 @@ import java.util.concurrent.Executors;
 public class VideoProcessor {
 
     private final ExecutorService executorService;
+
     private final RestTemplate restTemplate;
 
     @Value("${openai.api.key}")
