@@ -15,21 +15,37 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/**
+ * Service class for processing video files, extracting audio, and performing speech recognition.
+ * This class uses JavaCV for video processing and OpenAI's Whisper API for speech recognition.
+ */
 @Service
 public class VideoProcessor {
 
+    /** ExecutorService for handling asynchronous tasks. */
     private final ExecutorService executorService;
 
+    /** RestTemplate for making HTTP requests. */
     private final RestTemplate restTemplate;
 
+    /** OpenAI API key for authentication. */
     @Value("${openai.api.key}")
     private String openaiApiKey;
 
+    /**
+     * Constructor for VideoProcessor.
+     * @param restTemplate RestTemplate bean for making HTTP requests.
+     */
     public VideoProcessor(RestTemplate restTemplate) {
         this.executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
         this.restTemplate = restTemplate;
     }
 
+    /**
+     * Extracts text from speech in a video file asynchronously.
+     * @param videoInputStream InputStream of the video file.
+     * @return CompletableFuture<String> containing the extracted text.
+     */
     public CompletableFuture<String> extractTextFromSpeech(InputStream videoInputStream) {
         return CompletableFuture.supplyAsync(() -> {
             try {
@@ -41,6 +57,12 @@ public class VideoProcessor {
         }, executorService);
     }
 
+    /**
+     * Extracts audio from a video file.
+     * @param videoInputStream InputStream of the video file.
+     * @return byte array containing the extracted audio data.
+     * @throws IOException if there's an error processing the video.
+     */
     byte[] extractAudioFromVideo(InputStream videoInputStream) throws IOException {
         FFmpegFrameGrabber grabber = new FFmpegFrameGrabber(videoInputStream);
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
@@ -77,7 +99,12 @@ public class VideoProcessor {
         }
     }
 
-    String performSpeechRecognition(byte[] audioData){
+    /**
+     * Performs speech recognition on the given audio data using OpenAI's Whisper API.
+     * @param audioData byte array containing the audio data.
+     * @return String containing the transcribed text.
+     */
+    String performSpeechRecognition(byte[] audioData) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
         headers.set("Authorization", "Bearer " + openaiApiKey);
@@ -102,6 +129,9 @@ public class VideoProcessor {
         }
     }
 
+    /**
+     * Inner class representing the response from the OpenAI Whisper API.
+     */
     protected static class TranscriptionResponse {
         private String text;
 
@@ -111,9 +141,6 @@ public class VideoProcessor {
 
         public void setText(String text) {
             this.text = text;
-
         }
-
-
     }
 }
