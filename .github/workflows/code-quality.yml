@@ -8,11 +8,20 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - name: Set up JDK 17
+    - name: Set up JDK 21
       uses: actions/setup-java@v3
       with:
         java-version: '21'
         distribution: 'adopt'
+
+    - name: Change to project directory if needed
+      run: |
+        if [ -d "FactChecker" ]; then
+          cd FactChecker
+          echo "Changed to FactChecker directory"
+          ls -la
+        fi
+        
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
     - name: Run Checkstyle
