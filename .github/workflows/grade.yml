@@ -27,7 +27,7 @@ jobs:
 
   dependency-submission:
     runs-on: ubuntu-latest
-     defaults:
+    defaults:
       run:
         working-directory: ./FactChecker
     permissions:
