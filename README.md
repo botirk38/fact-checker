@@ -31,8 +31,8 @@
 
 1. **Clone the repository**:
     ```bash
-    git clone https://github.com/yourusername/truthlens.git
-    cd truthlens
+    git clone https://github.com/yourusername/fact-checker.git
+    cd FactChecker
     ```
 
 2. **Set up the OpenAI API key**:
