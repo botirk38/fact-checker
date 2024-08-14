@@ -1,7 +1,3 @@
-Here's a formatted and enhanced version of your text:
-
----
-
 # TruthLens: Video Claim Analysis Platform
 
 **TruthLens** is a cutting-edge video analysis platform that leverages artificial intelligence to scrutinize claims made in video content, providing a comprehensive fact-checking and content categorization solution.
