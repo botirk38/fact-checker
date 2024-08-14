@@ -21,16 +21,11 @@ jobs:
         with:
           java-version: '21'
           distribution: 'temurin'
-          
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@af1da67850ed9a4cedd57bfd976089dd991e2582 # v4.0.0
-      - name: Build with Gradle Wrapper
-        run: ./gradlew build
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@af1da67850ed9a4cedd57bfd976089dd991e2582 # v4.0.0
         with:
           gradle-version: '8.9'
-      - name: Build with Gradle 8.9
+      - name: Build with Gradle
         run: gradle build
 
   dependency-submission:
@@ -39,10 +34,10 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v4
-      - name: Set up JDK 17
+      - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
-          java-version: '17'
+          java-version: '21'
           distribution: 'temurin'
       - name: Generate and submit dependency graph
         uses: gradle/actions/dependency-submission@af1da67850ed9a4cedd57bfd976089dd991e2582 # v4.0.0
