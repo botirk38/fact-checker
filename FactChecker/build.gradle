@@ -6,6 +6,18 @@ plugins {
 	id 'jacoco'
 }
 
+checkstyle {
+	toolVersion = "8.45"
+	configFile = file("${rootDir}/config/checkstyle/checkstyle.xml")
+}
+
+tasks.withType(Checkstyle) {
+	reports {
+		xml.required = true
+		html.required = true
+	}
+}
+
 group = 'com.fact-checker'
 version = '0.0.1-SNAPSHOT'
 
