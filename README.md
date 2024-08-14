@@ -22,7 +22,7 @@
 - **API Integration**: Offers a robust API for seamless integration with other platforms and services.
 
 ## Prerequisites
-- Java 11 or higher
+- Java 21 or higher
 - Node.js and npm (for Tailwind CSS)
 - Gradle
 - An OpenAI API key
@@ -67,9 +67,7 @@
     ```bash
     ./gradlew bootRun
     ```
-
-*For detailed installation instructions, including setting up required databases and external services, please refer to our [Installation Guide](#).*
-
+   
 ## Usage
 
 1. **Upload a video** through the web interface or API.
@@ -81,7 +79,6 @@
     - Content categories and tags
     - Similar videos and trending topics
 
-*For a comprehensive guide on using TruthLens, please see our [User Manual](#).*
 
 ## API Documentation
 
