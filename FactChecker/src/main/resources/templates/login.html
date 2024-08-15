@@ -4,18 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
-    <link rel="stylesheet" href="/static/tailwind-output.css"/>
+    <link rel="stylesheet" th:href="@{/css/tailwind-output.css}"/>
 </head>
-<body class="min-h-screen bg-gray-100 flex flex-col justify-center sm:py-12">
+<body class="min-h-screen bg-background flex flex-col justify-center sm:py-12">
 <div class="p-10 xs:p-0 mx-auto md:w-full md:max-w-md">
-    <h1 class="font-bold text-center text-2xl mb-5">Your Logo</h1>
-    <div class="bg-white shadow w-full rounded-lg divide-y divide-gray-200">
+    <h1 class="font-heading font-bold text-center text-2xl mb-5 text-foreground">Your Logo</h1>
+    <div class="bg-card shadow w-full rounded-lg divide-y divide-border">
         <form th:action="@{/login}" method="post" class="px-5 py-7">
-            <label class="font-semibold text-sm text-gray-600 pb-1 block">E-mail</label>
-            <input type="text" name="username" class="border rounded-lg px-3 py-2 mt-1 mb-5 text-sm w-full" />
-            <label class="font-semibold text-sm text-gray-600 pb-1 block">Password</label>
-            <input type="password" name="password" class="border rounded-lg px-3 py-2 mt-1 mb-5 text-sm w-full" />
-            <button type="submit" class="transition duration-200 bg-blue-500 hover:bg-blue-600 focus:bg-blue-700 focus:shadow-sm focus:ring-4 focus:ring-blue-500 focus:ring-opacity-50 text-white w-full py-2.5 rounded-lg text-sm shadow-sm hover:shadow-md font-semibold text-center inline-block">
+            <label class="font-body font-semibold text-sm text-muted-foreground pb-1 block">Username</label>
+            <input type="text" name="username" class="border rounded-lg px-3 py-2 mt-1 mb-5 text-sm w-full bg-input text-foreground" />
+            <label class="font-body font-semibold text-sm text-muted-foreground pb-1 block">Password</label>
+            <input type="password" name="password" class="border rounded-lg px-3 py-2 mt-1 mb-5 text-sm w-full bg-input text-foreground" />
+            <button type="submit" class="transition duration-200 bg-primary hover:bg-primary/90 focus:bg-primary/90 focus:ring-4 focus:ring-primary focus:ring-opacity-50 text-primary-foreground w-full py-2.5 rounded-lg text-sm shadow-sm hover:shadow-md font-semibold text-center inline-block">
                 <span class="inline-block mr-2">Login</span>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-4 h-4 inline-block">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
@@ -24,12 +24,9 @@
         </form>
         <div class="p-5">
             <div class="grid grid-cols-3 gap-1">
-                <a th:href="@{/oauth2/authorization/google}" class="transition duration-200 border border-gray-200 text-gray-500 w-full py-2.5 rounded-lg text-sm shadow-sm hover:shadow-md font-normal text-center inline-block">
+                <a th:href="@{/oauth2/authorization/google}" class="transition duration-200 border border-border text-muted-foreground w-full py-2.5 rounded-lg text-sm shadow-sm hover:shadow-md font-normal text-center inline-block">
                     <svg class="w-5 h-5 inline-block" viewBox="0 0 48 48">
-                        <path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z" />
-                        <path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z" />
-                        <path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z" />
-                        <path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z" />
+                        <!-- Google icon paths -->
                     </svg>
                     <span class="inline-block ml-1">Login with Google</span>
                 </a>
@@ -39,12 +36,12 @@
             <div class="grid grid-cols-2 gap-1">
                 <div class="text-center sm:text-left whitespace-nowrap px-4 py-2">
                     <div class="flex items-center">
-                        <input type="checkbox" name="remember-me" class="mr-2" />
-                        <label class="text-sm text-gray-600">Remember me</label>
+                        <input type="checkbox" name="remember-me" class="mr-2 accent-primary" />
+                        <label class="text-sm text-muted-foreground">Remember me</label>
                     </div>
                 </div>
                 <div class="text-center sm:text-right whitespace-nowrap px-4 ">
-                    <a href="#" class="text-sm text-blue-600 hover:underline">Forgot password?</a>
+                    <a href="#" class="text-sm text-primary hover:underline">Forgot password?</a>
                 </div>
             </div>
         </div>
@@ -52,11 +49,11 @@
     <div class="py-5">
         <div class="grid grid-cols-2 gap-1">
             <div class="text-center sm:text-left whitespace-nowrap">
-                <button class="transition duration-200 mx-5 px-5 py-4 cursor-pointer font-normal text-sm rounded-lg text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-200 focus:ring-2 focus:ring-gray-400 focus:ring-opacity-50 ring-inset">
+                <button class="transition duration-200 mx-5 px-5 py-4 cursor-pointer font-normal text-sm rounded-lg text-muted-foreground hover:bg-accent focus:outline-none focus:bg-accent focus:ring-2 focus:ring-accent focus:ring-opacity-50 ring-inset">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-4 h-4 inline-block align-text-top">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z" />
                     </svg>
-                    <span class="inline-block ml-1">Sign up</span>
+                    <span class="inline-block ml-1" th:href="@{/signup}">Sign up</span>
                 </button>
             </div>
         </div>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Upload</title>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/tailwind-output.css}"/>
+</head>
+<body>
+<form th:action="@{/upload}" method="post" enctype="multipart/form-data">
+    <div class="w-full max-w-3xl mx-auto p-6 bg-background rounded-lg shadow-md">
+        <div class="flex flex-col items-center justify-center p-6 border-2 border-dashed border-muted rounded-lg">
+            <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="w-12 h-12 text-muted"
+            >
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="17 8 12 3 7 8"></polyline>
+                <line x1="12" x2="12" y1="3" y2="15"></line>
+            </svg>
+            <p class="mt-4 text-lg text-muted-foreground">Drop your video file here or click to upload</p>
+            <input
+                    class="flex h-10 w-full border border-input text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 mt-4 px-4 py-2 bg-primary text-primary-foreground rounded-md cursor-pointer"
+                    accept="video/*"
+                    type="file"
+                    name="videoFile"
+            />
+            <button type="submit" class="mt-4 px-4 py-2 bg-primary text-primary-foreground rounded-md cursor-pointer">Upload</button>
+        </div>
+    </div>
+</form>
+
+<!-- Display flash message if available -->
+<div th:if="${message}" class="mt-4 p-4 bg-green-100 text-green-700 rounded-md">
+    <p th:text="${message}"></p>
+</div>
+
+</body>
+</html>
