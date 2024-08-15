@@ -13,7 +13,7 @@ COPY src ./src
 
 # Set OpenAI Key
 
-ENV OPENAI_KEY=${OPENAI_KEY:OPENAI_API_KEY}
+ENV OPENAI_KEY=${OPENAI_API_KEY:OPENAI_API_KEY}
 
 # Build the application
 RUN gradle build --no-daemon
