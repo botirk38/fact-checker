@@ -52,7 +52,11 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'com.h2database:h2'
-	implementation 'mysql:mysql-connector-java:8.0.33'  // Use the latest version
+	implementation 'mysql:mysql-connector-java:8.0.33'
+	implementation 'me.paulschwarz:spring-dotenv:2.5.4'
+	compileOnly 'org.projectlombok:lombok:1.18.22'
+	annotationProcessor 'org.projectlombok:lombok'
+
 
 	// Java CV
 	implementation 'org.bytedeco:javacv-platform:1.5.10'

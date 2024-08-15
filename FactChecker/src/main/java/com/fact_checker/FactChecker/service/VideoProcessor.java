@@ -1,5 +1,6 @@
 package com.fact_checker.FactChecker.service;
 
+import com.fact_checker.FactChecker.repository.VideoTranscriptionRepository;
 import org.bytedeco.javacv.*;
 import org.bytedeco.ffmpeg.global.avcodec;
 import org.springframework.beans.factory.annotation.Value;
@@ -9,8 +10,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+import com.fact_checker.FactChecker.model.VideoTranscription;
 
 import java.io.*;
+import java.time.LocalDateTime;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -32,13 +35,19 @@ public class VideoProcessor {
     @Value("${openai.api.key}")
     private String openaiApiKey;
 
+    private final VideoTranscriptionRepository transcriptionRepository;
+
+    private final static int BIT_RATE = 19200;
+    private final static int AUDIO_QUALITY = 0;
+
     /**
      * Constructor for VideoProcessor.
      * @param restTemplate RestTemplate bean for making HTTP requests.
      */
-    public VideoProcessor(RestTemplate restTemplate) {
+    public VideoProcessor(RestTemplate restTemplate, VideoTranscriptionRepository transcriptionRepository) {
         this.executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
         this.restTemplate = restTemplate;
+        this.transcriptionRepository = transcriptionRepository;
     }
 
     /**
@@ -46,11 +55,18 @@ public class VideoProcessor {
      * @param videoInputStream InputStream of the video file.
      * @return CompletableFuture<String> containing the extracted text.
      */
-    public CompletableFuture<String> extractTextFromSpeech(InputStream videoInputStream) {
+    public CompletableFuture<VideoTranscription> extractTextFromSpeech(InputStream videoInputStream, String filename) {
         return CompletableFuture.supplyAsync(() -> {
             try {
                 byte[] audioData = extractAudioFromVideo(videoInputStream);
-                return performSpeechRecognition(audioData);
+                String transcriptionText =  performSpeechRecognition(audioData);
+
+                VideoTranscription videoTranscription = new VideoTranscription();
+                videoTranscription.setFileName(filename);
+                videoTranscription.setTranscriptionText(transcriptionText);
+                videoTranscription.setProcessedAt(LocalDateTime.now());
+
+                return transcriptionRepository.save(videoTranscription);
             } catch (Exception e) {
                 throw new RuntimeException("Error processing video", e);
             }
@@ -77,8 +93,8 @@ public class VideoProcessor {
             recorder.setAudioCodec(avcodec.AV_CODEC_ID_MP3);
             recorder.setSampleRate(sampleRate);
             recorder.setAudioChannels(audioChannels);
-            recorder.setAudioQuality(0);
-            recorder.setAudioBitrate(192000);
+            recorder.setAudioQuality(AUDIO_QUALITY);
+            recorder.setAudioBitrate(BIT_RATE);
 
             recorder.start();
 
