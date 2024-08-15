@@ -11,6 +11,9 @@ COPY gradle ./gradle
 # Copy the source code
 COPY src ./src
 
+# Copy the Checkstyle configuration
+COPY config ./config
+
 # Set OpenAI Key
 
 ENV OPENAI_KEY=${OPENAI_API_KEY}
