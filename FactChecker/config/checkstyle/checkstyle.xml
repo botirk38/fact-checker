@@ -7,6 +7,10 @@
     <property name="charset" value="UTF-8"/>
     <property name="severity" value="warning"/>
     <property name="fileExtensions" value="java, properties, xml"/>
+    <!-- Ignore tests -->
+    <module name="BeforeExecutionExclusionFileFilter">
+        <property name="fileNamePattern" value=".*[/\\]test[/\\].*\.java$"/>
+    </module>
 
     <!-- Checks for whitespace -->
     <module name="FileTabCharacter">
