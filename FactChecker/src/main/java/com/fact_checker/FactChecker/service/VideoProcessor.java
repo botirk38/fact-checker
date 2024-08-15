@@ -1,18 +1,25 @@
 package com.fact_checker.FactChecker.service;
 
 import com.fact_checker.FactChecker.repository.VideoTranscriptionRepository;
+import lombok.Getter;
+import lombok.Setter;
 import org.bytedeco.javacv.*;
 import org.bytedeco.ffmpeg.global.avcodec;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import com.fact_checker.FactChecker.model.VideoTranscription;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.nio.file.Files;
 import java.time.LocalDateTime;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
@@ -39,6 +46,7 @@ public class VideoProcessor {
 
     private final static int BIT_RATE = 19200;
     private final static int AUDIO_QUALITY = 0;
+    private static final Logger logger = LoggerFactory.getLogger(VideoProcessor.class);
 
     /**
      * Constructor for VideoProcessor.
@@ -68,6 +76,7 @@ public class VideoProcessor {
 
                 return transcriptionRepository.save(videoTranscription);
             } catch (Exception e) {
+                logger.error("Error processing video", e);
                 throw new RuntimeException("Error processing video", e);
             }
         }, executorService);
@@ -80,11 +89,12 @@ public class VideoProcessor {
      * @throws IOException if there's an error processing the video.
      */
     byte[] extractAudioFromVideo(InputStream videoInputStream) throws IOException {
-        FFmpegFrameGrabber grabber = new FFmpegFrameGrabber(videoInputStream);
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        FFmpegFrameRecorder recorder = new FFmpegFrameRecorder(byteArrayOutputStream, 0);
+        File tempFile = File.createTempFile("audio", ".mp3");
+        try(
+                FFmpegFrameRecorder recorder = new FFmpegFrameRecorder(tempFile, 0);
+                FFmpegFrameGrabber grabber = new FFmpegFrameGrabber(videoInputStream)
 
-        try {
+        ) {
             grabber.start();
 
             int sampleRate = grabber.getSampleRate();
@@ -108,10 +118,19 @@ public class VideoProcessor {
             recorder.stop();
             grabber.stop();
 
-            return byteArrayOutputStream.toByteArray();
-        } finally {
-            grabber.release();
-            recorder.release();
+            // Read the temporary file into a byte array
+            byte[] audioData = Files.readAllBytes(tempFile.toPath());
+
+            // Delete the temporary file
+            boolean deleted = tempFile.delete();
+
+            if (!deleted) {
+                logger.error("Error deleting temporary file");
+                throw new RuntimeException("Error deleting temporary file");
+            }
+
+            return audioData;
+
         }
     }
 
@@ -126,37 +145,54 @@ public class VideoProcessor {
         headers.set("Authorization", "Bearer " + openaiApiKey);
 
         MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
-        body.add("file", new ByteArrayResource(audioData));
-        body.add("model", "whisper-1");
 
-        HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
+        // Create a temporary file from the byte array
+        try {
+            File tempFile = File.createTempFile("audio", ".mp3");
+            FileOutputStream fos = new FileOutputStream(tempFile);
+            fos.write(audioData);
+            fos.close();
 
-        ResponseEntity<TranscriptionResponse> response = restTemplate.exchange(
-                "https://api.openai.com/v1/audio/transcriptions",
-                HttpMethod.POST,
-                requestEntity,
-                TranscriptionResponse.class
-        );
+            // Add the file to the request
+            body.add("file", new FileSystemResource(tempFile));
+            body.add("model", "whisper-1");
 
-        if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
-            return response.getBody().getText();
-        } else {
-            throw new RuntimeException("Failed to transcribe audio: " + response.getStatusCode());
+            HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
+
+            ResponseEntity<TranscriptionResponse> response = restTemplate.exchange(
+                    "https://api.openai.com/v1/audio/transcriptions",
+                    HttpMethod.POST,
+                    requestEntity,
+                    TranscriptionResponse.class
+            );
+
+            // Delete the temporary file
+            boolean deleted = tempFile.delete();
+
+            if (!deleted) {
+                logger.error("Error deleting temporary file");
+                throw new RuntimeException("Error deleting temporary file");
+            }
+
+            if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
+                return response.getBody().getText();
+            } else {
+                throw new RuntimeException("Failed to transcribe audio: " + response.getStatusCode());
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Error creating temporary file for audio data", e);
+        } catch (HttpClientErrorException e) {
+            throw new RuntimeException("Error performing speech recognition: " + e.getResponseBodyAsString(), e);
         }
     }
 
     /**
      * Inner class representing the response from the OpenAI Whisper API.
      */
+    @Getter
+    @Setter
     protected static class TranscriptionResponse {
         private String text;
 
-        public String getText() {
-            return text;
-        }
-
-        public void setText(String text) {
-            this.text = text;
-        }
     }
 }
