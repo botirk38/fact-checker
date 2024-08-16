@@ -19,6 +19,10 @@ import java.nio.file.StandardCopyOption;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
+/**
+ * Service class for handling video processing operations.
+ * This class is responsible for validating, saving, and processing video files.
+ */
 @Service
 public class VideoService {
     private static final Logger logger = LoggerFactory.getLogger(VideoService.class);
@@ -28,6 +32,14 @@ public class VideoService {
     private final VideoProcessor videoProcessor;
     private final String uploadPath;
 
+    /**
+     * Constructs a new VideoService.
+     *
+     * @param videoRepository Repository for Video entities
+     * @param videoProcessor Processor for video files
+     * @param uploadPath Path where uploaded files will be stored
+     * @throws RuntimeException if the upload directory cannot be created or is not writable
+     */
     public VideoService(VideoRepository videoRepository, VideoProcessor videoProcessor,
                         @Value("${video.upload.path}") String uploadPath) {
         this.videoRepository = videoRepository;
@@ -54,7 +66,14 @@ public class VideoService {
         logger.info("Upload directory is ready: {}", uploadPath);
     }
 
-
+    /**
+     * Processes and saves a video file asynchronously.
+     *
+     * @param file The MultipartFile representing the video to be processed
+     * @return A CompletableFuture that will contain the processed Video entity
+     * @throws InvalidFileException if the file is empty or has an unsupported extension
+     * @throws FileProcessingException if there's an error during file processing
+     */
     public CompletableFuture<Video> processAndSaveVideo(MultipartFile file) {
         return CompletableFuture.supplyAsync(() -> {
             try {
@@ -64,11 +83,19 @@ public class VideoService {
                 return videoRepository.save(video);
             } catch (InvalidFileException | FileProcessingException e){
                 logger.error("File is invalid: {}", file.getOriginalFilename());
-                throw  e;
+                throw e;
             }
         });
     }
 
+    /**
+     * Saves the uploaded file to the file system.
+     *
+     * @param file The MultipartFile to be saved
+     * @return The filename of the saved file
+     * @throws InvalidFileException if the file has no extension
+     * @throws FileProcessingException if there's an error while saving the file
+     */
     private String saveFile(MultipartFile file) throws InvalidFileException {
         String fileExtension = getFileExtension(file)
                 .orElseThrow(() -> new InvalidFileException("File has no extension"));
@@ -86,6 +113,12 @@ public class VideoService {
         }
     }
 
+    /**
+     * Validates the uploaded file.
+     *
+     * @param file The MultipartFile to be validated
+     * @throws InvalidFileException if the file is empty or has an unsupported extension
+     */
     private void validateFile(MultipartFile file) throws InvalidFileException {
         if (file.isEmpty()) {
             throw new InvalidFileException("File is empty");
@@ -96,12 +129,25 @@ public class VideoService {
                 .orElseThrow(() -> new InvalidFileException("File extension is not supported"));
     }
 
+    /**
+     * Extracts the file extension from the MultipartFile.
+     *
+     * @param file The MultipartFile to extract the extension from
+     * @return An Optional containing the file extension, or empty if no extension is found
+     */
     private Optional<String> getFileExtension(MultipartFile file) {
         return Optional.ofNullable(file.getOriginalFilename())
                 .filter(f -> !f.isEmpty())
                 .map(FilenameUtils::getExtension);
     }
 
+    /**
+     * Processes the video file to extract text from speech.
+     *
+     * @param filename The name of the file to process
+     * @return The processed Video entity
+     * @throws FileProcessingException if there's an error during video processing
+     */
     private Video processVideo(String filename) {
         Path filePath = Paths.get(uploadPath, filename);
         try (var inputStream = Files.newInputStream(filePath)) {
