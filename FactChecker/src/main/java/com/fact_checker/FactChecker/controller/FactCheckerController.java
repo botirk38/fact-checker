@@ -1,6 +1,7 @@
 package com.fact_checker.FactChecker.controller;
 
 
+import com.fact_checker.FactChecker.model.VideoTranscription;
 import com.fact_checker.FactChecker.service.VideoProcessor;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
 
 @Controller
 public class FactCheckerController implements ErrorController {
@@ -77,10 +79,6 @@ public class FactCheckerController implements ErrorController {
             redirectAttributes.addFlashAttribute("message", "Please upload a valid video file.");
             return "redirect:/fact-check-video";
         }
-        if (!Objects.equals(videoFile.getContentType(), "video/mp4")) {
-            redirectAttributes.addFlashAttribute("message", "Please upload a valid video file.");
-            return "redirect:/fact-check-video";
-        }
 
         if(videoFile.getOriginalFilename() == null) {
             redirectAttributes.addFlashAttribute("message", "Please upload a valid video file with a valid name.");
@@ -88,17 +86,23 @@ public class FactCheckerController implements ErrorController {
         }
 
         try {
-            videoProcessor.extractTextFromSpeech(videoFile.getInputStream(), videoFile.getOriginalFilename());
+            CompletableFuture<VideoTranscription> transcriptionFuture = videoProcessor.extractTextFromSpeech(videoFile.getInputStream(), videoFile.getOriginalFilename());
+            VideoTranscription videoTranscription = transcriptionFuture.get();
+            String extractedText = videoTranscription.getTranscriptionText();
+
+            if (extractedText == null) {
+                redirectAttributes.addFlashAttribute("message", "Could not extract text from video.");
+                return "redirect:/fact-check-video";
+            }
 
 
 
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("message", "Could not upload file.");
+            redirectAttributes.addFlashAttribute("message", "Could not upload file." + e);
             return "redirect:/fact-check-video";
         }
 
-
-        redirectAttributes.addFlashAttribute("message", "Video fact checked successfully.");
+        redirectAttributes.addFlashAttribute("message", "Successfully uploaded file.");
 
 
         return "redirect:/fact-check-video";
