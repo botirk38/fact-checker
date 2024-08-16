@@ -1,4 +1,4 @@
-package org.groq4j;
+package com.fact_checker.FactChecker.service;
 
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Single;
