@@ -14,11 +14,6 @@ COPY src ./src
 # Copy the Checkstyle configuration
 COPY config ./config
 
-# Set OpenAI Key
-
-ENV OPENAI_KEY=${OPENAI_API_KEY}
-
-
 # Build the application
 RUN gradle build --no-daemon
 
