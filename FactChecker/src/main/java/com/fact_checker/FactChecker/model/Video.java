@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Getter
 @Setter
-public class VideoTranscription {
+public class Video {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,6 +22,9 @@ public class VideoTranscription {
 
     @Column(name = "file_name")
     private String fileName;
+
+    @Column(name = "file_path")
+    private String filePath;
 
     @Lob
     @Column(name = "transcription_text")
