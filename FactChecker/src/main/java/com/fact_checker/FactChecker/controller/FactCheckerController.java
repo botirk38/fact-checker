@@ -90,6 +90,13 @@ public class FactCheckerController implements ErrorController {
             VideoTranscription videoTranscription = transcriptionFuture.get();
             String extractedText = videoTranscription.getTranscriptionText();
 
+            if (extractedText == null) {
+                redirectAttributes.addFlashAttribute("message", "Could not extract text from video.");
+                return "redirect:/fact-check-video";
+            }
+
+            redirectAttributes.addFlashAttribute("message", "Successfully uploaded file." + extractedText);
+
 
 
         } catch (Exception e) {
@@ -98,7 +105,6 @@ public class FactCheckerController implements ErrorController {
         }
 
 
-        redirectAttributes.addFlashAttribute("message", "Video fact checked successfully.");
 
 
         return "redirect:/fact-check-video";
