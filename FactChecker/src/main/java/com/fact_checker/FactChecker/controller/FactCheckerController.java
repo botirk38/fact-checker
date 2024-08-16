@@ -95,8 +95,6 @@ public class FactCheckerController implements ErrorController {
                 return "redirect:/fact-check-video";
             }
 
-            redirectAttributes.addFlashAttribute("message", "Successfully uploaded file." + extractedText);
-
 
 
         } catch (Exception e) {
@@ -104,7 +102,7 @@ public class FactCheckerController implements ErrorController {
             return "redirect:/fact-check-video";
         }
 
-
+        redirectAttributes.addFlashAttribute("message", "Successfully uploaded file.");
 
 
         return "redirect:/fact-check-video";
