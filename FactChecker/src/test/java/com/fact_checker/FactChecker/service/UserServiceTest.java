@@ -56,7 +56,7 @@ class UserServiceTest {
         });
 
         // Act
-        User result = userService.registerUser(username, email, password, fullName);
+        User result = userService.registerUser(username, password, email, fullName);
 
         // Assert
         assertNotNull(result);
@@ -72,24 +72,32 @@ class UserServiceTest {
     void registerUser_UsernameExists_ThrowsUserAlreadyExistsException() {
         // Arrange
         String username = "existinguser";
+        String email = "test@example.com";
+        String password = "password";
+        String fullName = "Test User";
+
         when(userRepository.findByUsername(username)).thenReturn(Optional.of(new User()));
 
         // Act & Assert
         assertThrows(UserAlreadyExistsException.class, () ->
-                userService.registerUser(username, "test@example.com", "password", "Test User")
+                userService.registerUser(username, password, email, fullName)
         );
     }
 
     @Test
     void registerUser_EmailExists_ThrowsUserAlreadyExistsException() {
         // Arrange
+        String username = "newuser";
         String email = "existing@example.com";
-        when(userRepository.findByUsername(anyString())).thenReturn(Optional.empty());
+        String password = "password";
+        String fullName = "Test User";
+
+        when(userRepository.findByUsername(username)).thenReturn(Optional.empty());
         when(userRepository.findByEmail(email)).thenReturn(Optional.of(new User()));
 
         // Act & Assert
         assertThrows(UserAlreadyExistsException.class, () ->
-                userService.registerUser("newuser", email, "password", "Test User")
+                userService.registerUser(username, password, email, fullName)
         );
     }
 
@@ -97,16 +105,16 @@ class UserServiceTest {
     void registerUser_EmptyInput_ThrowsIllegalArgumentException() {
         // Act & Assert
         assertThrows(IllegalArgumentException.class, () ->
-                userService.registerUser("", "test@example.com", "password", "Test User")
+                userService.registerUser("", "password", "test@example.com", "Test User")
         );
         assertThrows(IllegalArgumentException.class, () ->
-                userService.registerUser("testuser", "", "password", "Test User")
+                userService.registerUser("testuser", "", "test@example.com", "Test User")
         );
         assertThrows(IllegalArgumentException.class, () ->
-                userService.registerUser("testuser", "test@example.com", "", "Test User")
+                userService.registerUser("testuser", "password", "", "Test User")
         );
         assertThrows(IllegalArgumentException.class, () ->
-                userService.registerUser("testuser", "test@example.com", "password", "")
+                userService.registerUser("testuser", "password", "test@example.com", "")
         );
     }
 
