@@ -1,7 +1,11 @@
 package com.fact_checker.FactChecker.service;
 
+import com.google.api.client.util.Value;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Single;
+import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.io.StringReader;
 import java.net.http.HttpClient;
@@ -17,7 +21,9 @@ import java.util.concurrent.Executors;
 
 public class GroqApiClientImpl implements IGroqApiClient {
 
+    @Value("${groq.api.key}")
     private final String apiKey;
+
     private final HttpClient client;
 
     public GroqApiClientImpl(String apiKey) {

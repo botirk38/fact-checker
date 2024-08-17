@@ -1,54 +1,64 @@
 package com.fact_checker.FactChecker.service;
-
 import io.reactivex.rxjava3.core.Single;
-import org.springframework.beans.factory.annotation.Value;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.core.SingleObserver;
+import io.reactivex.rxjava3.disposables.Disposable;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+import javax.annotation.processing.SupportedSourceVersion;
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-@Service
+
+
+
 public class TextAnalysisService {
 
     private final IGroqApiClient apiClient;
-
-    @Value("${groq.api.key}")
-    private String apiKey;
 
     public TextAnalysisService(IGroqApiClient apiClient) {
         this.apiClient = apiClient;
     }
 
-    public int analyzeText(StringBuilder text) {
-        StringBuilder statements = generateClaimsSeparatedByAsterisks(apiClient, text);
-        StringBuilder statScore = rateClaimsByFacts(apiClient, statements);
+    public int analyzeText(String text) {
+        StringBuilder sb = new StringBuilder(text);
+        StringBuilder statements = generateClaimsSeparatedByAsterisks(sb);
+        StringBuilder statScore = rateClaimsByFacts(statements);
         List<Double> scores = extractScores(statScore.toString());
         return sumList(scores) / scores.size();
     }
 
-    public StringBuilder generateClaimsSeparatedByAsterisks(IGroqApiClient apiClient, StringBuilder sb) {
-        JsonObject request = Json.createObjectBuilder()
-                .add("model", "Llama-3.1-8b-Instant")
-                .add("messages", Json.createArrayBuilder()
-                        .add(Json.createObjectBuilder()
-                                .add("role", "user")
-                                .add("content", "Please divide the following text into distinct factual claims, with each claim separated by an asterisk (*). The text is:"
-                                        + sb.toString()
-                                        + " Make sure that each claim is clearly separated and represents a distinct idea or statement from the text.")))
-                .build();
-
-        JsonObject result = fetchSingleResponse(apiClient, request);
-        JsonArray choices = result.getJsonArray("choices");
-        JsonObject firstChoice = choices.getJsonObject(0);
-        JsonObject message = firstChoice.getJsonObject("message");
-        return new StringBuilder(message.getString("content"));
+    public int sumList(List<Double> list) {
+        int sum = 0;
+        for (Double value : list) {
+            sum += value;
+        }
+        return sum;
+    }
+    public ArrayList<Double> extractScores(String input) {
+        ArrayList<Double> numbersList = new ArrayList<>();
+        String[] numbers = input.split(" ");
+        for (String number : numbers) {
+            numbersList.add(Double.parseDouble(number));
+        }
+        return numbersList;
     }
 
-    public StringBuilder rateClaimsByFacts(IGroqApiClient apiClient, StringBuilder sb) {
+
+    public StringBuilder rateClaimsByFacts(StringBuilder sb) {
         JsonObject request = Json.createObjectBuilder()
                 .add("model", "Llama-3.1-8b-Instant")
                 .add("messages", Json.createArrayBuilder()
@@ -67,38 +77,41 @@ public class TextAnalysisService {
                                         - The value for each key should be a float or integer representing the factual score.
                                         - No additional text or explanations should be included in the output; only the JSON object.
                                         Text to analyse:                                      
-                                        """ + sb.toString())))
+                                        """ + sb.toString()
+                                )))
                 .build();
 
-        JsonObject result = fetchSingleResponse(apiClient, request);
+        JsonObject result = fetchSingleResponse(request);
         JsonArray choices = result.getJsonArray("choices");
         JsonObject firstChoice = choices.getJsonObject(0);
         JsonObject message = firstChoice.getJsonObject("message");
         return new StringBuilder(message.getString("content"));
     }
 
-    public ArrayList<Double> extractScores(String input) {
-        ArrayList<Double> numbersList = new ArrayList<>();
-        String[] numbers = input.split(" ");
-        for (String number : numbers) {
-            numbersList.add(Double.parseDouble(number));
-        }
-        return numbersList;
+    public StringBuilder generateClaimsSeparatedByAsterisks(StringBuilder sb) {
+        JsonObject request = Json.createObjectBuilder()
+                .add("model", "Llama-3.1-8b-Instant")
+                .add("messages", Json.createArrayBuilder()
+                        .add(Json.createObjectBuilder()
+                                .add("role", "user")
+                                .add("content", "Please divide the following text into distinct factual claims, with each claim separated by an asterisk (*). The text is:"
+                                        + sb.toString()
+                                        + " Make sure that each claim is clearly separated and represents a distinct idea or statement from the text.")))
+                .build();
+
+        JsonObject result = fetchSingleResponse(request);
+        JsonArray choices = result.getJsonArray("choices");
+        JsonObject firstChoice = choices.getJsonObject(0);
+        JsonObject message = firstChoice.getJsonObject("message");
+        return new StringBuilder(message.getString("content"));
     }
 
-    public int sumList(List<Double> list) {
-        int sum = 0;
-        for (Double value : list) {
-            sum += value.intValue();
-        }
-        return sum;
-    }
 
-    private JsonObject fetchSingleResponse(IGroqApiClient apiClient, JsonObject request) {
+    private JsonObject fetchSingleResponse(JsonObject request) {
         final JsonObject[] result = new JsonObject[1];
         CountDownLatch latch = new CountDownLatch(1);
 
-        Single<JsonObject> responseSingle = apiClient.createChatCompletionAsync(request);
+        Single<JsonObject> responseSingle = this.apiClient.createChatCompletionAsync(request);
         responseSingle.subscribe(
                 response -> {
                     result[0] = response;
@@ -118,4 +131,8 @@ public class TextAnalysisService {
 
         return result[0];
     }
+
+
+
+
 }
