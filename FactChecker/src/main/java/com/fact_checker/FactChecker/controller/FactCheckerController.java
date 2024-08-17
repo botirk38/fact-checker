@@ -118,4 +118,13 @@ public class FactCheckerController implements ErrorController {
 
         return "redirect:/fact-check-video";
     }
+
+    @GetMapping("/home")
+    public String home(Model model) {
+        model.addAttribute("videos", videoService.getAllVideos());
+        return "home";
+
+    }
+
+
 }
