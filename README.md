@@ -41,6 +41,16 @@
     ```
    *Note: For persistent configuration, add this line to your `~/.bashrc` or `~/.zshrc` file.*
 
+3. **Set up the environment variables**:
+
+    ```bash
+   
+   export GOOGLE_CLIENT_ID=your_client_id_here
+   export GOOGLE_CLIENT_SECRET=your_client_secret_here
+   ```
+   *Note: For persistent configuration, add these
+   lines to your `~/.bashrc` or `~/.zshrc` file.* Contact Botir for the client ID and secret.
+
 3. **Install Java dependencies**:
     ```bash
     ./gradlew build
