@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
  * This class is mapped to the "videos" table in the database.
  */
 @Entity
-@Table(name = "video_transcriptions")
+@Table(name = "videos")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -59,4 +59,12 @@ public class Video {
 
     @Column(name="thumbnail_path", nullable = false)
     private String thumbnailPath;
+  
+  /**
+     * The user who uploaded the video.
+     */
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 }
