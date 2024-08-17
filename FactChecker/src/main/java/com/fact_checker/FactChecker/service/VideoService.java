@@ -162,4 +162,8 @@ public class VideoService {
             throw new FileProcessingException("Failed to read video file", e);
         }
     }
+
+    public List<Video> getAllVideos() {
+        return videoRepository.findAll();
+    }
 }

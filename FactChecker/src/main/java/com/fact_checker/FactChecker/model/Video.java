@@ -30,13 +30,13 @@ public class Video {
     /**
      * The name of the video file.
      */
-    @Column(name = "file_name")
+    @Column(name = "file_name", nullable = false)
     private String fileName;
 
     /**
      * The path where the video file is stored.
      */
-    @Column(name = "file_path")
+    @Column(name = "file_path", nullable = false, unique = true)
     private String filePath;
 
     /**
@@ -44,12 +44,19 @@ public class Video {
      * Stored as a Large Object (LOB) in the database.
      */
     @Lob
-    @Column(name = "transcription_text")
+    @Column(name = "transcription_text", nullable = false)
     private String transcriptionText;
 
     /**
      * The date and time when the video was processed.
      */
-    @Column(name = "processed_at")
+    @Column(name = "processed_at", nullable = false)
     private LocalDateTime processedAt;
+
+    /**
+     * The path where the thumbnail of the video is stored.
+     */
+
+    @Column(name="thumbnail_path", nullable = false)
+    private String thumbnailPath;
 }
