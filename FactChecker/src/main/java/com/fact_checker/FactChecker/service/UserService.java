@@ -68,7 +68,6 @@ public class UserService {
         Set<String> roles = Set.of("USER");
 
         String encodedPassword = passwordEncoder.encode(password);
-        logger.info("Registering user: {}, encoded password: {}, raw password: {}", username, encodedPassword, password);
 
         User user = new User(username, email, encodedPassword, fullName, roles);
         return userRepository.save(user);
