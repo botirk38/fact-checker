@@ -59,19 +59,17 @@ dependencies {
 	implementation 'com.h2database:h2'
 	implementation 'mysql:mysql-connector-java:8.0.33'
 	implementation 'me.paulschwarz:spring-dotenv:2.5.4'
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 	compileOnly 'org.projectlombok:lombok:1.18.22'
 	annotationProcessor 'org.projectlombok:lombok'
-
 
 	// Java CV
 	implementation 'org.bytedeco:javacv-platform:1.5.10'
 
-	// Google Cloud Speech-to-Text
+	// Apache Commons IO
+	implementation 'commons-io:commons-io:2.11.0'
 
-	implementation 'com.google.cloud:google-cloud-speech:4.42.0'
-
-
-
+    // Testing
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'

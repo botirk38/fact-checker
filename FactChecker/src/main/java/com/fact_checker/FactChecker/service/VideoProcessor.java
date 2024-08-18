@@ -1,12 +1,10 @@
 package com.fact_checker.FactChecker.service;
 
-import com.fact_checker.FactChecker.repository.VideoTranscriptionRepository;
 import lombok.Getter;
 import lombok.Setter;
 import org.bytedeco.javacv.*;
 import org.bytedeco.ffmpeg.global.avcodec;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -14,7 +12,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
-import com.fact_checker.FactChecker.model.VideoTranscription;
+import com.fact_checker.FactChecker.model.Video;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,7 +40,6 @@ public class VideoProcessor {
     @Value("${openai.api.key}")
     private String openaiApiKey;
 
-    private final VideoTranscriptionRepository transcriptionRepository;
 
     private final static int BIT_RATE = 19200;
     private final static int AUDIO_QUALITY = 0;
@@ -52,10 +49,9 @@ public class VideoProcessor {
      * Constructor for VideoProcessor.
      * @param restTemplate RestTemplate bean for making HTTP requests.
      */
-    public VideoProcessor(RestTemplate restTemplate, VideoTranscriptionRepository transcriptionRepository) {
+    public VideoProcessor(RestTemplate restTemplate) {
         this.executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
         this.restTemplate = restTemplate;
-        this.transcriptionRepository = transcriptionRepository;
     }
 
     /**
@@ -63,18 +59,18 @@ public class VideoProcessor {
      * @param videoInputStream InputStream of the video file.
      * @return CompletableFuture<String> containing the extracted text.
      */
-    public CompletableFuture<VideoTranscription> extractTextFromSpeech(InputStream videoInputStream, String filename) {
+    public CompletableFuture<Video> extractTextFromSpeech(InputStream videoInputStream, String filename) {
         return CompletableFuture.supplyAsync(() -> {
             try {
                 byte[] audioData = extractAudioFromVideo(videoInputStream);
                 String transcriptionText =  performSpeechRecognition(audioData);
 
-                VideoTranscription videoTranscription = new VideoTranscription();
+                Video videoTranscription = new Video();
                 videoTranscription.setFileName(filename);
                 videoTranscription.setTranscriptionText(transcriptionText);
                 videoTranscription.setProcessedAt(LocalDateTime.now());
 
-                return transcriptionRepository.save(videoTranscription);
+                return videoTranscription;
             } catch (Exception e) {
                 logger.error("Error processing video", e);
                 throw new RuntimeException("Error processing video", e);
