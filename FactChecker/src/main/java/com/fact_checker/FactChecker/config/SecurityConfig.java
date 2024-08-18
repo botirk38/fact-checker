@@ -75,19 +75,19 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests((requests) -> requests
                         .requestMatchers("/", "/css/**").permitAll()
-                        .requestMatchers("/home").hasRole("USER")
+                        .requestMatchers("/home", "/fact-check-video").hasRole("USER")
                         .requestMatchers("/", "/css/**", "/images/**", "/signup", "/login").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin((form) -> form
                         .loginPage("/login")
-                        .defaultSuccessUrl("/fact-check-video", true)
+                        .defaultSuccessUrl("/home", true)
                         .permitAll()
                         .failureHandler(authenticationFailureHandler())
                 )
                 .oauth2Login(oauth2 -> oauth2
                         .loginPage("/login")
-                        .defaultSuccessUrl("/fact-check-video", true)
+                        .defaultSuccessUrl("/home", true)
                         .successHandler(new OAuth2AuthenticationSuccessHandler(userService))
                 )
                 .logout(LogoutConfigurer::permitAll);

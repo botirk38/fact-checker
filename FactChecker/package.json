@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build-css": "tailwindcss build src/main/resources/static/css/tailwind-input.css -o src/main/resources/static/css/tailwind-output.css",
+    "build-css": "tailwindcss -i src/main/resources/static/css/tailwind-input.css -o src/main/resources/static/css/tailwind-output.css",
     "watch-css": "nodemon --watch src/main/resources/templates --ext html --exec 'npm run build-css'"
 
   },
