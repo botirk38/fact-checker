@@ -1,7 +1,7 @@
 package com.fact_checker.FactChecker.service;
 
-import com.fact_checker.FactChecker.model.VideoTranscription;
-import com.fact_checker.FactChecker.repository.VideoTranscriptionRepository;
+import com.fact_checker.FactChecker.model.Video;
+import com.fact_checker.FactChecker.repository.VideoRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -27,13 +27,13 @@ class VideoProcessorTest {
     private RestTemplate restTemplate;
 
     @Mock
-    private VideoTranscriptionRepository transcriptionRepository;
+    private VideoRepository transcriptionRepository;
 
     private VideoProcessor videoProcessor;
 
     @BeforeEach
     void setUp() {
-        videoProcessor = new VideoProcessor(restTemplate, transcriptionRepository);
+        videoProcessor = new VideoProcessor(restTemplate);
         ReflectionTestUtils.setField(videoProcessor, "openaiApiKey", "test-api-key");
     }
 
@@ -47,41 +47,20 @@ class VideoProcessorTest {
         VideoProcessor spyVideoProcessor = spy(videoProcessor);
         doReturn(dummyAudioData).when(spyVideoProcessor).extractAudioFromVideo(any(InputStream.class));
 
-        VideoProcessor.TranscriptionResponse transcriptionResponse = new VideoProcessor.TranscriptionResponse();
-        transcriptionResponse.setText("Transcribed text");
-        ResponseEntity<VideoProcessor.TranscriptionResponse> mockResponse = new ResponseEntity<>(transcriptionResponse, HttpStatus.OK);
-        when(restTemplate.exchange(
-                anyString(),
-                eq(HttpMethod.POST),
-                any(),
-                eq(VideoProcessor.TranscriptionResponse.class)
-        )).thenReturn(mockResponse);
-
-        VideoTranscription savedTranscription = new VideoTranscription();
-        savedTranscription.setId(1L);
-        savedTranscription.setFileName(filename);
-        savedTranscription.setTranscriptionText("Transcribed text");
-        savedTranscription.setProcessedAt(LocalDateTime.now());
-        when(transcriptionRepository.save(any(VideoTranscription.class))).thenReturn(savedTranscription);
+        doReturn("Transcribed text").when(spyVideoProcessor).performSpeechRecognition(any(byte[].class));
 
         // Act
-        CompletableFuture<VideoTranscription> future = spyVideoProcessor.extractTextFromSpeech(inputStream, filename);
-        VideoTranscription result = future.get();
+        CompletableFuture<Video> future = spyVideoProcessor.extractTextFromSpeech(inputStream, filename);
+        Video result = future.get();
 
         // Assert
         assertNotNull(result);
         assertEquals(filename, result.getFileName());
         assertEquals("Transcribed text", result.getTranscriptionText());
+        assertNotNull(result.getProcessedAt());
         verify(spyVideoProcessor).extractAudioFromVideo(inputStream);
-        verify(restTemplate).exchange(
-                anyString(),
-                eq(HttpMethod.POST),
-                any(),
-                eq(VideoProcessor.TranscriptionResponse.class)
-        );
-        verify(transcriptionRepository).save(any(VideoTranscription.class));
+        verify(spyVideoProcessor).performSpeechRecognition(dummyAudioData);
     }
-
     @Test
     void extractAudioFromVideo_Success() throws Exception {
         // This test remains the same as it's mocked in other tests

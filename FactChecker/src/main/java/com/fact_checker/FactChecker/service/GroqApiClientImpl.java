@@ -1,7 +1,10 @@
-package org.groq4j;
+package com.fact_checker.FactChecker.service;
 
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Single;
+import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.io.StringReader;
 import java.net.http.HttpClient;
@@ -14,15 +17,23 @@ import javax.json.JsonObject;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import org.springframework.beans.factory.annotation.Value;
 
+
+
+
+
+@Service
 public class GroqApiClientImpl implements IGroqApiClient {
 
     private final String apiKey;
+
     private final HttpClient client;
 
-    public GroqApiClientImpl(String apiKey) {
-        ExecutorService executor = Executors.newCachedThreadPool();
+    // Constructor injection of the API key
+    public GroqApiClientImpl(@Value("${groq.api.key}") String apiKey) {
         this.apiKey = apiKey;
+        ExecutorService executor = Executors.newCachedThreadPool();
         this.client = HttpClient.newBuilder()
                 .version(HttpClient.Version.HTTP_2)
                 .executor(executor)
