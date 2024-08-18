@@ -97,7 +97,6 @@ public class VideoProcessor {
                     }
                 }
 
-                // Use the temporary file to create new input streams for each operation
                 byte[] audioData = extractAudioFromVideo(new FileInputStream(tempFile));
                 String transcriptionText = performSpeechRecognition(audioData);
                 String thumbnailPath = extractThumbnail(new FileInputStream(tempFile));
@@ -107,6 +106,8 @@ public class VideoProcessor {
                 video.setTranscriptionText(transcriptionText);
                 video.setThumbnailPath(thumbnailPath);
                 video.setProcessedAt(LocalDateTime.now());
+
+                logger.info("Video thumbnail path: {}", thumbnailPath);
 
                 return video;
 
