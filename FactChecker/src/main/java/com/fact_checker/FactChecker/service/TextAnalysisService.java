@@ -35,8 +35,8 @@ public class TextAnalysisService {
         this.apiClient = apiClient;
         this.apiKey = apiKey;
     }
+    
     public int analyzeText(String text) {
-        System.out.println("api key" + apiKey);
         StringBuilder sb = new StringBuilder(text);
         StringBuilder statements = generateClaimsSeparatedByAsterisks(sb);
         StringBuilder statScore = rateClaimsByFacts(statements);
@@ -95,8 +95,8 @@ public class TextAnalysisService {
         JsonObject firstChoice = choices.getJsonObject(0);
         JsonObject message = firstChoice.getJsonObject("message");
         return new StringBuilder(message.getString("content"));
-    }
 
+    }
     public StringBuilder generateClaimsSeparatedByAsterisks(StringBuilder sb) {
         JsonObject request = Json.createObjectBuilder()
                 .add("model", "Llama-3.1-8b-Instant")

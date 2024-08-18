@@ -3,6 +3,7 @@ package com.fact_checker.FactChecker.service;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.ArrayList;
@@ -15,23 +16,27 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 public class TextAnalysisServiceTest {
 
+
+
     @Autowired
     private TextAnalysisService textAnalysisService;
+
 
     @Autowired
     private IGroqApiClient apiClient;
 
+    @Value("${groq.api.key}")
     private String apiKey;
 
     @BeforeEach
     void setup() {
         apiKey = System.getenv("GROQ_API_KEY");
-        System.out.println("API Key from Environment: " + apiKey);
     }
 
     @Test
     public void testAnalyzeText() {
         // Mock the API responses
+        System.out.println("API Key in Test: " + apiKey);
         String text = "The sky is blue. The earth is flat.";
         int result = textAnalysisService.analyzeText(text);
         assertTrue(result >= 0 && result <= 100, "Result was: " + result);
