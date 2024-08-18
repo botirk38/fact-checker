@@ -1,12 +1,10 @@
 package com.fact_checker.FactChecker.service;
 
-import com.google.protobuf.Any;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import javax.annotation.meta.When;
 import java.util.ArrayList;
 import java.util.List;
 
