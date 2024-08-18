@@ -650,11 +650,6 @@ h1, h2, h3, h4, h5, h6 {
   left: 0px;
 }
 
-.mx-5 {
-  margin-left: 1.25rem;
-  margin-right: 1.25rem;
-}
-
 .mx-auto {
   margin-left: auto;
   margin-right: auto;
@@ -680,14 +675,16 @@ h1, h2, h3, h4, h5, h6 {
   margin-left: 0.25rem;
 }
 
+.ml-2 {
+  margin-left: 0.5rem;
+}
+
 .ml-6 {
   margin-left: 1.5rem;
 }
 
 .ml-auto {
   margin-left: auto;
-.ml-2 {
-  margin-left: 0.5rem;
 }
 
 .mr-2 {
@@ -702,13 +699,15 @@ h1, h2, h3, h4, h5, h6 {
   margin-top: 1rem;
 }
 
+.mt-8 {
+  margin-top: 2rem;
+}
+
 .line-clamp-2 {
   overflow: hidden;
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
-.mt-8 {
-  margin-top: 2rem;
 }
 
 .block {
@@ -731,11 +730,12 @@ h1, h2, h3, h4, h5, h6 {
   display: grid;
 }
 
-.aspect-video {
-  aspect-ratio: 16 / 9;
-  
 .hidden {
   display: none;
+}
+
+.aspect-video {
+  aspect-ratio: 16 / 9;
 }
 
 .h-10 {
@@ -830,10 +830,6 @@ h1, h2, h3, h4, h5, h6 {
   grid-template-columns: repeat(1, minmax(0, 1fr));
 }
 
-.grid-cols-2 {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-  
 .grid-cols-3 {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
@@ -973,12 +969,14 @@ h1, h2, h3, h4, h5, h6 {
   background-color: hsl(var(--primary));
 }
 
-.object-cover {
-  -o-object-fit: cover;
-     object-fit: cover;
 .bg-red-100 {
   --tw-bg-opacity: 1;
   background-color: rgb(254 226 226 / var(--tw-bg-opacity));
+}
+
+.object-cover {
+  -o-object-fit: cover;
+     object-fit: cover;
 }
 
 .p-10 {
@@ -1151,13 +1149,14 @@ h1, h2, h3, h4, h5, h6 {
   color: rgb(239 68 68 / var(--tw-text-opacity));
 }
 
-.text-white {
-  --tw-text-opacity: 1;
-  color: rgb(255 255 255 / var(--tw-text-opacity));
-=======
 .text-red-700 {
   --tw-text-opacity: 1;
   color: rgb(185 28 28 / var(--tw-text-opacity));
+}
+
+.text-white {
+  --tw-text-opacity: 1;
+  color: rgb(255 255 255 / var(--tw-text-opacity));
 }
 
 .accent-primary {
@@ -1356,6 +1355,8 @@ h1, h2, h3, h4, h5, h6 {
 @media (min-width: 640px) {
   .sm\:grid-cols-2 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .sm\:p-0 {
     padding: 0px;
   }
@@ -1388,6 +1389,7 @@ h1, h2, h3, h4, h5, h6 {
   .lg\:px-6 {
     padding-left: 1.5rem;
     padding-right: 1.5rem;
+  }
 }
 
 @media (prefers-color-scheme: dark) {
