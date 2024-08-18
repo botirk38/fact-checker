@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import org.apache.commons.lang3.RandomStringUtils;
 
 import java.util.Optional;
 import java.util.Set;
@@ -70,6 +71,8 @@ public class UserService {
         String encodedPassword = passwordEncoder.encode(password);
 
         User user = new User(username, email, encodedPassword, fullName, roles);
+        logger.info("Registering new user: username={}, email={}, roles={}", username, email, roles);
+
         return userRepository.save(user);
     }
 
@@ -82,6 +85,14 @@ public class UserService {
     public Optional<User> findByUsernameOrEmail(String usernameOrEmail) {
         return userRepository.findByUsername(usernameOrEmail)
                 .or(() -> userRepository.findByEmail(usernameOrEmail));
+    }
+
+
+    public String generateUniquePassword() {
+        int length = 16;
+        boolean useLetters = true;
+        boolean useNumbers = true;
+        return RandomStringUtils.random(length, useLetters, useNumbers);
     }
 
 

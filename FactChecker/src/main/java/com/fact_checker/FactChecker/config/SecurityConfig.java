@@ -14,9 +14,6 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -75,7 +72,7 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests((requests) -> requests
                         .requestMatchers("/", "/css/**").permitAll()
-                        .requestMatchers("/home", "/fact-check-video").hasRole("USER")
+                        .requestMatchers("/home", "/fact-check-video").hasAuthority("ROLE_USER")
                         .requestMatchers("/", "/css/**", "/images/**", "/signup", "/login").permitAll()
                         .anyRequest().authenticated()
                 )
@@ -90,7 +87,14 @@ public class SecurityConfig {
                         .defaultSuccessUrl("/home", true)
                         .successHandler(new OAuth2AuthenticationSuccessHandler(userService))
                 )
-                .logout(LogoutConfigurer::permitAll);
+                .logout(LogoutConfigurer::permitAll)
+                .exceptionHandling(exceptions -> exceptions
+                        .accessDeniedHandler((request, response, accessDeniedException) -> {
+                            logger.error("Access denied: {}", accessDeniedException.getMessage());
+                            response.sendRedirect("/access-denied");
+                        })
+                );
+
 
         return http.build();
     }
