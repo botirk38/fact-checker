@@ -87,7 +87,7 @@
                             class="w-full aspect-video object-cover"
                     />
                     <div class="absolute inset-0 bg-black/50 flex items-end p-4 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <div class="text-white text-sm font-medium line-clamp-2" th:text="${video.thumbnailPath}">
+                        <div class="text-white text-sm font-medium line-clamp-2" th:text="${video.getFileName()}">
                         </div>
                     </div>
                 </a>
