@@ -625,8 +625,16 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
-.pointer-events-none {
-  pointer-events: none;
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
 }
 
 .absolute {
@@ -646,8 +654,8 @@ h1, h2, h3, h4, h5, h6 {
   bottom: 0px;
 }
 
-.left-0 {
-  left: 0px;
+.left-2 {
+  left: 0.5rem;
 }
 
 .mx-auto {
@@ -677,14 +685,6 @@ h1, h2, h3, h4, h5, h6 {
 
 .ml-2 {
   margin-left: 0.5rem;
-}
-
-.ml-6 {
-  margin-left: 1.5rem;
-}
-
-.ml-auto {
-  margin-left: auto;
 }
 
 .mr-2 {
@@ -746,10 +746,6 @@ h1, h2, h3, h4, h5, h6 {
   height: 3rem;
 }
 
-.h-14 {
-  height: 3.5rem;
-}
-
 .h-4 {
   height: 1rem;
 }
@@ -760,10 +756,6 @@ h1, h2, h3, h4, h5, h6 {
 
 .h-6 {
   height: 1.5rem;
-}
-
-.h-8 {
-  height: 2rem;
 }
 
 .min-h-dvh {
@@ -794,10 +786,6 @@ h1, h2, h3, h4, h5, h6 {
   width: 1.5rem;
 }
 
-.w-8 {
-  width: 2rem;
-}
-
 .w-\[1px\] {
   width: 1px;
 }
@@ -808,10 +796,6 @@ h1, h2, h3, h4, h5, h6 {
 
 .max-w-3xl {
   max-width: 48rem;
-}
-
-.max-w-md {
-  max-width: 28rem;
 }
 
 .flex-1 {
@@ -832,6 +816,10 @@ h1, h2, h3, h4, h5, h6 {
 
 .grid-cols-3 {
   grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.flex-row {
+  flex-direction: row;
 }
 
 .flex-col {
@@ -856,6 +844,10 @@ h1, h2, h3, h4, h5, h6 {
 
 .gap-1 {
   gap: 0.25rem;
+}
+
+.gap-10 {
+  gap: 2.5rem;
 }
 
 .gap-2 {
@@ -906,10 +898,6 @@ h1, h2, h3, h4, h5, h6 {
 
 .border-2 {
   border-width: 2px;
-}
-
-.border-b {
-  border-bottom-width: 1px;
 }
 
 .border-t {
@@ -1054,12 +1042,8 @@ h1, h2, h3, h4, h5, h6 {
   padding-bottom: 0.25rem;
 }
 
-.pl-10 {
-  padding-left: 2.5rem;
-}
-
-.pl-3 {
-  padding-left: 0.75rem;
+.pl-8 {
+  padding-left: 2rem;
 }
 
 .pr-4 {
@@ -1270,10 +1254,6 @@ h1, h2, h3, h4, h5, h6 {
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
 }
 
-.focus\:border-primary:focus {
-  border-color: hsl(var(--primary));
-}
-
 .focus\:bg-accent:focus {
   background-color: hsl(var(--accent));
 }
@@ -1359,6 +1339,11 @@ h1, h2, h3, h4, h5, h6 {
 
   .sm\:p-0 {
     padding: 0px;
+  }
+
+  .sm\:px-6 {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
   }
 
   .sm\:py-12 {

@@ -7,29 +7,9 @@
 </head>
 <body>
 <div class="flex flex-col min-h-dvh">
-    <header class="bg-background border-b px-4 lg:px-6 h-14 flex items-center">
-        <a class="flex items-center gap-2" th:href="@{/}">
-            <!-- YouTube-like logo -->
-            <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    class="w-8 h-8 text-red-500"
-            >
-                <path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.55 49.55 0 0 1-16.2 0A2 2 0 0 1 2.5 17"></path>
-                <path d="m10 15 5-3-5-3z"></path>
-            </svg>
-            <span class="font-semibold">Fact Checker</span>
-        </a>
-        <div class="relative flex-1 ml-6 max-w-md">
-            <!-- Search icon -->
-            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+    <header class="flex items-center justify-between bg-background px-4 py-3 shadow-sm sm:px-6">
+        <div class="flex items-center gap-10 ">
+            <a class="flex items-center gap-2" href="#" rel="ugc">
                 <svg
                         xmlns="http://www.w3.org/2000/svg"
                         width="24"
@@ -40,20 +20,39 @@
                         stroke-width="2"
                         stroke-linecap="round"
                         stroke-linejoin="round"
-                        class="w-5 h-5 text-muted-foreground"
+                        class="h-6 w-6 text-red-500"
                 >
-                    <circle cx="11" cy="11" r="8"></circle>
-                    <path d="m21 21-4.3-4.3"></path>
+                    <path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.55 49.55 0 0 1-16.2 0A2 2 0 0 1 2.5 17"></path>
+                    <path d="m10 15 5-3-5-3z"></path>
                 </svg>
-            </div>
-            <input
-                    class="h-10 border border-input px-3 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 block w-full pl-10 pr-4 py-2 rounded-full bg-muted text-foreground focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary"
-                    placeholder="Search"
-                    type="search"
-            />
+                <span class="text-lg font-bold">YouTube</span>
+            </a>
+            <form class="relative flex-1">
+                <div class="absolute inset-y-0 left-2 flex items-center">
+                    <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            class="h-4 w-4 text-muted-foreground"
+                    >
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <path d="m21 21-4.3-4.3"></path>
+                    </svg>
+                </div>
+                <input
+                        class="flex h-10 border border-input px-3 ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 w-full rounded-full bg-muted pl-8 pr-4 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary"
+                        placeholder="Search"
+                        type="search"
+                />
+            </form>
         </div>
-        <div class="ml-auto flex items-center gap-4">
-            <!-- Upload icon -->
+        <div class="flex flex-row items-center gap-10">
             <a th:href="@{/fact-check-video}" class="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-10 w-10 rounded-full">
                 <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -65,13 +64,51 @@
                         stroke-width="2"
                         stroke-linecap="round"
                         stroke-linejoin="round"
-                        class="w-6 h-6 text-foreground"
+                        class="h-5 w-5"
                 >
                     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                     <polyline points="17 8 12 3 7 8"></polyline>
                     <line x1="12" x2="12" y1="3" y2="15"></line>
                 </svg>
+                <span class="sr-only">Upload</span>
             </a>
+
+            <button class="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-10 w-10 rounded-full">
+                <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        class="h-5 w-5"
+                >
+                    <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path>
+                    <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path>
+                </svg>
+                <span class="sr-only">Notifications</span>
+            </button>
+            <button
+                    class="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-10 w-10 rounded-full"
+                    type="button"
+                    id="radix-:r2:"
+                    aria-haspopup="menu"
+                    aria-expanded="false"
+                    data-state="closed"
+            >
+                <img
+                        src="/placeholder.svg"
+                        width="32"
+                        height="32"
+                        alt="Avatar"
+                        class="rounded-full"
+                        style="aspect-ratio: 32 / 32; object-fit: cover;"
+                />
+                <span class="sr-only">User menu</span>
+            </button>
         </div>
     </header>
     <main class="flex-1 bg-muted/40 py-8 px-4 lg:px-6">
@@ -80,14 +117,14 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 <a th:each="video : ${videos}" class="group relative rounded-lg overflow-hidden" th:href="@{'/video/' + ${video.id}}">
                     <img
-                            th:src="${video.thumbnailPath}"
+                            th:src="@{'/thumbnails/' + ${video.thumbnailPath}}"
                             width="320"
                             height="180"
                             alt="Thumbnail"
                             class="w-full aspect-video object-cover"
                     />
                     <div class="absolute inset-0 bg-black/50 flex items-end p-4 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <div class="text-white text-sm font-medium line-clamp-2" th:text="${video.thumbnailPath}">
+                        <div class="text-white text-sm font-medium line-clamp-2" th:text="${video.getFileName()}">
                         </div>
                     </div>
                 </a>
