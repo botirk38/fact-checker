@@ -153,12 +153,15 @@ public class VideoService {
     private Video processVideo(String filename) {
         Path filePath = Paths.get(uploadPath, filename);
         try (var inputStream = Files.newInputStream(filePath)) {
-            return videoProcessor.extractTextFromSpeech(inputStream, filename)
+            Video video =  videoProcessor.extractTextFromSpeech(inputStream, filename)
                     .exceptionally(ex -> {
                         logger.error("Error processing video: {}", ex.getMessage());
                         throw new FileProcessingException("Failed to process video", ex);
                     })
                     .join();
+
+            video.setFilePath(filePath.toString());
+            return video;
         } catch (Exception e) {
             logger.error("Error reading file: {}", e.getMessage());
             throw new FileProcessingException("Failed to read video file", e);
