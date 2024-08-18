@@ -4,28 +4,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign Up</title>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/css/tailwind-output.css}"/>
+    <link rel="icon" type="image/x-icon" th:href="@{/favicon.ico}">
 </head>
-<body class="min-h-screen bg-background flex flex-col justify-center sm:py-12">
+<body class="min-h-screen bg-background dark:bg-gray-900 flex flex-col justify-center sm:py-12">
 <div class="p-10 xs:p-0 mx-auto md:w-full md:max-w-md">
-    <h1 class="font-heading font-bold text-center text-2xl mb-5 text-foreground">Your Logo</h1>
-    <div class="bg-card shadow w-full rounded-lg divide-y divide-border">
+    <h1 class="font-heading font-bold text-center text-2xl mb-5 text-foreground dark:text-white">Your Logo</h1>
+    <div class="bg-card dark:bg-gray-800 shadow w-full rounded-lg divide-y divide-border dark:divide-gray-700">
         <form th:action="@{/signup}" method="post" class="px-5 py-7">
-            <label class="font-body font-semibold text-sm text-muted-foreground pb-1 block">Full Name</label>
-            <input type="text" name="fullName" class="border rounded-lg px-3 py-2 mt-1 mb-5 text-sm w-full bg-input text-foreground" required />
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
 
-            <label class="font-body font-semibold text-sm text-muted-foreground pb-1 block">Username</label>
-            <input type="text" name="username"
-                   class="border rounded-lg px-3 py-2 mt-1 mb-5 text-sm w-full bg-input text-foreground" required/>
+            <label for="fullName" class="font-body font-semibold text-sm text-muted-foreground dark:text-gray-300 pb-1 block">Full Name</label>
+            <input type="text" id="fullName" name="fullName" class="border rounded-lg px-3 py-2 mt-1 mb-5 text-sm w-full bg-input dark:bg-gray-700 text-foreground dark:text-white" required autocomplete="name" />
 
-            <label class="font-body font-semibold text-sm text-muted-foreground pb-1 block">Email</label>
-            <input type="email" name="email" class="border rounded-lg px-3 py-2 mt-1 mb-5 text-sm w-full bg-input text-foreground" required />
+            <label for="username" class="font-body font-semibold text-sm text-muted-foreground dark:text-gray-300 pb-1 block">Username</label>
+            <input type="text" id="username" name="username" class="border rounded-lg px-3 py-2 mt-1 mb-5 text-sm w-full bg-input dark:bg-gray-700 text-foreground dark:text-white" required autocomplete="username" />
 
-            <label class="font-body font-semibold text-sm text-muted-foreground pb-1 block">Password</label>
-            <input type="password" name="password" class="border rounded-lg px-3 py-2 mt-1 mb-5 text-sm w-full bg-input text-foreground" required />
+            <label for="email" class="font-body font-semibold text-sm text-muted-foreground dark:text-gray-300 pb-1 block">Email</label>
+            <input type="email" id="email" name="email" class="border rounded-lg px-3 py-2 mt-1 mb-5 text-sm w-full bg-input dark:bg-gray-700 text-foreground dark:text-white" required autocomplete="email" />
 
-            <label class="font-body font-semibold text-sm text-muted-foreground pb-1 block">Confirm Password</label>
-            <input type="password" name="confirmPassword" class="border rounded-lg px-3 py-2 mt-1 mb-5 text-sm w-full bg-input text-foreground" required />
+            <label for="password" class="font-body font-semibold text-sm text-muted-foreground dark:text-gray-300 pb-1 block">Password</label>
+            <input type="password" id="password" name="password" class="border rounded-lg px-3 py-2 mt-1 mb-5 text-sm w-full bg-input dark:bg-gray-700 text-foreground dark:text-white" required autocomplete="new-password" />
+
+            <label for="confirmPassword" class="font-body font-semibold text-sm text-muted-foreground dark:text-gray-300 pb-1 block">Confirm Password</label>
+            <input type="password" id="confirmPassword" name="confirmPassword" class="border rounded-lg px-3 py-2 mt-1 mb-5 text-sm w-full bg-input dark:bg-gray-700 text-foreground dark:text-white" required autocomplete="new-password" />
 
             <button type="submit" class="transition duration-200 bg-primary hover:bg-primary/90 focus:bg-primary/90 focus:ring-4 focus:ring-primary focus:ring-opacity-50 text-primary-foreground w-full py-2.5 rounded-lg text-sm shadow-sm hover:shadow-md font-semibold text-center inline-block">
                 <span class="inline-block mr-2">Sign Up</span>
@@ -33,30 +36,44 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
             </button>
+
+            <div th:if="${param.error}" class="mt-4 p-4 bg-red-100 text-red-700 rounded-md">
+                <p th:text="${param.error[1]}"></p>
+            </div>
         </form>
         <div class="p-5">
             <div class="grid grid-cols-3 gap-1">
-                <a th:href="@{/oauth2/authorization/google}" class="transition duration-200 border border-border text-muted-foreground w-full py-2.5 rounded-lg text-sm shadow-sm hover:shadow-md font-normal text-center inline-block">
+                <a th:href="@{/oauth2/authorization/google}" class="transition duration-200 border border-border dark:border-gray-700 text-muted-foreground dark:text-gray-300 w-full py-2.5 rounded-lg text-sm shadow-sm hover:shadow-md font-normal text-center inline-block">
                     <svg class="w-5 h-5 inline-block" viewBox="0 0 48 48">
                         <!-- Google icon paths -->
                     </svg>
                     <span class="inline-block ml-1">Sign up with Google</span>
                 </a>
+                <a th:href="@{/oauth2/authorization/facebook}" class="transition duration-200 border border-border dark:border-gray-700 text-muted-foreground dark:text-gray-300 w-full py-2.5 rounded-lg text-sm shadow-sm hover:shadow-md font-normal text-center inline-block">
+                    <svg class="w-5 h-5 inline-block" viewBox="0 0 48 48">
+                        <!-- Facebook icon paths -->
+                    </svg>
+                    <span class="inline-block ml-1">Sign up with Facebook</span>
+                </a>
+                <a th:href="@{/oauth2/authorization/github}" class="transition duration-200 border border-border dark:border-gray-700 text-muted-foreground dark:text-gray-300 w-full py-2.5 rounded-lg text-sm shadow-sm hover:shadow-md font-normal text-center inline-block">
+                    <svg class="w-5 h-5 inline-block" viewBox="0 0 48 48">
+                        <!-- GitHub icon paths -->
+                    </svg>
+                    <span class="inline-block ml-1">Sign up with GitHub</span>
+                </a>
             </div>
         </div>
         <div class="py-5">
             <div class="text-center">
-                <p class="text-sm text-muted-foreground">
-                    By signing up, you agree to our
-                    <a href="#" class="text-primary hover:underline">Terms of Service</a> and
-                    <a href="#" class="text-primary hover:underline">Privacy Policy</a>.
+                <p class="text-sm text-muted-foreground dark:text-gray-400">
+                    By signing up, you agree to our <a href="#" class="text-primary hover:underline">Terms of Service</a> and <a href="#" class="text-primary hover:underline">Privacy Policy</a>.
                 </p>
             </div>
         </div>
     </div>
     <div class="py-5">
         <div class="text-center">
-            <p class="text-sm text-muted-foreground">
+            <p class="text-sm text-muted-foreground dark:text-gray-400">
                 Already have an account?
                 <a th:href="@{/login}" class="text-primary hover:underline">Log in</a>
             </p>
