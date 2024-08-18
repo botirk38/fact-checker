@@ -1,17 +1,20 @@
 # Build stage
 FROM gradle:8.5-jdk21 AS build
-
-# Install Node.js and npm
-RUN apt-get update && apt-get install -y nodejs npm
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install -y nodejs
 
 # Set the working directory
 WORKDIR /app
 
-# Copy package.json and package-lock.json (if you have one)
-COPY package.json package-lock.json* ./
+# Copy package.json, package-lock.json, and tailwind.config.js
+COPY package.json package-lock.json* tailwind.config.js ./
 
 # Install npm dependencies
 RUN npm install
+
+# Copy the CSS source files
+COPY src/main/resources/static/css ./src/main/resources/static/css
+COPY src/main/resources/templates ./src/main/resources/templates
 
 # Run the CSS build
 RUN npm run build-css
