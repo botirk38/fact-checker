@@ -36,6 +36,7 @@ public class TextAnalysisService {
         this.apiKey = apiKey;
     }
     public int analyzeText(String text) {
+        System.out.println("api key" + apiKey);
         StringBuilder sb = new StringBuilder(text);
         StringBuilder statements = generateClaimsSeparatedByAsterisks(sb);
         StringBuilder statScore = rateClaimsByFacts(statements);
