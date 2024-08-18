@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Gradle: me.paulschwarz:spring-dotenv:2.5.4" type="java-imported" external-system-id="GRADLE">
+    <properties groupId="me.paulschwarz" artifactId="spring-dotenv" version="2.5.4" />
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/me.paulschwarz/spring-dotenv/2.5.4/9a13b8df9e29c56974a8ecfd374d6e745b8276c5/spring-dotenv-2.5.4.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/me.paulschwarz/spring-dotenv/2.5.4/3e35135067c28d048c14b7ceca7fa3dc9b180a18/spring-dotenv-2.5.4-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
