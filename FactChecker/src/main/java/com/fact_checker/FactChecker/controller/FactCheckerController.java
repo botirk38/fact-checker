@@ -4,6 +4,7 @@ package com.fact_checker.FactChecker.controller;
 import com.fact_checker.FactChecker.model.Video;
 import com.fact_checker.FactChecker.service.UserService;
 import com.fact_checker.FactChecker.service.VideoService;
+import com.fact_checker.FactChecker.service.TextAnalysisService;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.boot.web.servlet.error.ErrorController;
@@ -27,10 +28,12 @@ public class FactCheckerController implements ErrorController {
 
     private final VideoService videoService;
     private final UserService userService;
+    private final TextAnalysisService textAnalysisService;
 
-    public FactCheckerController(VideoService videoService, UserService userService) {
+    public FactCheckerController(VideoService videoService, UserService userService , TextAnalysisService textAnalysisService) {
         this.videoService = videoService;
         this.userService = userService;
+        this.textAnalysisService = textAnalysisService;
     }
 
     @GetMapping("/login")
@@ -107,7 +110,10 @@ public class FactCheckerController implements ErrorController {
                 redirectAttributes.addFlashAttribute("message", "Could not extract text from video.");
                 return "redirect:/fact-check-video";
             }
-            redirectAttributes.addFlashAttribute("message", "Successfully uploaded file. " + extractedText);
+
+            int analysisScore =  textAnalysisService.analyzeText(extractedText);
+            video.setFactPercentage(analysisScore);
+            redirectAttributes.addFlashAttribute("message", "Successfully uploaded file. " + "Analysis score : " + extractedText);
 
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("message", "Could not upload file." + e.getMessage());

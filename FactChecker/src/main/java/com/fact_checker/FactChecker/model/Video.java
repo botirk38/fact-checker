@@ -67,4 +67,11 @@ public class Video {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
+
+
+    /**
+     * The fact percentage score of the video after text analysis.
+     */
+    @Column(name = "fact_percentage")
+    private Integer factPercentage;
 }
