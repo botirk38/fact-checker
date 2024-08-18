@@ -4,6 +4,8 @@ import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.SingleObserver;
 import io.reactivex.rxjava3.disposables.Disposable;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -22,17 +24,17 @@ import java.util.concurrent.CountDownLatch;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-
-
-
+@Service
 public class TextAnalysisService {
 
     private final IGroqApiClient apiClient;
+    private final String apiKey;
 
-    public TextAnalysisService(IGroqApiClient apiClient) {
+    // Inject IGroqApiClient and API key via constructor
+    public TextAnalysisService(IGroqApiClient apiClient, @Value("${groq.api.key}") String apiKey) {
         this.apiClient = apiClient;
+        this.apiKey = apiKey;
     }
-
     public int analyzeText(String text) {
         StringBuilder sb = new StringBuilder(text);
         StringBuilder statements = generateClaimsSeparatedByAsterisks(sb);
@@ -50,15 +52,20 @@ public class TextAnalysisService {
     }
     public ArrayList<Double> extractScores(String input) {
         ArrayList<Double> numbersList = new ArrayList<>();
-        String[] numbers = input.split(" ");
-        for (String number : numbers) {
-            numbersList.add(Double.parseDouble(number));
+        Pattern pattern = Pattern.compile(":\\s*(\\d+(?:\\.\\d+)?)");
+        Matcher matcher = pattern.matcher(input);
+
+        while (matcher.find()) {
+            String numberStr = matcher.group(1);
+            numbersList.add(Double.parseDouble(numberStr));
         }
+
         return numbersList;
     }
 
 
     public StringBuilder rateClaimsByFacts(StringBuilder sb) {
+        System.out.println("api key" + apiKey);
         JsonObject request = Json.createObjectBuilder()
                 .add("model", "Llama-3.1-8b-Instant")
                 .add("messages", Json.createArrayBuilder()
@@ -82,6 +89,7 @@ public class TextAnalysisService {
                 .build();
 
         JsonObject result = fetchSingleResponse(request);
+        System.out.println("Result : "+ result);
         JsonArray choices = result.getJsonArray("choices");
         JsonObject firstChoice = choices.getJsonObject(0);
         JsonObject message = firstChoice.getJsonObject("message");
