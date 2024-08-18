@@ -175,7 +175,7 @@ public class VideoProcessor {
     String performSpeechRecognition(byte[] audioData) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
-        headers.set("Authorization", "Bearer " + openAiConfig.getApiKey());
+        headers.set(HttpHeaders.AUTHORIZATION, "Bearer " + openAiConfig.getApiKey());
 
         MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
 
