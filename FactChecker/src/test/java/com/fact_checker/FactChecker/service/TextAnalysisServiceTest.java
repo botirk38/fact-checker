@@ -1,12 +1,16 @@
 package com.fact_checker.FactChecker.service;
 
+import com.google.protobuf.Any;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import javax.annotation.meta.When;
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.mockito.Mockito.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -26,6 +30,15 @@ public class TextAnalysisServiceTest {
         apiKey = System.getenv("GROQ_API_KEY");
         System.out.println("API Key from Environment: " + apiKey);
     }
+
+    @Test
+    public void testAnalyzeText() {
+        // Mock the API responses
+        String text = "The sky is blue. The earth is flat.";
+        int result = textAnalysisService.analyzeText(text);
+        assertTrue(result >= 0 && result <= 100, "Result was: " + result);
+    }
+
 
     @Test
     public void testRateClaimsByFacts() {
@@ -65,4 +78,6 @@ public class TextAnalysisServiceTest {
         double sum = textAnalysisService.sumList(list);
         assertEquals(60.0, sum, 0.001);
     }
+
+
 }
