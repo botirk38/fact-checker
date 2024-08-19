@@ -127,13 +127,8 @@ public class FactCheckerController implements ErrorController {
   @PostMapping("/fact-check-video")
   public String factCheckVideo(@RequestParam("videoFile") MultipartFile videoFile,
       RedirectAttributes redirectAttributes) {
-    if (videoFile.isEmpty()) {
+    if (videoFile.isEmpty() || videoFile.getSize() == 0 || videoFile.getOriginalFilename() == null) {
       redirectAttributes.addFlashAttribute("message", "Please upload a valid video file.");
-      return "redirect:/fact-check-video";
-    }
-
-    if (videoFile.getOriginalFilename() == null) {
-      redirectAttributes.addFlashAttribute("message", "Please upload a valid video file with a valid name.");
       return "redirect:/fact-check-video";
     }
 
@@ -143,9 +138,11 @@ public class FactCheckerController implements ErrorController {
       return "redirect:/fact-check-video";
     }
 
-    redirectAttributes.addFlashAttribute("message", "Processing video, please wait! ⌛");
+
 
     try {
+      redirectAttributes.addFlashAttribute("message", "Processing video, please wait! ⌛");
+
       Video video = videoService.processAndSaveVideo(videoFile).join();
       String extractedText = video.getTranscriptionText();
 
