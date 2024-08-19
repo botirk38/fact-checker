@@ -55,6 +55,8 @@ dependencies {
 	implementation 'mysql:mysql-connector-java:8.0.33'
 	implementation 'me.paulschwarz:spring-dotenv:2.5.4'
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+  implementation 'com.github.ben-manes.caffeine:caffeine'
+
 	compileOnly 'org.projectlombok:lombok:1.18.22'
 	annotationProcessor 'org.projectlombok:lombok'
 
