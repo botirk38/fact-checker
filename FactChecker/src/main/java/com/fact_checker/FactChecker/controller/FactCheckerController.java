@@ -4,6 +4,7 @@ package com.fact_checker.FactChecker.controller;
 import com.fact_checker.FactChecker.model.Video;
 import com.fact_checker.FactChecker.service.UserService;
 import com.fact_checker.FactChecker.service.VideoService;
+import com.fact_checker.FactChecker.model.TermItem;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.boot.web.servlet.error.ErrorController;
@@ -19,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.security.core.Authentication;
-
+import java.util.List;
 
 @Controller
 @RequestMapping("/")
@@ -98,6 +99,19 @@ public class FactCheckerController implements ErrorController {
 
     @GetMapping("terms-of-service")
     public String termsOfService(HttpServletRequest request, Model model){
+
+       model.addAttribute("accountItems", List.of(
+            new TermItem("Account Creation:", "To use our services, you must create an account by providing accurate and complete information."),
+            new TermItem("Account Security:", "You are responsible for maintaining the confidentiality of your account credentials and for any activity that occurs under your account."),
+            new TermItem("Account Termination:", "We reserve the right to suspend or terminate your account at any time for any reason, including if we reasonably believe you have violated these terms.")
+        ));
+
+        model.addAttribute("conductItems", List.of(
+            new TermItem("Prohibited Activities:", "You will not engage in any illegal, harmful, or fraudulent activities."),
+            new TermItem("Intellectual Property:", "You will respect the intellectual property rights of others and not infringe on copyrights, trademarks, or other protected assets."),
+            new TermItem("User Content:", "Any content you upload or share must be your own and not violate the rights of others.")
+        ));
+
 
       return "terms-of-service";
 
