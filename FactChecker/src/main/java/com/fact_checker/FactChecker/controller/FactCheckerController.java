@@ -81,9 +81,8 @@ public class FactCheckerController implements ErrorController {
     }
 
     @GetMapping("/privacy-policy")
-
-    public String privacyPolicy(){
-        model.addAttribute("introduction", "At Acme Inc., we value your privacy and are committed to protecting your personal information. This Privacy Policy explains how we collect, use, and disclose information about you when you use our website and services.");
+    public String privacyPolicy(HttpServletRequest request, Model model){
+        model.addAttribute("introduction", "At Truth Lens, we value your privacy and are committed to protecting your personal information. This Privacy Policy explains how we collect, use, and disclose information about you when you use our website and services.");
 
         model.addAttribute("personalInfo", "We may collect personal information such as your name, email address, and contact details when you sign up for our services, make a purchase, or contact us for support.");
 
@@ -94,6 +93,13 @@ public class FactCheckerController implements ErrorController {
         model.addAttribute("sharingInfo", "We may share your information with third-party service providers who perform services on our behalf, such as hosting, data analysis, and customer service. We may also share information when required by law or to protect our rights.");
             
         return "privacy-policy";
+
+    }
+
+    @GetMapping("terms-of-service")
+    public String termsOfService(HttpServletRequest request, Model model){
+
+      return "terms-of-service";
 
     }
 

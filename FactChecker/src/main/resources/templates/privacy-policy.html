@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Privacy Policy</title>
-    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <link rel="stylesheet" th:href="@{/css/tailwind-output.css}">
 </head>
 <body>
     <main>
         <section class="bg-background py-24">
-            <div class="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
+            <div class="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 gap-4">
                 <header class="mb-10 flex items-center justify-between">
                     <div class="flex items-center gap-2">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-8 w-8 text-primary">
@@ -28,7 +28,7 @@
                         Download PDF
                     </a>
                 </header>
-                <article class="space-y-8">
+                <article class="container space-y-8">
                     <section>
                         <h2 class="mb-2 text-xl font-semibold">Introduction</h2>
                         <p class="text-muted-foreground" th:text="${introduction}">
