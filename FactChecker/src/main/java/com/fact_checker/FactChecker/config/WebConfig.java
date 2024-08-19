@@ -10,18 +10,24 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
-    private final String storageLocation;
+    private final String thumbnailLocation;
+    private final String videoLocation;
 
     private static final Logger logger = LoggerFactory.getLogger(WebConfig.class);
 
 
-    public WebConfig(@Value("${thumbnail.upload.path}") String storageLocation) {
-        this.storageLocation = storageLocation;
+    public WebConfig(@Value("${thumbnail.upload.path}") String thumbnailLocation, @Value("${video.upload.path}") String videoLocation) {
+        this.thumbnailLocation = thumbnailLocation;
+        this.videoLocation = videoLocation;
     }
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/thumbnails/**")
-                .addResourceLocations("file:" + storageLocation + "/");
+                .addResourceLocations("file:" + thumbnailLocation + "/");
+
+
+        registry.addResourceHandler("/videos/**")
+                .addResourceLocations("file:" + videoLocation + "/");
     }
 }
