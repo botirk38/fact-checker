@@ -80,6 +80,23 @@ public class FactCheckerController implements ErrorController {
         return "error";
     }
 
+    @GetMapping("/privacy-policy")
+
+    public String privacyPolicy(){
+        model.addAttribute("introduction", "At Acme Inc., we value your privacy and are committed to protecting your personal information. This Privacy Policy explains how we collect, use, and disclose information about you when you use our website and services.");
+
+        model.addAttribute("personalInfo", "We may collect personal information such as your name, email address, and contact details when you sign up for our services, make a purchase, or contact us for support.");
+
+        model.addAttribute("usageInfo", "We may collect information about how you use our website and services, such as the pages you visit, the features you use, and the time spent on our platform.");
+
+        model.addAttribute("usageOfInfo", "We use the information we collect to provide, maintain, and improve our services, as well as to personalize your experience, communicate with you, and ensure the security of our platform.");
+
+        model.addAttribute("sharingInfo", "We may share your information with third-party service providers who perform services on our behalf, such as hosting, data analysis, and customer service. We may also share information when required by law or to protect our rights.");
+            
+        return "privacy-policy";
+
+    }
+
 
     @GetMapping("/fact-check-video")
     public String uploadVideo() {
