@@ -28,10 +28,13 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        logger.info("Adding resource handlers for thumbnail location: {}", thumbnailLocation);
+
         registry.addResourceHandler("/thumbnails/**")
                 .addResourceLocations("file:" + thumbnailLocation + "/");
 
-
+        logger.info("Adding resource handlers for video location: {}", videoLocation);
+        
         registry.addResourceHandler("/videos/**")
                 .addResourceLocations("file:" + videoLocation + "/");
     }

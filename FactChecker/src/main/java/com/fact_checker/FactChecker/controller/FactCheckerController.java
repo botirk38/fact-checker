@@ -4,12 +4,11 @@ import com.fact_checker.FactChecker.model.Video;
 import com.fact_checker.FactChecker.service.UserService;
 import com.fact_checker.FactChecker.service.VideoService;
 import com.fact_checker.FactChecker.model.TermItem;
+import com.fact_checker.FactChecker.model.User;
+
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.boot.web.servlet.error.ErrorController;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,8 +17,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.security.core.Authentication;
 import java.util.List;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
 @Controller
 @RequestMapping("/")
@@ -126,7 +125,7 @@ public class FactCheckerController implements ErrorController {
 
   @PostMapping("/fact-check-video")
   public String factCheckVideo(@RequestParam("videoFile") MultipartFile videoFile,
-      RedirectAttributes redirectAttributes) {
+      RedirectAttributes redirectAttributes, HttpServletRequest request, @AuthenticationPrincipal  User user) {
     if (videoFile.isEmpty() || videoFile.getSize() == 0 || videoFile.getOriginalFilename() == null) {
       redirectAttributes.addFlashAttribute("message", "Please upload a valid video file.");
       return "redirect:/fact-check-video";
@@ -143,7 +142,7 @@ public class FactCheckerController implements ErrorController {
     try {
       redirectAttributes.addFlashAttribute("message", "Processing video, please wait! ⌛");
 
-      Video video = videoService.processAndSaveVideo(videoFile).join();
+      Video video = videoService.processAndSaveVideo(videoFile, user).join();
       String extractedText = video.getTranscriptionText();
 
       if (extractedText == null) {
@@ -151,6 +150,7 @@ public class FactCheckerController implements ErrorController {
         return "redirect:/fact-check-video";
       }
       redirectAttributes.addFlashAttribute("message", "Successfully uploaded file. " + extractedText);
+        
 
     } catch (Exception e) {
       redirectAttributes.addFlashAttribute("message", "Could not upload file." + e.getMessage());
