@@ -74,24 +74,26 @@ public class VideoProcessor {
   @Cacheable(value = "videos", key = "#filename")
   public CompletableFuture<Video> extractTextFromSpeech(Path filePath, String filename) {
     return CompletableFuture.supplyAsync(() -> {
-      try {
-        File videoFile = filePath.toFile();
-        byte[] audioData = extractAudioFromVideo(new FileInputStream(videoFile));
-        String transcriptionText = performSpeechRecognition(audioData);
-        String thumbnailPath = extractThumbnail(new FileInputStream(videoFile), filename);
+      try (BufferedInputStream bufferedInputStream = new BufferedInputStream(new FileInputStream(filePath.toFile()))) {
+    bufferedInputStream.mark(Integer.MAX_VALUE);
+    byte[] audioData = extractAudioFromVideo(bufferedInputStream);
+    String transcriptionText = performSpeechRecognition(audioData);
+    
+    bufferedInputStream.reset();
+    String thumbnailPath = extractThumbnail(bufferedInputStream, filename);
 
-        Video video = new Video();
-        video.setFileName(filename);
-        video.setTranscriptionText(transcriptionText);
-        video.setThumbnailPath(thumbnailPath);
-        video.setProcessedAt(LocalDateTime.now());
+    Video video = new Video();
+    video.setFileName(filename);
+    video.setTranscriptionText(transcriptionText);
+    video.setThumbnailPath(thumbnailPath);
+    video.setProcessedAt(LocalDateTime.now());
 
-        logger.info("Video processed successfully: {}", filename);
-        return video;
-      } catch (Exception e) {
-        logger.error("Error processing video: {}", filename, e);
-        throw new VideoProcessingException("Error processing video: " + filename, e);
-      }
+    logger.info("Video processed successfully: {}", filename);
+    return video;
+} catch (Exception e) {
+    logger.error("Error processing video: {}", filename, e);
+    throw new VideoProcessingException("Error processing video: " + filename, e);
+}
     }, executorService);
   }
 
@@ -222,4 +224,3 @@ public class VideoProcessor {
     private String text;
   }
 }
-
