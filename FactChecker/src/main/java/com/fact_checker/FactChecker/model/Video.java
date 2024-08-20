@@ -44,7 +44,7 @@ public class Video {
      * Stored as a Large Object (LOB) in the database.
      */
     @Lob
-    @Column(name = "transcription_text", nullable = false)
+    @Column(name = "transcription_text", nullable = false, columnDefinition = "LONGTEXT")
     private String transcriptionText;
 
     /**

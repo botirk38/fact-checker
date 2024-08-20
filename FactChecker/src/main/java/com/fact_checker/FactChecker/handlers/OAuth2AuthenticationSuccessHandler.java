@@ -10,12 +10,19 @@ import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * Handler for successful OAuth2 authentication.
@@ -59,7 +66,13 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
             createSession(request, user);
             logger.info("User authenticated successfully. Email: {}", email);
 
-            String targetUrl = determineTargetUrl(request, response, authentication);
+            // Create a new authentication with updated authorities
+            Authentication newAuth = updateAuthenticationWithUserRoles(authentication, user);
+
+            // Set the new authentication in the security context
+            SecurityContextHolder.getContext().setAuthentication(newAuth);
+
+            String targetUrl = determineTargetUrl(request, response, newAuth);
             getRedirectStrategy().sendRedirect(request, response, targetUrl);
         } catch (Exception e) {
             logger.error("Error during OAuth2 authentication success handling", e);
@@ -115,8 +128,9 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
      */
     private User createNewUser(String email, String name) {
         String username = generateUniqueUsername(email);
+        String password = userService.generateUniquePassword();
         try {
-            return userService.registerUser(username, "", email, name);
+            return userService.registerUser(username, password, email, name);
         } catch (UserAlreadyExistsException e) {
             logger.warn("Unexpected user already exists error", e);
             return userService.findByUsernameOrEmail(email)
@@ -163,5 +177,20 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     @Override
     protected String determineTargetUrl(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
         return "/home";
+    }
+
+    private Authentication updateAuthenticationWithUserRoles(Authentication authentication, User user) {
+        OAuth2User oauth2User = (OAuth2User) authentication.getPrincipal();
+
+        Set<GrantedAuthority> updatedAuthorities = new HashSet<>(authentication.getAuthorities());
+        for (String role : user.getRoles()) {
+            updatedAuthorities.add(new SimpleGrantedAuthority("ROLE_" + role.toUpperCase()));
+        }
+
+        return new OAuth2AuthenticationToken(
+                new DefaultOAuth2User(updatedAuthorities, oauth2User.getAttributes(), "email"),
+                updatedAuthorities,
+                ((OAuth2AuthenticationToken) authentication).getAuthorizedClientRegistrationId()
+        );
     }
 }

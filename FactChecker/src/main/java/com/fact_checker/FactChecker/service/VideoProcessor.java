@@ -1,10 +1,17 @@
 package com.fact_checker.FactChecker.service;
 
+import com.fact_checker.FactChecker.exceptions.OpenAiException;
+import com.fact_checker.FactChecker.exceptions.VideoProcessingException;
+import com.fact_checker.FactChecker.model.Video;
+import com.fact_checker.FactChecker.config.OpenAIConfig;
+import jakarta.annotation.PreDestroy;
 import lombok.Getter;
 import lombok.Setter;
 import org.bytedeco.javacv.*;
 import org.bytedeco.ffmpeg.global.avcodec;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -12,183 +19,207 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
-import com.fact_checker.FactChecker.model.Video;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
-/**
- * Service class for processing video files, extracting audio, and performing speech recognition.
- * This class uses JavaCV for video processing and OpenAI's Whisper API for speech recognition.
- */
 @Service
 public class VideoProcessor {
 
-    /** ExecutorService for handling asynchronous tasks. */
-    private final ExecutorService executorService;
+  private static final int BIT_RATE = 19200;
+  private static final int AUDIO_QUALITY = 0;
+  private static final Logger logger = LoggerFactory.getLogger(VideoProcessor.class);
 
-    /** RestTemplate for making HTTP requests. */
-    private final RestTemplate restTemplate;
+  private final ExecutorService executorService;
+  private final RestTemplate restTemplate;
+  private final OpenAIConfig openAiConfig;
+  private final String thumbnailUploadPath;
 
-    /** OpenAI API key for authentication. */
-    @Value("${openai.api.key}")
-    private String openaiApiKey;
+  public VideoProcessor(RestTemplate restTemplate, OpenAIConfig openAiConfig,
+      @Value("${thumbnail.upload.path}") String thumbnailUploadPath) {
+    this.executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+    this.restTemplate = restTemplate;
+    this.openAiConfig = openAiConfig;
+    this.thumbnailUploadPath = thumbnailUploadPath;
+    initializeThumbnailDirectory();
+  }
 
-
-    private final static int BIT_RATE = 19200;
-    private final static int AUDIO_QUALITY = 0;
-    private static final Logger logger = LoggerFactory.getLogger(VideoProcessor.class);
-
-    /**
-     * Constructor for VideoProcessor.
-     * @param restTemplate RestTemplate bean for making HTTP requests.
-     */
-    public VideoProcessor(RestTemplate restTemplate) {
-        this.executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
-        this.restTemplate = restTemplate;
+  private void initializeThumbnailDirectory() {
+    Path thumbnailUploadPathDir = Paths.get(thumbnailUploadPath);
+    if (!Files.exists(thumbnailUploadPathDir)) {
+      try {
+        Files.createDirectories(thumbnailUploadPathDir);
+        logger.info("Thumbnail upload directory created: {}", thumbnailUploadPath);
+      } catch (IOException e) {
+        throw new RuntimeException("Could not create thumbnail upload path: " + thumbnailUploadPath, e);
+      }
     }
-
-    /**
-     * Extracts text from speech in a video file asynchronously.
-     * @param videoInputStream InputStream of the video file.
-     * @return CompletableFuture<String> containing the extracted text.
-     */
-    public CompletableFuture<Video> extractTextFromSpeech(InputStream videoInputStream, String filename) {
-        return CompletableFuture.supplyAsync(() -> {
-            try {
-                byte[] audioData = extractAudioFromVideo(videoInputStream);
-                String transcriptionText =  performSpeechRecognition(audioData);
-
-                Video videoTranscription = new Video();
-                videoTranscription.setFileName(filename);
-                videoTranscription.setTranscriptionText(transcriptionText);
-                videoTranscription.setProcessedAt(LocalDateTime.now());
-
-                return videoTranscription;
-            } catch (Exception e) {
-                logger.error("Error processing video", e);
-                throw new RuntimeException("Error processing video", e);
-            }
-        }, executorService);
+    if (!Files.isWritable(thumbnailUploadPathDir)) {
+      throw new RuntimeException("Thumbnail upload path is not writable: " + thumbnailUploadPath);
     }
+  }
 
-    /**
-     * Extracts audio from a video file.
-     * @param videoInputStream InputStream of the video file.
-     * @return byte array containing the extracted audio data.
-     * @throws IOException if there's an error processing the video.
-     */
-    byte[] extractAudioFromVideo(InputStream videoInputStream) throws IOException {
-        File tempFile = File.createTempFile("audio", ".mp3");
-        try(
-                FFmpegFrameRecorder recorder = new FFmpegFrameRecorder(tempFile, 0);
-                FFmpegFrameGrabber grabber = new FFmpegFrameGrabber(videoInputStream)
+  @Cacheable(value = "videos", key = "#filename")
+  public CompletableFuture<Video> extractTextFromSpeech(Path filePath, String filename) {
+    return CompletableFuture.supplyAsync(() -> {
+      try {
+        File videoFile = filePath.toFile();
+        byte[] audioData = extractAudioFromVideo(new FileInputStream(videoFile));
+        String transcriptionText = performSpeechRecognition(audioData);
+        String thumbnailPath = extractThumbnail(new FileInputStream(videoFile), filename);
 
-        ) {
-            grabber.start();
+        Video video = new Video();
+        video.setFileName(filename);
+        video.setTranscriptionText(transcriptionText);
+        video.setThumbnailPath(thumbnailPath);
+        video.setProcessedAt(LocalDateTime.now());
 
-            int sampleRate = grabber.getSampleRate();
-            int audioChannels = grabber.getAudioChannels();
+        logger.info("Video processed successfully: {}", filename);
+        return video;
+      } catch (Exception e) {
+        logger.error("Error processing video: {}", filename, e);
+        throw new VideoProcessingException("Error processing video: " + filename, e);
+      }
+    }, executorService);
+  }
 
-            recorder.setAudioCodec(avcodec.AV_CODEC_ID_MP3);
-            recorder.setSampleRate(sampleRate);
-            recorder.setAudioChannels(audioChannels);
-            recorder.setAudioQuality(AUDIO_QUALITY);
-            recorder.setAudioBitrate(BIT_RATE);
+  @Cacheable(value = "audioExtractions", key = "#videoInputStream.hashCode()")
+  byte[] extractAudioFromVideo(InputStream videoInputStream) throws IOException {
+    File tempFile = File.createTempFile("audio", ".mp3");
+    try (FFmpegFrameRecorder recorder = new FFmpegFrameRecorder(tempFile, 0);
+        FFmpegFrameGrabber grabber = new FFmpegFrameGrabber(videoInputStream)) {
+      grabber.start();
+      recorder.setAudioCodec(avcodec.AV_CODEC_ID_MP3);
+      recorder.setSampleRate(grabber.getSampleRate());
+      recorder.setAudioChannels(grabber.getAudioChannels());
+      recorder.setAudioQuality(AUDIO_QUALITY);
+      recorder.setAudioBitrate(BIT_RATE);
+      recorder.start();
 
-            recorder.start();
-
-            Frame frame;
-            while ((frame = grabber.grab()) != null) {
-                if (frame.samples != null) {
-                    recorder.record(frame);
-                }
-            }
-
-            recorder.stop();
-            grabber.stop();
-
-            // Read the temporary file into a byte array
-            byte[] audioData = Files.readAllBytes(tempFile.toPath());
-
-            // Delete the temporary file
-            boolean deleted = tempFile.delete();
-
-            if (!deleted) {
-                logger.error("Error deleting temporary file");
-                throw new RuntimeException("Error deleting temporary file");
-            }
-
-            return audioData;
-
+      Frame frame;
+      while ((frame = grabber.grab()) != null) {
+        if (frame.samples != null) {
+          recorder.record(frame);
         }
+      }
+
+      recorder.stop();
+      grabber.stop();
+
+      byte[] audioData = Files.readAllBytes(tempFile.toPath());
+      if (!tempFile.delete()) {
+        logger.warn("Failed to delete temporary audio file: {}", tempFile.getAbsolutePath());
+      }
+      return audioData;
     }
+  }
 
-    /**
-     * Performs speech recognition on the given audio data using OpenAI's Whisper API.
-     * @param audioData byte array containing the audio data.
-     * @return String containing the transcribed text.
-     */
-    String performSpeechRecognition(byte[] audioData) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
-        headers.set("Authorization", "Bearer " + openaiApiKey);
+  @Cacheable(value = "transcriptions", key = "#audioData.hashCode()")
+  String performSpeechRecognition(byte[] audioData) {
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+    headers.set(HttpHeaders.AUTHORIZATION, "Bearer " + openAiConfig.getApiKey());
 
-        MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+    MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+    try {
+      File tempFile = File.createTempFile("audio", ".mp3");
+      try (FileOutputStream fos = new FileOutputStream(tempFile)) {
+        fos.write(audioData);
+      }
 
-        // Create a temporary file from the byte array
-        try {
-            File tempFile = File.createTempFile("audio", ".mp3");
-            FileOutputStream fos = new FileOutputStream(tempFile);
-            fos.write(audioData);
-            fos.close();
+      body.add("file", new FileSystemResource(tempFile));
+      body.add("model", "whisper-1");
 
-            // Add the file to the request
-            body.add("file", new FileSystemResource(tempFile));
-            body.add("model", "whisper-1");
+      HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
 
-            HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
+      ResponseEntity<TranscriptionResponse> response = restTemplate.exchange(
+          openAiConfig.getApiUrl(),
+          HttpMethod.POST,
+          requestEntity,
+          TranscriptionResponse.class);
 
-            ResponseEntity<TranscriptionResponse> response = restTemplate.exchange(
-                    "https://api.openai.com/v1/audio/transcriptions",
-                    HttpMethod.POST,
-                    requestEntity,
-                    TranscriptionResponse.class
-            );
+      if (!tempFile.delete()) {
+        logger.warn("Failed to delete temporary speech file: {}", tempFile.getAbsolutePath());
+      }
 
-            // Delete the temporary file
-            boolean deleted = tempFile.delete();
+      if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
+        return response.getBody().getText();
+      } else {
+        throw new OpenAiException("Failed to transcribe audio: " + response.getStatusCode(), null);
+      }
+    } catch (IOException e) {
+      throw new VideoProcessingException("Error creating temporary file for audio data", e);
+    } catch (HttpClientErrorException e) {
+      throw new OpenAiException("Error performing speech recognition: " + e.getResponseBodyAsString(), e);
+    }
+  }
 
-            if (!deleted) {
-                logger.error("Error deleting temporary file");
-                throw new RuntimeException("Error deleting temporary file");
-            }
+  @Cacheable(value = "thumbnails", key = "#filename")
+  String extractThumbnail(InputStream videoInputStream, String filename) throws IOException {
+    try (FFmpegFrameGrabber grabber = new FFmpegFrameGrabber(videoInputStream);
+        Java2DFrameConverter converter = new Java2DFrameConverter()) {
+      grabber.start();
+      long durationInMicroseconds = grabber.getLengthInTime();
+      if (durationInMicroseconds <= 0) {
+        throw new VideoProcessingException("Unable to determine video duration", null);
+      }
 
-            if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
-                return response.getBody().getText();
-            } else {
-                throw new RuntimeException("Failed to transcribe audio: " + response.getStatusCode());
-            }
-        } catch (IOException e) {
-            throw new RuntimeException("Error creating temporary file for audio data", e);
-        } catch (HttpClientErrorException e) {
-            throw new RuntimeException("Error performing speech recognition: " + e.getResponseBodyAsString(), e);
+      // Attempt to grab frame at 10% of the video duration
+      long targetPosition = durationInMicroseconds / 10;
+      grabber.setTimestamp(targetPosition, true);
+      Frame frame = grabber.grabImage();
+
+      if (frame != null && frame.image != null) {
+        BufferedImage bufferedImage = converter.getBufferedImage(frame);
+        if (bufferedImage != null) {
+          String thumbnailFileName = UUID.randomUUID() + ".png";
+          Path thumbnailPath = Paths.get(thumbnailUploadPath, thumbnailFileName);
+          if (ImageIO.write(bufferedImage, "png", thumbnailPath.toFile())) {
+            return thumbnailFileName;
+          }
         }
-    }
+      }
 
-    /**
-     * Inner class representing the response from the OpenAI Whisper API.
-     */
-    @Getter
-    @Setter
-    protected static class TranscriptionResponse {
-        private String text;
-
+      throw new VideoProcessingException("Could not extract a valid thumbnail from the video", null);
+    } catch (FFmpegFrameGrabber.Exception e) {
+      throw new IOException("Error processing video with FFmpeg", e);
     }
+  }
+
+  @CacheEvict(value = { "videos", "audioExtractions", "transcriptions", "thumbnails" }, key = "#filename")
+  public void clearCaches(String filename) {
+    logger.info("Cleared caches for video: {}", filename);
+  }
+
+  @PreDestroy
+  public void shutdown() {
+    executorService.shutdown();
+    try {
+      if (!executorService.awaitTermination(60, TimeUnit.SECONDS)) {
+        executorService.shutdownNow();
+      }
+    } catch (InterruptedException e) {
+      executorService.shutdownNow();
+      Thread.currentThread().interrupt();
+    }
+  }
+
+  @Getter
+  @Setter
+  protected static class TranscriptionResponse {
+    private String text;
+  }
 }
+

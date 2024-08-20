@@ -23,101 +23,102 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
+import java.nio.file.Path;
 
 @ExtendWith(MockitoExtension.class)
 class VideoServiceTest {
 
-    @Mock
-    private VideoRepository videoRepository;
+  @Mock
+  private VideoRepository videoRepository;
 
-    @Mock
-    private VideoProcessor videoProcessor;
+  @Mock
+  private VideoProcessor videoProcessor;
 
-    private VideoService videoService;
+  private VideoService videoService;
 
-    private static final String UPLOAD_PATH = "test-upload-path";
+  private static final String UPLOAD_PATH = "test-upload-path";
 
-    @BeforeEach
-    void setUp() {
-        videoService = new VideoService(videoRepository, videoProcessor, UPLOAD_PATH);
-    }
+  @BeforeEach
+  void setUp() {
+    videoService = new VideoService(videoRepository, videoProcessor, UPLOAD_PATH);
+  }
 
-    @Test
-    void processAndSaveVideo_validFile_success() throws Exception {
-        MultipartFile file = new MockMultipartFile("file", "test.mp4", "video/mp4", "test data".getBytes());
-        Video processedVideo = new Video();
-        processedVideo.setId(1L);
+  @Test
+  void processAndSaveVideo_validFile_success() throws Exception {
+    MultipartFile file = new MockMultipartFile("file", "test.mp4", "video/mp4", "test data".getBytes());
+    Video processedVideo = new Video();
+    processedVideo.setId(1L);
 
-        when(videoProcessor.extractTextFromSpeech(any(InputStream.class), anyString()))
-                .thenReturn(CompletableFuture.completedFuture(processedVideo));
-        when(videoRepository.save(any(Video.class))).thenReturn(processedVideo);
+    when(videoProcessor.extractTextFromSpeech(any(Path.class), anyString()))
+        .thenReturn(CompletableFuture.completedFuture(processedVideo));
+    when(videoRepository.save(any(Video.class))).thenReturn(processedVideo);
 
-        Files.createDirectories(Paths.get(UPLOAD_PATH));
+    Files.createDirectories(Paths.get(UPLOAD_PATH));
 
-        Video result = videoService.processAndSaveVideo(file).get();
+    Video result = videoService.processAndSaveVideo(file).get();
 
-        assertThat(result).isEqualTo(processedVideo);
-        verify(videoRepository).save(any(Video.class));
-        verify(videoProcessor).extractTextFromSpeech(any(InputStream.class), anyString());
-    }
+    assertThat(result).isEqualTo(processedVideo);
+    verify(videoRepository).save(any(Video.class));
+    verify(videoProcessor).extractTextFromSpeech(any(Path.class), anyString());
+  }
 
-    @Test
-    void processAndSaveVideo_emptyFile_throwsInvalidFileException() {
-        MultipartFile emptyFile = new MockMultipartFile("file", "empty.mp4", "video/mp4", new byte[0]);
+  @Test
+  void processAndSaveVideo_emptyFile_throwsInvalidFileException() {
+    MultipartFile emptyFile = new MockMultipartFile("file", "empty.mp4", "video/mp4", new byte[0]);
 
-        assertThatThrownBy(() -> videoService.processAndSaveVideo(emptyFile).get())
-                .isInstanceOf(ExecutionException.class)
-                .hasCauseInstanceOf(InvalidFileException.class)
-                .hasRootCauseMessage("File is empty");
-    }
+    assertThatThrownBy(() -> videoService.processAndSaveVideo(emptyFile).get())
+        .isInstanceOf(ExecutionException.class)
+        .hasCauseInstanceOf(InvalidFileException.class)
+        .hasRootCauseMessage("File is empty");
+  }
 
-    @Test
-    void processAndSaveVideo_unsupportedFileExtension_throwsInvalidFileException() {
-        MultipartFile unsupportedFile = new MockMultipartFile("file", "test.txt", "text/plain", "test data".getBytes());
+  @Test
+  void processAndSaveVideo_unsupportedFileExtension_throwsInvalidFileException() {
+    MultipartFile unsupportedFile = new MockMultipartFile("file", "test.txt", "text/plain", "test data".getBytes());
 
-        assertThatThrownBy(() -> videoService.processAndSaveVideo(unsupportedFile).get())
-                .isInstanceOf(ExecutionException.class)
-                .hasCauseInstanceOf(InvalidFileException.class)
-                .hasRootCauseMessage("File extension is not supported");
-    }
+    assertThatThrownBy(() -> videoService.processAndSaveVideo(unsupportedFile).get())
+        .isInstanceOf(ExecutionException.class)
+        .hasCauseInstanceOf(InvalidFileException.class)
+        .hasRootCauseMessage("File extension is not supported");
+  }
 
-    @Test
-    void processAndSaveVideo_ioExceptionDuringSave_throwsFileProcessingException() throws Exception {
-        MultipartFile file = new MockMultipartFile("file", "test.mp4", "video/mp4", "test data".getBytes());
+  @Test
+  void processAndSaveVideo_ioExceptionDuringSave_throwsFileProcessingException() throws Exception {
+    MultipartFile file = new MockMultipartFile("file", "test.mp4", "video/mp4", "test data".getBytes());
 
-        when(videoProcessor.extractTextFromSpeech(any(InputStream.class), anyString()))
-                .thenReturn(CompletableFuture.failedFuture(new IOException("Simulated IO error")));
+    when(videoProcessor.extractTextFromSpeech(any(Path.class), anyString()))
+        .thenReturn(CompletableFuture.failedFuture(new IOException("Simulated IO error")));
 
-        Files.createDirectories(Paths.get(UPLOAD_PATH));
+    Files.createDirectories(Paths.get(UPLOAD_PATH));
 
-        assertThatThrownBy(() -> videoService.processAndSaveVideo(file).get())
-                .isInstanceOf(ExecutionException.class)
-                .hasCauseInstanceOf(FileProcessingException.class)
-                .hasRootCauseMessage("Simulated IO error");
-    }
+    assertThatThrownBy(() -> videoService.processAndSaveVideo(file).get())
+        .isInstanceOf(ExecutionException.class)
+        .hasCauseInstanceOf(FileProcessingException.class)
+        .hasRootCauseMessage("Simulated IO error");
+  }
 
-    @Test
-    void processAndSaveVideo_exceptionDuringProcessing_throwsFileProcessingException() throws Exception {
-        MultipartFile file = new MockMultipartFile("file", "test.mp4", "video/mp4", "test data".getBytes());
+  @Test
+  void processAndSaveVideo_exceptionDuringProcessing_throwsFileProcessingException() throws Exception {
+    MultipartFile file = new MockMultipartFile("file", "test.mp4", "video/mp4", "test data".getBytes());
 
-        when(videoProcessor.extractTextFromSpeech(any(InputStream.class), anyString()))
-                .thenReturn(CompletableFuture.failedFuture(new RuntimeException("Processing error")));
+    when(videoProcessor.extractTextFromSpeech(any(Path.class), anyString()))
+        .thenReturn(CompletableFuture.failedFuture(new RuntimeException("Processing error")));
 
-        Files.createDirectories(Paths.get(UPLOAD_PATH));
+    Files.createDirectories(Paths.get(UPLOAD_PATH));
 
-        assertThatThrownBy(() -> videoService.processAndSaveVideo(file).get())
-                .isInstanceOf(ExecutionException.class)
-                .hasCauseInstanceOf(FileProcessingException.class)
-                .hasRootCauseMessage("Processing error");
-    }
+    assertThatThrownBy(() -> videoService.processAndSaveVideo(file).get())
+        .isInstanceOf(ExecutionException.class)
+        .hasCauseInstanceOf(FileProcessingException.class)
+        .hasRootCauseMessage("Processing error");
+  }
 
-    @Test
-    void processAndSaveVideo_nullFilename_throwsInvalidFileException() {
-        MultipartFile fileWithNullName = new MockMultipartFile("file", null, "video/mp4", "test data".getBytes());
+  @Test
+  void processAndSaveVideo_nullFilename_throwsInvalidFileException() {
+    MultipartFile fileWithNullName = new MockMultipartFile("file", null, "video/mp4", "test data".getBytes());
 
-        assertThatThrownBy(() -> videoService.processAndSaveVideo(fileWithNullName).get())
-                .isInstanceOf(ExecutionException.class)
-                .hasCauseInstanceOf(InvalidFileException.class)
-                .hasRootCauseMessage("File extension is not supported");
-    }
+    assertThatThrownBy(() -> videoService.processAndSaveVideo(fileWithNullName).get())
+        .isInstanceOf(ExecutionException.class)
+        .hasCauseInstanceOf(InvalidFileException.class)
+        .hasRootCauseMessage("File extension is not supported");
+  }
 }
