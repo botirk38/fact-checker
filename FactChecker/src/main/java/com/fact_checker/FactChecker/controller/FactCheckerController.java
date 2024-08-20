@@ -126,6 +126,8 @@ public class FactCheckerController implements ErrorController {
   @PostMapping("/fact-check-video")
   public String factCheckVideo(@RequestParam("videoFile") MultipartFile videoFile,
       RedirectAttributes redirectAttributes, HttpServletRequest request, @AuthenticationPrincipal  User user) {
+
+
     if (videoFile.isEmpty() || videoFile.getSize() == 0 || videoFile.getOriginalFilename() == null) {
       redirectAttributes.addFlashAttribute("message", "Please upload a valid video file.");
       return "redirect:/fact-check-video";

@@ -74,31 +74,36 @@ public class VideoProcessor {
   @Cacheable(value = "videos", key = "#filename")
   public CompletableFuture<Video> extractTextFromSpeech(Path filePath, String filename) {
     return CompletableFuture.supplyAsync(() -> {
-      try (BufferedInputStream bufferedInputStream = new BufferedInputStream(new FileInputStream(filePath.toFile()))) {
-    bufferedInputStream.mark(Integer.MAX_VALUE);
-    byte[] audioData = extractAudioFromVideo(bufferedInputStream);
-    String transcriptionText = performSpeechRecognition(audioData);
-    
-    bufferedInputStream.reset();
-    String thumbnailPath = extractThumbnail(bufferedInputStream, filename);
+      try {
+        // Create a byte array from the file
+        byte[] fileBytes = Files.readAllBytes(filePath);
 
-    Video video = new Video();
-    video.setFileName(filename);
-    video.setTranscriptionText(transcriptionText);
-    video.setThumbnailPath(thumbnailPath);
-    video.setProcessedAt(LocalDateTime.now());
+        // Extract audio
+        byte[] audioData = extractAudioFromVideo(new ByteArrayInputStream(fileBytes));
+        String transcriptionText = performSpeechRecognition(audioData);
 
-    logger.info("Video processed successfully: {}", filename);
-    return video;
-} catch (Exception e) {
-    logger.error("Error processing video: {}", filename, e);
-    throw new VideoProcessingException("Error processing video: " + filename, e);
-}
+        // Extract thumbnail
+        String thumbnailPath = extractThumbnail(new ByteArrayInputStream(fileBytes), filename);
+
+        Video video = new Video();
+        video.setFileName(filename);
+        video.setTranscriptionText(transcriptionText);
+        video.setThumbnailPath(thumbnailPath);
+        video.setProcessedAt(LocalDateTime.now());
+
+        logger.info("Video processed successfully: {}", filename);
+        return video;
+      } catch (Exception e) {
+        logger.error("Error processing video: {}", filename, e);
+        throw new VideoProcessingException("Error processing video: " + filename, e);
+      }
     }, executorService);
   }
 
+
+
   @Cacheable(value = "audioExtractions", key = "#videoInputStream.hashCode()")
-  byte[] extractAudioFromVideo(InputStream videoInputStream) throws IOException {
+  public byte[] extractAudioFromVideo(InputStream videoInputStream) throws IOException {
     File tempFile = File.createTempFile("audio", ".mp3");
     try (FFmpegFrameRecorder recorder = new FFmpegFrameRecorder(tempFile, 0);
         FFmpegFrameGrabber grabber = new FFmpegFrameGrabber(videoInputStream)) {
@@ -129,7 +134,7 @@ public class VideoProcessor {
   }
 
   @Cacheable(value = "transcriptions", key = "#audioData.hashCode()")
-  String performSpeechRecognition(byte[] audioData) {
+  public String performSpeechRecognition(byte[] audioData) {
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.MULTIPART_FORM_DATA);
     headers.set(HttpHeaders.AUTHORIZATION, "Bearer " + openAiConfig.getApiKey());
@@ -169,7 +174,7 @@ public class VideoProcessor {
   }
 
   @Cacheable(value = "thumbnails", key = "#filename")
-  String extractThumbnail(InputStream videoInputStream, String filename) throws IOException {
+  public String extractThumbnail(InputStream videoInputStream, String filename) throws IOException {
     try (FFmpegFrameGrabber grabber = new FFmpegFrameGrabber(videoInputStream);
         Java2DFrameConverter converter = new Java2DFrameConverter()) {
       grabber.start();
