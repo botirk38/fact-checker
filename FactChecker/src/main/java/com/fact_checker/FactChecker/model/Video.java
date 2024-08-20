@@ -50,6 +50,7 @@ public class Video {
     /**
      * The date and time when the video was processed.
      */
+
     @Column(name = "processed_at", nullable = false)
     private LocalDateTime processedAt;
 
@@ -67,4 +68,6 @@ public class Video {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
+
+
 }

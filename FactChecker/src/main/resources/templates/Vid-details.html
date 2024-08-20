@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/tailwind-output.css}" />
+
+    <title>Video Page</title>
+
+
+</head>
+<body>
+
+<div class="container">
+    <div class="video-content">
+        <div class="video-player">
+            <!-- Video player will be embedded here -->
+
+            <video width="640" height="480" controls>
+                <source th:src="@{'/videos/' + ${video.filePath}}" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+
+        </div>
+
+        <div class="video-details">
+            <div class="video-title">Video Title</div>
+            <div class="fact-percentage">Fact Percentage: 90%</div>
+            <div class="uploader-info">
+                <img src="uploader-profile.jpg" alt="Uploader Profile">
+                <div>
+                    <div>
+                        <p>Username: <span th:text="${username}"></span></p>
+                    </div>
+                    <div class="upload-date">
+                        <p>Date is: </p>
+                    </div>
+                </div>
+            </div>
+            <div class="video-description">
+                <p>This is a brief description of the video content. It provides an overview of what the video is about.</p>
+            </div>
+        </div>
+
+        <div class="comments-section">
+            <h3>Comments</h3>
+            <!-- Comments will be displayed here -->
+        </div>
+    </div>
+
+    <div class="sidebar">
+        <div class="related-videos">
+            <h3>Related Videos</h3>
+            <div class="related-video">
+                <img src="related-video1.jpg" alt="Related Video 1">
+                <div>Related Video Title 1</div>
+            </div>
+            <div class="related-video">
+                <img src="related-video2.jpg" alt="Related Video 2">
+                <div>Related Video Title 2</div>
+            </div>
+            <!-- Additional related videos can be added here -->
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

@@ -7,27 +7,24 @@ import com.fact_checker.FactChecker.model.TermItem;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.boot.web.servlet.error.ErrorController;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.security.core.Authentication;
+
+import java.time.LocalDateTime;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 @Controller
 @RequestMapping("/")
 public class FactCheckerController implements ErrorController {
 
   private final VideoService videoService;
   private final UserService userService;
-
+  private static final Logger logger = LoggerFactory.getLogger(FactCheckerController.class);
   public FactCheckerController(VideoService videoService, UserService userService) {
     this.videoService = videoService;
     this.userService = userService;
@@ -160,11 +157,33 @@ public class FactCheckerController implements ErrorController {
     return "redirect:/fact-check-video";
   }
 
+
   @GetMapping("/home")
   public String home(Model model) {
     model.addAttribute("videos", videoService.getAllVideos());
     return "home";
 
+  }
+
+  @GetMapping("/videos/{id}")
+  public String getVideo(@PathVariable("id") Long id, Model model) {
+    Video video = videoService.getVideo(id);
+
+    //Video
+    if (video == null) {
+      model.addAttribute("message", "Video not found");
+      return "error";
+    }
+    logger.info("Video File Path: {}", video.getFilePath());
+    //Uploder
+    String username = video.getUser() != null ? video.getUser().getUsername() : "Unknown User";
+    //Date
+    LocalDateTime date=video.getProcessedAt();
+
+    model.addAttribute("video", video);
+    //model.addAttribute("username", username);
+    //model.addAttribute("processedAt",date);
+    return "Vid-details"; // This will render the video.html template
   }
 
 

@@ -33,7 +33,7 @@ public class WebConfig implements WebMvcConfigurer {
 
 
         registry.addResourceHandler("/videos/**")
-                .addResourceLocations("file:" + videoLocation + "/");
+                .addResourceLocations("file:" + videoLocation );
     }
 
     @Override
