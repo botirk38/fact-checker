@@ -1,5 +1,6 @@
 package com.fact_checker.FactChecker.service;
 
+import com.fact_checker.FactChecker.model.Video;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,9 +37,11 @@ public class TextAnalysisServiceTest {
     @Test
     public void testAnalyzeText() {
         // Mock the API responses
+        Video video = new Video();
+        video.setTranscriptionText("The sky is blue. The earth is flat.");
         System.out.println("API Key in Test: " + apiKey);
         String text = "The sky is blue. The earth is flat.";
-        int result = textAnalysisService.analyzeText(text);
+        int result = textAnalysisService.analyzeText(video);
         assertTrue(result >= 0 && result <= 100, "Result was: " + result);
     }
 

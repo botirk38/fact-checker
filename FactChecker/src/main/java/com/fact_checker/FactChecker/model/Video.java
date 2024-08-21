@@ -69,5 +69,12 @@ public class Video {
     @JoinColumn(name = "user_id")
     private User user;
 
+    /**
+     * The fact percentage of the video content.
+     */
+
+    @Column(name = "fact_percentage", nullable = false)
+    private float  factPercentage;
+
 
 }

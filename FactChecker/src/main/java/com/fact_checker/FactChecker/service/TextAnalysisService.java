@@ -1,24 +1,12 @@
 package com.fact_checker.FactChecker.service;
+import com.fact_checker.FactChecker.model.Video;
 import io.reactivex.rxjava3.core.Single;
-import io.reactivex.rxjava3.core.Observable;
-import io.reactivex.rxjava3.core.SingleObserver;
-import io.reactivex.rxjava3.disposables.Disposable;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Service;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import javax.annotation.processing.SupportedSourceVersion;
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.regex.Matcher;
@@ -31,13 +19,13 @@ public class TextAnalysisService {
     private final String apiKey;
 
     // Inject IGroqApiClient and API key via constructor
-    public TextAnalysisService(IGroqApiClient apiClient, @Value("${groq.api.key}") String apiKey) {
+    public TextAnalysisService(IGroqApiClient apiClient, @Value("${groq.api.key}") String apiKey ) {
         this.apiClient = apiClient;
         this.apiKey = apiKey;
     }
     
-    public int analyzeText(String text) {
-        StringBuilder sb = new StringBuilder(text);
+    public int analyzeText(Video video) {
+        StringBuilder sb = new StringBuilder(video.getTranscriptionText());
         StringBuilder statements = generateClaimsSeparatedByAsterisks(sb);
         StringBuilder statScore = rateClaimsByFacts(statements);
         List<Double> scores = extractScores(statScore.toString());
@@ -56,8 +44,12 @@ public class TextAnalysisService {
         Pattern pattern = Pattern.compile(":\\s*(\\d+(?:\\.\\d+)?)");
         Matcher matcher = pattern.matcher(input);
 
+
         while (matcher.find()) {
             String numberStr = matcher.group(1);
+            if (Double.parseDouble(numberStr) > 50) {
+
+            }
             numbersList.add(Double.parseDouble(numberStr));
         }
 
@@ -90,7 +82,6 @@ public class TextAnalysisService {
                 .build();
 
         JsonObject result = fetchSingleResponse(request);
-        System.out.println("Result : "+ result);
         JsonArray choices = result.getJsonArray("choices");
         JsonObject firstChoice = choices.getJsonObject(0);
         JsonObject message = firstChoice.getJsonObject("message");

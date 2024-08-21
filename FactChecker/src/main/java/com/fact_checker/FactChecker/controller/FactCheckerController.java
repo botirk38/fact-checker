@@ -8,16 +8,15 @@ import com.fact_checker.FactChecker.service.VideoService;
 import com.fact_checker.FactChecker.model.TermItem;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.slf4j.Logger;
 import java.util.List;
 
 @Controller
@@ -26,10 +25,13 @@ public class FactCheckerController implements ErrorController {
 
   private final VideoService videoService;
   private final UserService userService;
+  private final TextAnalysisService textAnalysisService;
+  private static final Logger logger = LoggerFactory.getLogger(FactCheckerController.class);
 
   public FactCheckerController(VideoService videoService, UserService userService, TextAnalysisService textAnalysisService) {
     this.videoService = videoService;
     this.userService = userService;
+    this.textAnalysisService = textAnalysisService;
   }
 
   @GetMapping("/login")
@@ -145,18 +147,43 @@ public class FactCheckerController implements ErrorController {
       Video video = videoService.processAndSaveVideo(videoFile, user).join();
       String extractedText = video.getTranscriptionText();
 
-      if (extractedText == null) {
+      if (extractedText == null || extractedText.isEmpty()) {
         redirectAttributes.addFlashAttribute("message", "Could not extract text from video.");
         return "redirect:/fact-check-video";
       }
-      redirectAttributes.addFlashAttribute("message", "Successfully uploaded file. " + extractedText);
 
+      float factCheckPercentage = textAnalysisService.analyzeText(video);
+
+
+      redirectAttributes.addFlashAttribute("message", "Successfully uploaded file. " + extractedText+ " Fact Check Percentage: " + factCheckPercentage + "%");
     } catch (Exception e) {
       redirectAttributes.addFlashAttribute("message", "Could not upload file." + e.getMessage());
       return "redirect:/fact-check-video";
     }
 
     return "redirect:/fact-check-video";
+  }
+
+  @GetMapping("/videos/{id}")
+  public String getVideo(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
+    try {
+      Video video = videoService.getVideo(id);
+      if (video == null) {
+        redirectAttributes.addAttribute("error", "Video not found");
+        return "redirect:/error";
+      }
+
+      model.addAttribute("video", video);
+      model.addAttribute("username", video.getUser().getUsername());
+      model.addAttribute("processedAt", video.getProcessedAt());
+
+      return "video-details";
+    } catch (Exception e) {
+      redirectAttributes.addAttribute("error", "An error occurred while retrieving the video");
+      // Log the exception
+      logger.error("Error retrieving video with id: " + id, e);
+      return "redirect:/error";
+    }
   }
 
   @GetMapping("/home")
