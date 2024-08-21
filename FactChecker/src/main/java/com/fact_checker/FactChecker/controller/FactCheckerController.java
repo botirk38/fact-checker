@@ -1,5 +1,6 @@
 package com.fact_checker.FactChecker.controller;
 
+import com.fact_checker.FactChecker.model.User;
 import com.fact_checker.FactChecker.model.Video;
 import com.fact_checker.FactChecker.service.TextAnalysisService;
 import com.fact_checker.FactChecker.service.UserService;
@@ -8,9 +9,7 @@ import com.fact_checker.FactChecker.model.TermItem;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.boot.web.servlet.error.ErrorController;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.security.core.Authentication;
 import java.util.List;
 
 @Controller
@@ -28,12 +26,10 @@ public class FactCheckerController implements ErrorController {
 
   private final VideoService videoService;
   private final UserService userService;
-  private final TextAnalysisService textAnalysisService;
 
   public FactCheckerController(VideoService videoService, UserService userService, TextAnalysisService textAnalysisService) {
     this.videoService = videoService;
     this.userService = userService;
-    this.textAnalysisService = textAnalysisService;
   }
 
   @GetMapping("/login")
@@ -61,7 +57,7 @@ public class FactCheckerController implements ErrorController {
       return "redirect:/signup";
     }
 
-    userService.registerUser(username, password, email, fullName);
+    userService.registerUser(username, password, email, fullName, "LOCAL");
     model.addAttribute("success", "User created successfully");
 
     return "redirect:/login";
@@ -129,7 +125,7 @@ public class FactCheckerController implements ErrorController {
 
   @PostMapping("/fact-check-video")
   public String factCheckVideo(@RequestParam("videoFile") MultipartFile videoFile,
-      RedirectAttributes redirectAttributes) {
+                               RedirectAttributes redirectAttributes , @AuthenticationPrincipal User user ){
     if (videoFile.isEmpty() || videoFile.getSize() == 0 || videoFile.getOriginalFilename() == null) {
       redirectAttributes.addFlashAttribute("message", "Please upload a valid video file.");
       return "redirect:/fact-check-video";
@@ -146,21 +142,14 @@ public class FactCheckerController implements ErrorController {
     try {
       redirectAttributes.addFlashAttribute("message", "Processing video, please wait! ⌛");
 
-      Video video = videoService.processAndSaveVideo(videoFile).join();
+      Video video = videoService.processAndSaveVideo(videoFile, user).join();
       String extractedText = video.getTranscriptionText();
 
       if (extractedText == null) {
         redirectAttributes.addFlashAttribute("message", "Could not extract text from video.");
         return "redirect:/fact-check-video";
       }
-      int analysisScore =  textAnalysisService.analyzeText(extractedText);
-      video.setFactPercentage(analysisScore);
       redirectAttributes.addFlashAttribute("message", "Successfully uploaded file. " + extractedText);
-      if (analysisScore > 50) {
-        redirectAttributes.addFlashAttribute("message", "Successfully uploaded file. " + "Analysis score : " + extractedText + " This video is likely to contain false information.");
-      } else {
-        redirectAttributes.addFlashAttribute("message", "Successfully uploaded file. " + "Analysis score : " + extractedText + " This video is likely to contain true information.");
-      }
 
     } catch (Exception e) {
       redirectAttributes.addFlashAttribute("message", "Could not upload file." + e.getMessage());

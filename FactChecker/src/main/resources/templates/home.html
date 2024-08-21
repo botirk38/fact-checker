@@ -71,7 +71,7 @@
         <!-- Video grid -->
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           <a th:each="video : ${videos}" class="group relative rounded-lg overflow-hidden"
-            th:href="@{'/video/' + ${video.id}}">
+            th:href="@{'/videos/' + ${video.id}}">
             <img th:src="@{'/thumbnails/' + ${video.thumbnailPath}}" width="320" height="180" alt="Thumbnail"
               class="w-full aspect-video object-cover" />
 

@@ -1,7 +1,6 @@
 package com.fact_checker.FactChecker.config;
 
 import com.fact_checker.FactChecker.handlers.OAuth2AuthenticationSuccessHandler;
-import com.fact_checker.FactChecker.repository.UserRepository;
 import com.fact_checker.FactChecker.service.CustomUserDetailsService;
 import com.fact_checker.FactChecker.service.UserService;
 import org.slf4j.Logger;
@@ -62,17 +61,16 @@ public class SecurityConfig {
      * Configures the security filter chain.
      *
      * @param http The HttpSecurity to modify.
-     * @param userRepository The user repository.
      * @param userService The user service.
      * @return A SecurityFilterChain with the configured security settings.
      * @throws Exception If an error occurs during configuration.
      */
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, UserRepository userRepository, UserService userService) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, UserService userService) throws Exception {
         http
                 .authorizeHttpRequests((requests) -> requests
                         .requestMatchers("/", "/css/**").permitAll()
-                        .requestMatchers("/home", "/fact-check-video").hasAuthority("ROLE_USER")
+                        .requestMatchers("/home", "/fact-check-video", "/videos/**", "/videos-storage/**", "/thumbnails/**").hasAuthority("ROLE_USER")
                         .requestMatchers("/", "/css/**", "/images/**", "/signup", "/login").permitAll()
                         .anyRequest().authenticated()
                 )

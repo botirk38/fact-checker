@@ -47,11 +47,6 @@ public class CustomUserDetailsService implements UserDetailsService {
         logger.debug("Loaded user: {}", username);
         logger.debug("Stored password hash: {}", user.getPassword());
 
-        // Deencode the password from the stored hash.
-
-
-
-
         return user;
     }
 }

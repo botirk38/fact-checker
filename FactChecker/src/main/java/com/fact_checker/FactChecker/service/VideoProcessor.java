@@ -75,10 +75,15 @@ public class VideoProcessor {
   public CompletableFuture<Video> extractTextFromSpeech(Path filePath, String filename) {
     return CompletableFuture.supplyAsync(() -> {
       try {
-        File videoFile = filePath.toFile();
-        byte[] audioData = extractAudioFromVideo(new FileInputStream(videoFile));
+        // Create a byte array from the file
+        byte[] fileBytes = Files.readAllBytes(filePath);
+
+        // Extract audio
+        byte[] audioData = extractAudioFromVideo(new ByteArrayInputStream(fileBytes));
         String transcriptionText = performSpeechRecognition(audioData);
-        String thumbnailPath = extractThumbnail(new FileInputStream(videoFile), filename);
+
+        // Extract thumbnail
+        String thumbnailPath = extractThumbnail(new ByteArrayInputStream(fileBytes), filename);
 
         Video video = new Video();
         video.setFileName(filename);
@@ -95,8 +100,10 @@ public class VideoProcessor {
     }, executorService);
   }
 
+
+
   @Cacheable(value = "audioExtractions", key = "#videoInputStream.hashCode()")
-  byte[] extractAudioFromVideo(InputStream videoInputStream) throws IOException {
+  public byte[] extractAudioFromVideo(InputStream videoInputStream) throws IOException {
     File tempFile = File.createTempFile("audio", ".mp3");
     try (FFmpegFrameRecorder recorder = new FFmpegFrameRecorder(tempFile, 0);
         FFmpegFrameGrabber grabber = new FFmpegFrameGrabber(videoInputStream)) {
@@ -127,7 +134,7 @@ public class VideoProcessor {
   }
 
   @Cacheable(value = "transcriptions", key = "#audioData.hashCode()")
-  String performSpeechRecognition(byte[] audioData) {
+  public String performSpeechRecognition(byte[] audioData) {
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.MULTIPART_FORM_DATA);
     headers.set(HttpHeaders.AUTHORIZATION, "Bearer " + openAiConfig.getApiKey());
@@ -167,7 +174,7 @@ public class VideoProcessor {
   }
 
   @Cacheable(value = "thumbnails", key = "#filename")
-  String extractThumbnail(InputStream videoInputStream, String filename) throws IOException {
+  public String extractThumbnail(InputStream videoInputStream, String filename) throws IOException {
     try (FFmpegFrameGrabber grabber = new FFmpegFrameGrabber(videoInputStream);
         Java2DFrameConverter converter = new Java2DFrameConverter()) {
       grabber.start();
@@ -222,4 +229,3 @@ public class VideoProcessor {
     private String text;
   }
 }
-
