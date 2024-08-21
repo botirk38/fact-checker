@@ -159,7 +159,6 @@ class UserServiceTest {
         // Arrange
         String usernameOrEmail = "nonexistent";
         when(userRepository.findByUsername(usernameOrEmail)).thenReturn(Optional.empty());
-        when(userRepository.findByEmail(usernameOrEmail)).thenReturn(Optional.empty());
 
         // Act
         Optional<User> result = userService.findByUsername(usernameOrEmail);
