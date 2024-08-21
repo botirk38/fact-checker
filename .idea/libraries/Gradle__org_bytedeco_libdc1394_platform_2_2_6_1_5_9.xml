@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Gradle: org.bytedeco:libdc1394-platform:2.2.6-1.5.9" type="java-imported" external-system-id="GRADLE">
+    <properties groupId="org.bytedeco" artifactId="libdc1394-platform" version="2.2.6-1.5.9" />
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.bytedeco/libdc1394-platform/2.2.6-1.5.9/72f5c0340514f89601bdac20304ce7ccf686b6c5/libdc1394-platform-2.2.6-1.5.9.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.bytedeco/libdc1394-platform/2.2.6-1.5.9/5ce5e2fccae2bee8fd54698ed4bab4eda4d02ef7/libdc1394-platform-2.2.6-1.5.9-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

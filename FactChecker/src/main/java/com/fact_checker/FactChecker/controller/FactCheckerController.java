@@ -156,7 +156,7 @@ public class FactCheckerController implements ErrorController {
       int analysisScore =  textAnalysisService.analyzeText(extractedText);
       video.setFactPercentage(analysisScore);
       redirectAttributes.addFlashAttribute("message", "Successfully uploaded file. " + extractedText);
-      if (analysisScore > 50) {
+      if (analysisScore < 50) {
         redirectAttributes.addFlashAttribute("message", "Successfully uploaded file. " + "Analysis score : " + extractedText + " This video is likely to contain false information.");
       } else {
         redirectAttributes.addFlashAttribute("message", "Successfully uploaded file. " + "Analysis score : " + extractedText + " This video is likely to contain true information.");

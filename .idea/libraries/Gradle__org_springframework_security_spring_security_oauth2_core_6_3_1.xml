@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Gradle: org.springframework.security:spring-security-oauth2-core:6.3.1" type="java-imported" external-system-id="GRADLE">
+    <properties groupId="org.springframework.security" artifactId="spring-security-oauth2-core" version="6.3.1" />
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.springframework.security/spring-security-oauth2-core/6.3.1/2f68a3b5a10022599b72430eb89bde5e6630975c/spring-security-oauth2-core-6.3.1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.springframework.security/spring-security-oauth2-core/6.3.1/714f1fe7ae270a49bacab0d33fd49c3095ec3056/spring-security-oauth2-core-6.3.1-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

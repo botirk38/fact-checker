@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Gradle: com.nimbusds:content-type:2.2" type="java-imported" external-system-id="GRADLE">
+    <properties groupId="com.nimbusds" artifactId="content-type" version="2.2" />
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.nimbusds/content-type/2.2/9a894bce7646dd4086652d85b88013229f23724b/content-type-2.2.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.nimbusds/content-type/2.2/3701f6781ae50cfecceaff7a8a68a111d8322f24/content-type-2.2-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
