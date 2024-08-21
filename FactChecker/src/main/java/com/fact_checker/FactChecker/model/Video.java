@@ -65,7 +65,7 @@ public class Video {
      * The user who uploaded the video.
      */
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     private User user;
 
