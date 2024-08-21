@@ -18,7 +18,7 @@
             <!-- Video player will be embedded here -->
 
             <video width="640" height="480" controls>
-                <source th:src="@{'/videos/' + ${video.filePath}}" type="video/mp4">
+                <source th:src="@{'/videos/' + ${video.fileName}}" type="video/mp4">
                 Your browser does not support the video tag.
             </video>
 

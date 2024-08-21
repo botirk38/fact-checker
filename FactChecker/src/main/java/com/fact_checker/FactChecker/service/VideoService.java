@@ -178,6 +178,6 @@ public class VideoService {
 
 
   public Video getVideo(Long id) {
-        return videoRepository.findById(id).orElseThrow(() -> new RuntimeException("Video not found"));
-    }
+        return videoRepository.findById(id).orElse(null);
+  }
 }

@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -73,7 +72,7 @@ public class FactCheckerController implements ErrorController {
   }
 
   @GetMapping("/privacy-policy")
-  public String privacyPolicy(HttpServletRequest request, Model model) {
+  public String privacyPolicy( Model model) {
     model.addAttribute("introduction",
         "At Truth Lens, we value your privacy and are committed to protecting your personal information. This Privacy Policy explains how we collect, use, and disclose information about you when you use our website and services.");
 
@@ -94,7 +93,7 @@ public class FactCheckerController implements ErrorController {
   }
 
   @GetMapping("terms-of-service")
-  public String termsOfService(HttpServletRequest request, Model model) {
+  public String termsOfService(Model model) {
 
     model.addAttribute("accountItems", List.of(
         new TermItem("Account Creation:",
@@ -151,7 +150,7 @@ public class FactCheckerController implements ErrorController {
 
     } catch (Exception e) {
       redirectAttributes.addFlashAttribute("message", "Could not upload file." + e.getMessage());
-      return "redirect:/fact-check-video";
+      return "redirect:/home";
     }
 
     return "redirect:/fact-check-video";
@@ -166,25 +165,24 @@ public class FactCheckerController implements ErrorController {
   }
 
   @GetMapping("/videos/{id}")
-  public String getVideo(@PathVariable("id") Long id, Model model) {
-    Video video = videoService.getVideo(id);
+  public String getVideo(@PathVariable Long id, Model model) {
+    try {
+      Video video = videoService.getVideo(id);
+      if (video == null) {
+        model.addAttribute("error", "Video not found");
+        return "error";
+      }
 
-    //Video
-    if (video == null) {
-      model.addAttribute("message", "Video not found");
+      model.addAttribute("video", video);
+      model.addAttribute("username", video.getUser().getUsername());
+      model.addAttribute("processedAt", video.getProcessedAt());
+
+      return "video-details";
+    } catch (Exception e) {
+      model.addAttribute("error", "An error occurred while retrieving the video");
+      logger.error("Error retrieving video with id: {}", id, e);
       return "error";
     }
-    logger.info("Video File Path: {}", video.getFilePath());
-    //Uploder
-    String username = video.getUser() != null ? video.getUser().getUsername() : "Unknown User";
-    //Date
-    LocalDateTime date=video.getProcessedAt();
-
-    model.addAttribute("video", video);
-    //model.addAttribute("username", username);
-    //model.addAttribute("processedAt",date);
-    return "Vid-details"; // This will render the video.html template
   }
-
 
 }

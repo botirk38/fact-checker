@@ -72,7 +72,7 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests((requests) -> requests
                         .requestMatchers("/", "/css/**").permitAll()
-                        .requestMatchers("/home", "/fact-check-video").hasAuthority("ROLE_USER")
+                        .requestMatchers("/home", "/fact-check-video", "/videos/**").hasAuthority("ROLE_USER")
                         .requestMatchers("/", "/css/**", "/images/**", "/signup", "/login").permitAll()
                         .anyRequest().authenticated()
                 )
