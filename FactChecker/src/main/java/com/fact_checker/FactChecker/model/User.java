@@ -36,6 +36,10 @@ public class User implements UserDetails {
     @Column
     private String fullName;
 
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private AuthProvider provider;
+
 
     // @Column(columnDefinition = "VECTOR(256)")
     // private byte[] recommendationVector;
@@ -52,35 +56,13 @@ public class User implements UserDetails {
 
 
 
-    public User(String username, String email, String password, String fullName, Set<String> roles) {
+    public User(String username, String email, String password, String fullName, Set<String> roles, String provider) {
         this.username = username;
         this.email = email;
         this.password = password;
         this.fullName = fullName;
         this.roles = roles;
-    }
-
-
-
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return true;
+        this.provider = AuthProvider.valueOf(provider);
     }
 
     @Override

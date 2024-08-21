@@ -5,65 +5,183 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/css/tailwind-output.css}" />
-
     <title>Video Page</title>
-
-
 </head>
 <body>
 
-<div class="container">
-    <div class="video-content">
-        <div class="video-player">
-            <!-- Video player will be embedded here -->
+<div class="flex flex-col min-h-dvh">
 
-            <video width="640" height="480" controls>
-                <source th:src="@{'/videos/' + ${video.fileName}}" type="video/mp4">
-                Your browser does not support the video tag.
-            </video>
 
+<header class="flex items-center justify-between bg-background px-4 py-3 shadow-sm sm:px-6">
+    <div class="flex items-center gap-10 ">
+        <a class="flex items-center gap-2" th:href="@{/home}" rel="ugc">
+            <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="h-6 w-6 text-red-500"
+            >
+                <path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.55 49.55 0 0 1-16.2 0A2 2 0 0 1 2.5 17"></path>
+                <path d="m10 15 5-3-5-3z"></path>
+            </svg>
+            <span class="text-lg font-bold">Truth Lens</span>
+        </a>
+        <form class="relative flex-1">
+            <div class="absolute inset-y-0 left-2 flex items-center">
+                <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        class="h-4 w-4 text-muted-foreground"
+                >
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <path d="m21 21-4.3-4.3"></path>
+                </svg>
+            </div>
+            <input
+                    class="flex h-10 border border-input px-3 ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 w-full rounded-full bg-muted pl-8 pr-4 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary"
+                    placeholder="Search"
+                    type="search"
+            />
+        </form>
+    </div>
+    <div class="flex flex-row items-center gap-10">
+        <a th:href="@{/fact-check-video}" class="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-10 w-10 rounded-full">
+            <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="h-5 w-5"
+            >
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="17 8 12 3 7 8"></polyline>
+                <line x1="12" x2="12" y1="3" y2="15"></line>
+            </svg>
+            <span class="sr-only">Upload</span>
+        </a>
+
+        <button class="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-10 w-10 rounded-full">
+            <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="h-5 w-5"
+            >
+                <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path>
+                <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path>
+            </svg>
+            <span class="sr-only">Notifications</span>
+        </button>
+        <button
+                class="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-10 w-10 rounded-full"
+                type="button"
+                id="radix-:r2:"
+                aria-haspopup="menu"
+                aria-expanded="false"
+                data-state="closed"
+        >
+            <img
+                    src="/placeholder.svg"
+                    width="32"
+                    height="32"
+                    alt="Avatar"
+                    class="rounded-full"
+                    style="aspect-ratio: 32 / 32; object-fit: cover;"
+            />
+            <span class="sr-only">User menu</span>
+        </button>
+    </div>
+</header>
+
+
+<div class="grid grid-cols-1 md:grid-cols-[3fr_1fr] gap-6 p-4 md:p-6">
+    <div class="rounded-lg overflow-hidden">
+        <video
+                class="w-full aspect-video"
+                controls=""
+                th:src="@{'/videos-storage/' + ${video.fileName}}"
+        ></video>
+
+        <div>
+            <h1 class="text-2xl font-bold" th:text="${video.fileName}">Video Title</h1>
+            <p class="text-muted-foreground" th:text="${video.transcriptionText}">
+                Video transcription text goes here.
+            </p>
+            <div class="flex items-center gap-4 mt-4 text-sm text-muted-foreground">
+                <div th:text="${#temporals.format(video.processedAt, 'HH:mm')}">12:34</div>
+                <div>Uploaded by: <span th:text="${video.user.username}">Username</span></div>
+                <div th:text="${#temporals.format(video.processedAt, 'dd MMM yyyy')}">2 days ago</div>
+            </div>
         </div>
 
-        <div class="video-details">
-            <div class="video-title">Video Title</div>
-            <div class="fact-percentage">Fact Percentage: 90%</div>
-            <div class="uploader-info">
-                <img src="uploader-profile.jpg" alt="Uploader Profile">
-                <div>
+    </div>
+    <div class="grid gap-6">
+        <div>
+            <h2 class="text-lg font-semibold mb-4">Related Videos</h2>
+            <div class="grid gap-4">
+                <!-- This section would ideally be populated with actual related videos -->
+                <div class="flex gap-4">
+                    <img
+                            th:src="@{'/thumbnails/' + ${video.thumbnailPath}}"
+                            width="120"
+                            height="80"
+                            alt="Thumbnail"
+                            class="rounded-md object-cover"
+                            style="aspect-ratio: 120 / 80; object-fit: cover;"
+                    />
                     <div>
-                        <p>Username: <span th:text="${username}"></span></p>
-                    </div>
-                    <div class="upload-date">
-                        <p>Date is: </p>
+                        <h3 class="font-medium line-clamp-2">Related Video Title</h3>
+                        <div class="text-sm text-muted-foreground">Views count</div>
                     </div>
                 </div>
+                <!-- Repeat this structure for other related videos -->
             </div>
-            <div class="video-description">
-                <p>This is a brief description of the video content. It provides an overview of what the video is about.</p>
-            </div>
-        </div>
-
-        <div class="comments-section">
-            <h3>Comments</h3>
-            <!-- Comments will be displayed here -->
-        </div>
-    </div>
-
-    <div class="sidebar">
-        <div class="related-videos">
-            <h3>Related Videos</h3>
-            <div class="related-video">
-                <img src="related-video1.jpg" alt="Related Video 1">
-                <div>Related Video Title 1</div>
-            </div>
-            <div class="related-video">
-                <img src="related-video2.jpg" alt="Related Video 2">
-                <div>Related Video Title 2</div>
-            </div>
-            <!-- Additional related videos can be added here -->
         </div>
     </div>
 </div>
 
+<footer class="bg-background border-t px-4 lg:px-6 py-6 flex items-center justify-between">
+    <div class="text-xs text-muted-foreground">© <span th:text="${#dates.year(#dates.createNow())}"></span> Fact Checker. All rights reserved.</div>
+    <nav class="flex items-center gap-4">
+        <a class="text-xs hover:underline" th:href="@{/about}">
+            About
+        </a>
+        <!-- Vertical divider -->
+        <div data-orientation="vertical" role="none" class="shrink-0 bg-border w-[1px] h-4"></div>
+        <a class="text-xs hover:underline" th:href="@{/terms}">
+            Terms
+        </a>
+        <!-- Vertical divider -->
+        <div data-orientation="vertical" role="none" class="shrink-0 bg-border w-[1px] h-4"></div>
+        <a class="text-xs hover:underline" th:href="@{/privacy}">
+            Privacy
+        </a>
+    </nav>
+</footer>
+</div>
 </body>
 </html>

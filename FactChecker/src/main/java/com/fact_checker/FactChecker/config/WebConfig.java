@@ -35,8 +35,11 @@ public class WebConfig implements WebMvcConfigurer {
 
         logger.info("Adding resource handlers for video location: {}", videoLocation);
         
-        registry.addResourceHandler("/videos/**")
+        registry.addResourceHandler("/videos-storage/**")
                 .addResourceLocations("file:" + videoLocation );
+
+        registry.addResourceHandler("/images/**")
+                .addResourceLocations("file:" + "lol");
     }
 
     @Override

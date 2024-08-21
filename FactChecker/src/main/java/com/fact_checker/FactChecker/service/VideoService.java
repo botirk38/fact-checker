@@ -9,6 +9,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -85,9 +86,10 @@ public class VideoService {
         validateFile(file);
         String filename = saveFile(file);
         Video video = processVideo(filename);
+        logger.info("User {} with id {} uploaded video {}", user.getUsername(), user.getId(), filename);
         video.setUser(user);
         return videoRepository.save(video);
-      } catch (InvalidFileException | FileProcessingException e) {
+      } catch (InvalidFileException | FileProcessingException | DataIntegrityViolationException e) {
         logger.error("File is invalid: {}", file.getOriginalFilename());
         throw e;
       }
