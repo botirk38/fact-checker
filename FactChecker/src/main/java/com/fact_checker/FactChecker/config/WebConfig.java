@@ -31,12 +31,15 @@ public class WebConfig implements WebMvcConfigurer {
         logger.info("Adding resource handlers for thumbnail location: {}", thumbnailLocation);
 
         registry.addResourceHandler("/thumbnails/**")
-                .addResourceLocations("file:" + thumbnailLocation + "/");
+                .addResourceLocations("file:" + thumbnailLocation);
 
         logger.info("Adding resource handlers for video location: {}", videoLocation);
         
-        registry.addResourceHandler("/videos/**")
-                .addResourceLocations("file:" + videoLocation + "/");
+        registry.addResourceHandler("/videos-storage/**")
+                .addResourceLocations("file:" + videoLocation );
+
+        registry.addResourceHandler("/images/**")
+                .addResourceLocations("file:" + "lol");
     }
 
     @Override

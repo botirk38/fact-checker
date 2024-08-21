@@ -1,5 +1,6 @@
 package com.fact_checker.FactChecker.handlers;
 
+import com.fact_checker.FactChecker.service.CustomUserDetailsService;
 import com.fact_checker.FactChecker.service.UserService;
 import com.fact_checker.FactChecker.model.User;
 import com.fact_checker.FactChecker.exceptions.UserAlreadyExistsException;
@@ -9,6 +10,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -62,12 +64,14 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         String name = getName(oauth2User);
 
         try {
-            User user = findOrCreateUser(email, name);
+            User user = findOrCreateUser(email, name, "GOOGLE");
             createSession(request, user);
             logger.info("User authenticated successfully. Email: {}", email);
 
             // Create a new authentication with updated authorities
-            Authentication newAuth = updateAuthenticationWithUserRoles(authentication, user);
+            Authentication newAuth = new UsernamePasswordAuthenticationToken(
+                    user, null, user.getAuthorities()
+            );
 
             // Set the new authentication in the security context
             SecurityContextHolder.getContext().setAuthentication(newAuth);
@@ -114,9 +118,9 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
      * @param name The user's name.
      * @return The User object.
      */
-    private User findOrCreateUser(String email, String name) {
-        return userService.findByUsernameOrEmail(email)
-                .orElseGet(() -> createNewUser(email, name));
+    private User findOrCreateUser(String email, String name, String provider) {
+        return userService.findByEmail(email)
+                .orElseGet(() -> createNewUser(email, name, provider));
     }
 
     /**
@@ -126,15 +130,14 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
      * @param name The user's name.
      * @return The newly created User object.
      */
-    private User createNewUser(String email, String name) {
+    private User createNewUser(String email, String name, String provider) {
         String username = generateUniqueUsername(email);
         String password = userService.generateUniquePassword();
         try {
-            return userService.registerUser(username, password, email, name);
+            return userService.registerUser(username, password, email, name, provider);
         } catch (UserAlreadyExistsException e) {
             logger.warn("Unexpected user already exists error", e);
-            return userService.findByUsernameOrEmail(email)
-                    .orElseThrow(() -> new RuntimeException("Failed to create or retrieve user"));
+            throw new RuntimeException("Unexpected user already exists error", e);
         }
     }
 
@@ -148,7 +151,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         String baseUsername = email.split("@")[0];
         String username = baseUsername;
         int suffix = 1;
-        while (userService.findByUsernameOrEmail(username).isPresent()) {
+        while (userService.findByEmail(username).isPresent()) {
             username = baseUsername + suffix++;
         }
         return username;
@@ -179,18 +182,5 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         return "/home";
     }
 
-    private Authentication updateAuthenticationWithUserRoles(Authentication authentication, User user) {
-        OAuth2User oauth2User = (OAuth2User) authentication.getPrincipal();
 
-        Set<GrantedAuthority> updatedAuthorities = new HashSet<>(authentication.getAuthorities());
-        for (String role : user.getRoles()) {
-            updatedAuthorities.add(new SimpleGrantedAuthority("ROLE_" + role.toUpperCase()));
-        }
-
-        return new OAuth2AuthenticationToken(
-                new DefaultOAuth2User(updatedAuthorities, oauth2User.getAttributes(), "email"),
-                updatedAuthorities,
-                ((OAuth2AuthenticationToken) authentication).getAuthorizedClientRegistrationId()
-        );
-    }
 }
