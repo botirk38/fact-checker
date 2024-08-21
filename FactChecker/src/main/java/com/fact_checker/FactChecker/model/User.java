@@ -44,6 +44,8 @@ public class User implements UserDetails {
     // @Column(columnDefinition = "VECTOR(256)")
     // private byte[] recommendationVector;
 
+
+
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
     @Column(name = "role")
