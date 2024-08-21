@@ -1,5 +1,6 @@
 package com.fact_checker.FactChecker.controller;
 
+import com.fact_checker.FactChecker.model.User;
 import com.fact_checker.FactChecker.model.Video;
 import com.fact_checker.FactChecker.service.UserService;
 import com.fact_checker.FactChecker.service.VideoService;
@@ -7,23 +8,28 @@ import com.fact_checker.FactChecker.model.TermItem;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.boot.web.servlet.error.ErrorController;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
+import org.springframework.security.core.Authentication;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 @Controller
 @RequestMapping("/")
 public class FactCheckerController implements ErrorController {
 
   private final VideoService videoService;
   private final UserService userService;
-  private static final Logger logger = LoggerFactory.getLogger(FactCheckerController.class);
+
   public FactCheckerController(VideoService videoService, UserService userService) {
     this.videoService = videoService;
     this.userService = userService;
@@ -72,7 +78,7 @@ public class FactCheckerController implements ErrorController {
   }
 
   @GetMapping("/privacy-policy")
-  public String privacyPolicy( Model model) {
+  public String privacyPolicy(HttpServletRequest request, Model model) {
     model.addAttribute("introduction",
         "At Truth Lens, we value your privacy and are committed to protecting your personal information. This Privacy Policy explains how we collect, use, and disclose information about you when you use our website and services.");
 
@@ -93,7 +99,7 @@ public class FactCheckerController implements ErrorController {
   }
 
   @GetMapping("terms-of-service")
-  public String termsOfService(Model model) {
+  public String termsOfService(HttpServletRequest request, Model model) {
 
     model.addAttribute("accountItems", List.of(
         new TermItem("Account Creation:",
@@ -122,7 +128,7 @@ public class FactCheckerController implements ErrorController {
 
   @PostMapping("/fact-check-video")
   public String factCheckVideo(@RequestParam("videoFile") MultipartFile videoFile,
-      RedirectAttributes redirectAttributes) {
+                               RedirectAttributes redirectAttributes, @AuthenticationPrincipal User user) {
     if (videoFile.isEmpty() || videoFile.getSize() == 0 || videoFile.getOriginalFilename() == null) {
       redirectAttributes.addFlashAttribute("message", "Please upload a valid video file.");
       return "redirect:/fact-check-video";
@@ -139,7 +145,7 @@ public class FactCheckerController implements ErrorController {
     try {
       redirectAttributes.addFlashAttribute("message", "Processing video, please wait! ⌛");
 
-      Video video = videoService.processAndSaveVideo(videoFile).join();
+      Video video = videoService.processAndSaveVideo(videoFile, user).join();
       String extractedText = video.getTranscriptionText();
 
       if (extractedText == null) {
@@ -150,12 +156,11 @@ public class FactCheckerController implements ErrorController {
 
     } catch (Exception e) {
       redirectAttributes.addFlashAttribute("message", "Could not upload file." + e.getMessage());
-      return "redirect:/home";
+      return "redirect:/fact-check-video";
     }
 
     return "redirect:/fact-check-video";
   }
-
 
   @GetMapping("/home")
   public String home(Model model) {
@@ -164,25 +169,5 @@ public class FactCheckerController implements ErrorController {
 
   }
 
-  @GetMapping("/videos/{id}")
-  public String getVideo(@PathVariable Long id, Model model) {
-    try {
-      Video video = videoService.getVideo(id);
-      if (video == null) {
-        model.addAttribute("error", "Video not found");
-        return "error";
-      }
-
-      model.addAttribute("video", video);
-      model.addAttribute("username", video.getUser().getUsername());
-      model.addAttribute("processedAt", video.getProcessedAt());
-
-      return "video-details";
-    } catch (Exception e) {
-      model.addAttribute("error", "An error occurred while retrieving the video");
-      logger.error("Error retrieving video with id: {}", id, e);
-      return "error";
-    }
-  }
 
 }

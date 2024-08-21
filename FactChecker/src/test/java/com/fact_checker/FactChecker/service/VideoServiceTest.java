@@ -2,6 +2,7 @@ package com.fact_checker.FactChecker.service;
 
 import com.fact_checker.FactChecker.exceptions.FileProcessingException;
 import com.fact_checker.FactChecker.exceptions.InvalidFileException;
+import com.fact_checker.FactChecker.model.User;
 import com.fact_checker.FactChecker.model.Video;
 import com.fact_checker.FactChecker.repository.VideoRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,7 +14,6 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.concurrent.CompletableFuture;
@@ -47,6 +47,7 @@ class VideoServiceTest {
   void processAndSaveVideo_validFile_success() throws Exception {
     MultipartFile file = new MockMultipartFile("file", "test.mp4", "video/mp4", "test data".getBytes());
     Video processedVideo = new Video();
+    User user = new User();
     processedVideo.setId(1L);
 
     when(videoProcessor.extractTextFromSpeech(any(Path.class), anyString()))
@@ -55,7 +56,7 @@ class VideoServiceTest {
 
     Files.createDirectories(Paths.get(UPLOAD_PATH));
 
-    Video result = videoService.processAndSaveVideo(file).get();
+    Video result = videoService.processAndSaveVideo(file, user).get();
 
     assertThat(result).isEqualTo(processedVideo);
     verify(videoRepository).save(any(Video.class));
@@ -65,8 +66,10 @@ class VideoServiceTest {
   @Test
   void processAndSaveVideo_emptyFile_throwsInvalidFileException() {
     MultipartFile emptyFile = new MockMultipartFile("file", "empty.mp4", "video/mp4", new byte[0]);
+    User user = new User();
 
-    assertThatThrownBy(() -> videoService.processAndSaveVideo(emptyFile).get())
+
+    assertThatThrownBy(() -> videoService.processAndSaveVideo(emptyFile, user).get())
         .isInstanceOf(ExecutionException.class)
         .hasCauseInstanceOf(InvalidFileException.class)
         .hasRootCauseMessage("File is empty");
@@ -75,8 +78,9 @@ class VideoServiceTest {
   @Test
   void processAndSaveVideo_unsupportedFileExtension_throwsInvalidFileException() {
     MultipartFile unsupportedFile = new MockMultipartFile("file", "test.txt", "text/plain", "test data".getBytes());
+    User user = new User();
 
-    assertThatThrownBy(() -> videoService.processAndSaveVideo(unsupportedFile).get())
+    assertThatThrownBy(() -> videoService.processAndSaveVideo(unsupportedFile, user).get())
         .isInstanceOf(ExecutionException.class)
         .hasCauseInstanceOf(InvalidFileException.class)
         .hasRootCauseMessage("File extension is not supported");
@@ -85,13 +89,14 @@ class VideoServiceTest {
   @Test
   void processAndSaveVideo_ioExceptionDuringSave_throwsFileProcessingException() throws Exception {
     MultipartFile file = new MockMultipartFile("file", "test.mp4", "video/mp4", "test data".getBytes());
+    User user = new User();
 
     when(videoProcessor.extractTextFromSpeech(any(Path.class), anyString()))
         .thenReturn(CompletableFuture.failedFuture(new IOException("Simulated IO error")));
 
     Files.createDirectories(Paths.get(UPLOAD_PATH));
 
-    assertThatThrownBy(() -> videoService.processAndSaveVideo(file).get())
+    assertThatThrownBy(() -> videoService.processAndSaveVideo(file, user).get())
         .isInstanceOf(ExecutionException.class)
         .hasCauseInstanceOf(FileProcessingException.class)
         .hasRootCauseMessage("Simulated IO error");
@@ -100,13 +105,14 @@ class VideoServiceTest {
   @Test
   void processAndSaveVideo_exceptionDuringProcessing_throwsFileProcessingException() throws Exception {
     MultipartFile file = new MockMultipartFile("file", "test.mp4", "video/mp4", "test data".getBytes());
+    User user = new User();
 
     when(videoProcessor.extractTextFromSpeech(any(Path.class), anyString()))
         .thenReturn(CompletableFuture.failedFuture(new RuntimeException("Processing error")));
 
     Files.createDirectories(Paths.get(UPLOAD_PATH));
 
-    assertThatThrownBy(() -> videoService.processAndSaveVideo(file).get())
+    assertThatThrownBy(() -> videoService.processAndSaveVideo(file, user).get())
         .isInstanceOf(ExecutionException.class)
         .hasCauseInstanceOf(FileProcessingException.class)
         .hasRootCauseMessage("Processing error");
@@ -115,8 +121,9 @@ class VideoServiceTest {
   @Test
   void processAndSaveVideo_nullFilename_throwsInvalidFileException() {
     MultipartFile fileWithNullName = new MockMultipartFile("file", null, "video/mp4", "test data".getBytes());
+    User user = new User();
 
-    assertThatThrownBy(() -> videoService.processAndSaveVideo(fileWithNullName).get())
+    assertThatThrownBy(() -> videoService.processAndSaveVideo(fileWithNullName, user).get())
         .isInstanceOf(ExecutionException.class)
         .hasCauseInstanceOf(InvalidFileException.class)
         .hasRootCauseMessage("File extension is not supported");

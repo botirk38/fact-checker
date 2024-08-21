@@ -1,5 +1,6 @@
 package com.fact_checker.FactChecker.service;
 
+import com.fact_checker.FactChecker.model.User;
 import com.fact_checker.FactChecker.model.Video;
 import com.fact_checker.FactChecker.repository.VideoRepository;
 import com.fact_checker.FactChecker.exceptions.FileProcessingException;
@@ -78,12 +79,13 @@ public class VideoService {
    * @throws FileProcessingException if there's an error during file processing
    */
   @Transactional
-  public CompletableFuture<Video> processAndSaveVideo(MultipartFile file) {
+  public CompletableFuture<Video> processAndSaveVideo(MultipartFile file, User user) {
     return CompletableFuture.supplyAsync(() -> {
       try {
         validateFile(file);
         String filename = saveFile(file);
         Video video = processVideo(filename);
+        video.setUser(user);
         return videoRepository.save(video);
       } catch (InvalidFileException | FileProcessingException e) {
         logger.error("File is invalid: {}", file.getOriginalFilename());
