@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module external.linked.project.id="FactChecker:main" external.linked.project.path="$MODULE_DIR$/../../FactChecker" external.root.project.path="$MODULE_DIR$/../../FactChecker" external.system.id="GRADLE" external.system.module.group="com.fact-checker" external.system.module.type="sourceSet" external.system.module.version="0.0.1-SNAPSHOT" type="JAVA_MODULE" version="4">
+  <component name="FacetManager">
+    <facet external-system-id="GRADLE" type="web" name="Web">
+      <configuration>
+        <webroots />
+      </configuration>
+    </facet>
+  </component>
+  <component name="NewModuleRootManager">
+    <output url="file://$MODULE_DIR$/../../FactChecker/build/classes/java/main" />
+    <exclude-output />
+    <content url="file://$MODULE_DIR$/../../FactChecker/build/generated/sources/annotationProcessor/java/main">
+      <sourceFolder url="file://$MODULE_DIR$/../../FactChecker/build/generated/sources/annotationProcessor/java/main" isTestSource="false" generated="true" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../FactChecker/src/main">
+      <sourceFolder url="file://$MODULE_DIR$/../../FactChecker/src/main/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/../../FactChecker/src/main/resources" type="java-resource" />
+    </content>
+    <orderEntry type="jdk" jdkName="openjdk-21" jdkType="JavaSDK" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" scope="PROVIDED" name="Gradle: org.projectlombok:lombok:1.18.22" level="project" />
+    <orderEntry type="library" name="Gradle: org.springframework.boot:spring-boot-starter-security:3.3.2" level="project" />
+    <orderEntry type="library" name="Gradle: org.springframework.boot:spring-boot-starter-web:3.3.2" level="project" />
+    <orderEntry type="library" name="Gradle: org.springframework.boot:spring-boot-starter-thymeleaf:3.3.2" level="project" />
+    <orderEntry type="library" name="Gradle: org.springframework.boot:spring-boot-starter-validation:3.3.2" level="project" />
+    <orderEntry type="library" name="Gradle: org.springframework.boot:spring-boot-starter-actuator:3.3.2" level="project" />
+    <orderEntry type="library" name="Gradle: org.springframework.boot:spring-boot-starter-data-jpa:3.3.2" level="project" />
+    <orderEntry type="library" name="Gradle: org.springframework.boot:spring-boot-starter:3.3.2" level="project" />
+    <orderEntry type="library" name="Gradle: com.h2database:h2:2.2.224" level="project" />
+    <orderEntry type="library" name="Gradle: me.paulschwarz:spring-dotenv:2.5.4" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:javacv-platform:1.5.10" level="project" />
+    <orderEntry type="library" name="Gradle: com.google.cloud:google-cloud-speech:4.42.0" level="project" />
+    <orderEntry type="library" name="Gradle: org.springframework.security:spring-security-config:6.3.1" level="project" />
+    <orderEntry type="library" name="Gradle: org.springframework.security:spring-security-web:6.3.1" level="project" />
+    <orderEntry type="library" name="Gradle: org.springframework:spring-aop:6.1.11" level="project" />
+    <orderEntry type="library" name="Gradle: org.springframework.boot:spring-boot-starter-json:3.3.2" level="project" />
+    <orderEntry type="library" name="Gradle: org.springframework.boot:spring-boot-starter-tomcat:3.3.2" level="project" />
+    <orderEntry type="library" name="Gradle: org.springframework:spring-webmvc:6.1.11" level="project" />
+    <orderEntry type="library" name="Gradle: org.springframework:spring-web:6.1.11" level="project" />
+    <orderEntry type="library" name="Gradle: org.thymeleaf:thymeleaf-spring6:3.1.2.RELEASE" level="project" />
+    <orderEntry type="library" name="Gradle: org.apache.tomcat.embed:tomcat-embed-el:10.1.26" level="project" />
+    <orderEntry type="library" name="Gradle: org.hibernate.validator:hibernate-validator:8.0.1.Final" level="project" />
+    <orderEntry type="library" name="Gradle: org.springframework.boot:spring-boot-actuator-autoconfigure:3.3.2" level="project" />
+    <orderEntry type="library" name="Gradle: io.micrometer:micrometer-jakarta9:1.13.2" level="project" />
+    <orderEntry type="library" name="Gradle: io.micrometer:micrometer-observation:1.13.2" level="project" />
+    <orderEntry type="library" name="Gradle: org.springframework.boot:spring-boot-starter-aop:3.3.2" level="project" />
+    <orderEntry type="library" name="Gradle: org.springframework.boot:spring-boot-starter-jdbc:3.3.2" level="project" />
+    <orderEntry type="library" name="Gradle: org.springframework.data:spring-data-jpa:3.3.2" level="project" />
+    <orderEntry type="library" name="Gradle: org.hibernate.orm:hibernate-core:6.5.2.Final" level="project" />
+    <orderEntry type="library" name="Gradle: org.springframework:spring-aspects:6.1.11" level="project" />
+    <orderEntry type="library" name="Gradle: org.springframework.boot:spring-boot-autoconfigure:3.3.2" level="project" />
+    <orderEntry type="library" name="Gradle: org.springframework.boot:spring-boot:3.3.2" level="project" />
+    <orderEntry type="library" name="Gradle: org.springframework.boot:spring-boot-starter-logging:3.3.2" level="project" />
+    <orderEntry type="library" name="Gradle: jakarta.annotation:jakarta.annotation-api:2.1.1" level="project" />
+    <orderEntry type="library" name="Gradle: org.springframework:spring-core:6.1.11" level="project" />
+    <orderEntry type="library" name="Gradle: org.yaml:snakeyaml:2.2" level="project" />
+    <orderEntry type="library" name="Gradle: com.mysql:mysql-connector-j:8.3.0" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:javacv:1.5.10" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:opencv-platform:4.9.0-1.5.10" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:openblas-platform:0.3.26-1.5.10" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:ffmpeg-platform:6.1.1-1.5.10" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:flycapture-platform:2.13.3.31-1.5.9" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:libdc1394-platform:2.2.6-1.5.9" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:libfreenect-platform:0.5.7-1.5.9" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:libfreenect2-platform:0.2.0-1.5.9" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:librealsense-platform:1.12.4-1.5.9" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:librealsense2-platform:2.53.1-1.5.9" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:videoinput-platform:0.200-1.5.9" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:artoolkitplus-platform:2.3.1-1.5.9" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:tesseract-platform:5.3.4-1.5.10" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:leptonica-platform:1.84.1-1.5.10" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:javacpp-platform:1.5.10" level="project" />
+    <orderEntry type="library" name="Gradle: com.google.api.grpc:proto-google-cloud-speech-v1p1beta1:2.42.0" level="project" />
+    <orderEntry type="library" name="Gradle: com.google.api.grpc:proto-google-cloud-speech-v2:4.42.0" level="project" />
+    <orderEntry type="library" name="Gradle: com.google.api.grpc:proto-google-iam-v1:1.37.0" level="project" />
+    <orderEntry type="library" name="Gradle: com.google.api.grpc:proto-google-cloud-speech-v1beta1:2.42.0" level="project" />
+    <orderEntry type="library" name="Gradle: com.google.api.grpc:proto-google-cloud-speech-v1:4.42.0" level="project" />
+    <orderEntry type="library" name="Gradle: com.google.api:api-common:2.34.0" level="project" />
+    <orderEntry type="library" name="Gradle: com.google.auto.value:auto-value-annotations:1.10.4" level="project" />
+    <orderEntry type="library" name="Gradle: com.google.code.findbugs:jsr305:3.0.2" level="project" />
+    <orderEntry type="library" name="Gradle: javax.annotation:javax.annotation-api:1.3.2" level="project" />
+    <orderEntry type="library" name="Gradle: com.google.errorprone:error_prone_annotations:2.29.2" level="project" />
+    <orderEntry type="library" name="Gradle: com.google.j2objc:j2objc-annotations:3.0.0" level="project" />
+    <orderEntry type="library" name="Gradle: com.google.guava:guava:33.2.1-jre" level="project" />
+    <orderEntry type="library" name="Gradle: com.google.guava:failureaccess:1.0.2" level="project" />
+    <orderEntry type="library" name="Gradle: com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava" level="project" />
+    <orderEntry type="library" name="Gradle: org.checkerframework:checker-qual:3.45.0" level="project" />
+    <orderEntry type="library" name="Gradle: io.grpc:grpc-api:1.65.1" level="project" />
+    <orderEntry type="library" name="Gradle: io.grpc:grpc-stub:1.65.1" level="project" />
+    <orderEntry type="library" name="Gradle: io.grpc:grpc-protobuf:1.65.1" level="project" />
+    <orderEntry type="library" name="Gradle: com.google.protobuf:protobuf-java:3.25.3" level="project" />
+    <orderEntry type="library" name="Gradle: com.google.api.grpc:proto-google-common-protos:2.42.0" level="project" />
+    <orderEntry type="library" name="Gradle: com.google.api:gax:2.51.0" level="project" />
+    <orderEntry type="library" name="Gradle: com.google.auth:google-auth-library-credentials:1.24.0" level="project" />
+    <orderEntry type="library" name="Gradle: io.opencensus:opencensus-api:0.31.1" level="project" />
+    <orderEntry type="library" name="Gradle: io.grpc:grpc-context:1.65.1" level="project" />
+    <orderEntry type="library" name="Gradle: com.google.auth:google-auth-library-oauth2-http:1.24.0" level="project" />
+    <orderEntry type="library" name="Gradle: com.google.api:gax-grpc:2.51.0" level="project" />
+    <orderEntry type="library" name="Gradle: io.grpc:grpc-inprocess:1.65.1" level="project" />
+    <orderEntry type="library" name="Gradle: io.grpc:grpc-core:1.65.1" level="project" />
+    <orderEntry type="library" name="Gradle: io.grpc:grpc-alts:1.65.1" level="project" />
+    <orderEntry type="library" name="Gradle: io.grpc:grpc-grpclb:1.65.1" level="project" />
+    <orderEntry type="library" name="Gradle: org.conscrypt:conscrypt-openjdk-uber:2.5.2" level="project" />
+    <orderEntry type="library" name="Gradle: io.grpc:grpc-auth:1.65.1" level="project" />
+    <orderEntry type="library" name="Gradle: io.grpc:grpc-netty-shaded:1.65.1" level="project" />
+    <orderEntry type="library" name="Gradle: com.google.api:gax-httpjson:2.51.0" level="project" />
+    <orderEntry type="library" name="Gradle: com.google.code.gson:gson:2.10.1" level="project" />
+    <orderEntry type="library" name="Gradle: com.google.http-client:google-http-client:1.44.2" level="project" />
+    <orderEntry type="library" name="Gradle: org.apache.httpcomponents:httpclient:4.5.14" level="project" />
+    <orderEntry type="library" name="Gradle: commons-codec:commons-codec:1.16.1" level="project" />
+    <orderEntry type="library" name="Gradle: org.apache.httpcomponents:httpcore:4.4.16" level="project" />
+    <orderEntry type="library" name="Gradle: io.opencensus:opencensus-contrib-http-util:0.31.1" level="project" />
+    <orderEntry type="library" name="Gradle: com.google.http-client:google-http-client-gson:1.44.2" level="project" />
+    <orderEntry type="library" name="Gradle: com.google.protobuf:protobuf-java-util:3.25.3" level="project" />
+    <orderEntry type="library" name="Gradle: org.threeten:threetenbp:1.6.9" level="project" />
+    <orderEntry type="library" name="Gradle: org.springframework.security:spring-security-core:6.3.1" level="project" />
+    <orderEntry type="library" name="Gradle: org.springframework:spring-context:6.1.11" level="project" />
+    <orderEntry type="library" name="Gradle: org.springframework:spring-beans:6.1.11" level="project" />
+    <orderEntry type="library" name="Gradle: org.springframework:spring-expression:6.1.11" level="project" />
+    <orderEntry type="library" name="Gradle: com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.17.2" level="project" />
+    <orderEntry type="library" name="Gradle: com.fasterxml.jackson.module:jackson-module-parameter-names:2.17.2" level="project" />
+    <orderEntry type="library" name="Gradle: com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.17.2" level="project" />
+    <orderEntry type="library" name="Gradle: com.fasterxml.jackson.core:jackson-databind:2.17.2" level="project" />
+    <orderEntry type="library" name="Gradle: org.apache.tomcat.embed:tomcat-embed-websocket:10.1.26" level="project" />
+    <orderEntry type="library" name="Gradle: org.apache.tomcat.embed:tomcat-embed-core:10.1.26" level="project" />
+    <orderEntry type="library" name="Gradle: org.thymeleaf:thymeleaf:3.1.2.RELEASE" level="project" />
+    <orderEntry type="library" name="Gradle: org.slf4j:slf4j-api:2.0.13" level="project" />
+    <orderEntry type="library" name="Gradle: jakarta.validation:jakarta.validation-api:3.0.2" level="project" />
+    <orderEntry type="library" name="Gradle: org.jboss.logging:jboss-logging:3.5.3.Final" level="project" />
+    <orderEntry type="library" name="Gradle: com.fasterxml:classmate:1.7.0" level="project" />
+    <orderEntry type="library" name="Gradle: org.springframework.boot:spring-boot-actuator:3.3.2" level="project" />
+    <orderEntry type="library" name="Gradle: io.micrometer:micrometer-core:1.13.2" level="project" />
+    <orderEntry type="library" name="Gradle: io.micrometer:micrometer-commons:1.13.2" level="project" />
+    <orderEntry type="library" name="Gradle: org.aspectj:aspectjweaver:1.9.22.1" level="project" />
+    <orderEntry type="library" name="Gradle: org.springframework:spring-jdbc:6.1.11" level="project" />
+    <orderEntry type="library" name="Gradle: com.zaxxer:HikariCP:5.1.0" level="project" />
+    <orderEntry type="library" name="Gradle: org.springframework:spring-orm:6.1.11" level="project" />
+    <orderEntry type="library" name="Gradle: org.springframework.data:spring-data-commons:3.3.2" level="project" />
+    <orderEntry type="library" name="Gradle: org.springframework:spring-tx:6.1.11" level="project" />
+    <orderEntry type="library" name="Gradle: org.antlr:antlr4-runtime:4.13.0" level="project" />
+    <orderEntry type="library" name="Gradle: jakarta.persistence:jakarta.persistence-api:3.1.0" level="project" />
+    <orderEntry type="library" name="Gradle: jakarta.transaction:jakarta.transaction-api:2.0.1" level="project" />
+    <orderEntry type="library" name="Gradle: ch.qos.logback:logback-classic:1.5.6" level="project" />
+    <orderEntry type="library" name="Gradle: org.apache.logging.log4j:log4j-to-slf4j:2.23.1" level="project" />
+    <orderEntry type="library" name="Gradle: org.slf4j:jul-to-slf4j:2.0.13" level="project" />
+    <orderEntry type="library" name="Gradle: org.springframework:spring-jcl:6.1.11" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:opencv:4.9.0-1.5.10" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:opencv:android-arm64:4.9.0-1.5.10" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:opencv:android-x86_64:4.9.0-1.5.10" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:opencv:ios-arm64:4.9.0-1.5.10" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:opencv:ios-x86_64:4.9.0-1.5.10" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:opencv:linux-arm64:4.9.0-1.5.10" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:opencv:linux-ppc64le:4.9.0-1.5.10" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:opencv:linux-x86_64:4.9.0-1.5.10" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:opencv:macosx-arm64:4.9.0-1.5.10" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:opencv:macosx-x86_64:4.9.0-1.5.10" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:opencv:windows-x86_64:4.9.0-1.5.10" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:openblas:0.3.26-1.5.10" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:openblas:android-arm64:0.3.26-1.5.10" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:openblas:android-x86_64:0.3.26-1.5.10" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:openblas:ios-arm64:0.3.26-1.5.10" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:openblas:ios-x86_64:0.3.26-1.5.10" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:openblas:linux-arm64:0.3.26-1.5.10" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:openblas:linux-ppc64le:0.3.26-1.5.10" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:openblas:linux-x86_64:0.3.26-1.5.10" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:openblas:macosx-arm64:0.3.26-1.5.10" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:openblas:macosx-x86_64:0.3.26-1.5.10" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:openblas:windows-x86_64:0.3.26-1.5.10" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:ffmpeg:6.1.1-1.5.10" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:ffmpeg:android-arm64:6.1.1-1.5.10" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:ffmpeg:android-x86_64:6.1.1-1.5.10" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:ffmpeg:linux-arm64:6.1.1-1.5.10" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:ffmpeg:linux-ppc64le:6.1.1-1.5.10" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:ffmpeg:linux-x86_64:6.1.1-1.5.10" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:ffmpeg:macosx-arm64:6.1.1-1.5.10" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:ffmpeg:macosx-x86_64:6.1.1-1.5.10" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:ffmpeg:windows-x86_64:6.1.1-1.5.10" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:flycapture:2.13.3.31-1.5.9" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:flycapture:linux-arm64:2.13.3.31-1.5.9" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:flycapture:linux-armhf:2.13.3.31-1.5.9" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:flycapture:linux-x86:2.13.3.31-1.5.9" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:flycapture:linux-x86_64:2.13.3.31-1.5.9" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:flycapture:windows-x86:2.13.3.31-1.5.9" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:flycapture:windows-x86_64:2.13.3.31-1.5.9" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:libdc1394:2.2.6-1.5.9" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:libdc1394:linux-arm64:2.2.6-1.5.9" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:libdc1394:linux-armhf:2.2.6-1.5.9" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:libdc1394:linux-ppc64le:2.2.6-1.5.9" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:libdc1394:linux-x86:2.2.6-1.5.9" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:libdc1394:linux-x86_64:2.2.6-1.5.9" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:libdc1394:macosx-x86_64:2.2.6-1.5.9" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:libdc1394:windows-x86:2.2.6-1.5.9" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:libdc1394:windows-x86_64:2.2.6-1.5.9" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:libfreenect:0.5.7-1.5.9" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:libfreenect:linux-arm64:0.5.7-1.5.9" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:libfreenect:linux-armhf:0.5.7-1.5.9" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:libfreenect:linux-ppc64le:0.5.7-1.5.9" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:libfreenect:linux-x86:0.5.7-1.5.9" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:libfreenect:linux-x86_64:0.5.7-1.5.9" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:libfreenect:macosx-x86_64:0.5.7-1.5.9" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:libfreenect:windows-x86:0.5.7-1.5.9" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:libfreenect:windows-x86_64:0.5.7-1.5.9" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:libfreenect2:0.2.0-1.5.9" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:libfreenect2:linux-x86:0.2.0-1.5.9" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:libfreenect2:linux-x86_64:0.2.0-1.5.9" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:libfreenect2:macosx-x86_64:0.2.0-1.5.9" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:libfreenect2:windows-x86_64:0.2.0-1.5.9" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:librealsense:1.12.4-1.5.9" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:librealsense:linux-arm64:1.12.4-1.5.9" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:librealsense:linux-armhf:1.12.4-1.5.9" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:librealsense:linux-x86:1.12.4-1.5.9" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:librealsense:linux-x86_64:1.12.4-1.5.9" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:librealsense:macosx-x86_64:1.12.4-1.5.9" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:librealsense:windows-x86:1.12.4-1.5.9" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:librealsense:windows-x86_64:1.12.4-1.5.9" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:librealsense2:2.53.1-1.5.9" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:librealsense2:linux-arm64:2.53.1-1.5.9" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:librealsense2:linux-armhf:2.53.1-1.5.9" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:librealsense2:linux-x86:2.53.1-1.5.9" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:librealsense2:linux-x86_64:2.53.1-1.5.9" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:librealsense2:macosx-x86_64:2.53.1-1.5.9" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:librealsense2:windows-x86:2.53.1-1.5.9" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:librealsense2:windows-x86_64:2.53.1-1.5.9" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:videoinput:0.200-1.5.9" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:videoinput:windows-x86:0.200-1.5.9" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:videoinput:windows-x86_64:0.200-1.5.9" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:artoolkitplus:2.3.1-1.5.9" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:artoolkitplus:android-arm:2.3.1-1.5.9" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:artoolkitplus:android-arm64:2.3.1-1.5.9" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:artoolkitplus:android-x86:2.3.1-1.5.9" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:artoolkitplus:android-x86_64:2.3.1-1.5.9" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:artoolkitplus:linux-arm64:2.3.1-1.5.9" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:artoolkitplus:linux-armhf:2.3.1-1.5.9" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:artoolkitplus:linux-ppc64le:2.3.1-1.5.9" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:artoolkitplus:linux-x86:2.3.1-1.5.9" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:artoolkitplus:linux-x86_64:2.3.1-1.5.9" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:artoolkitplus:macosx-x86_64:2.3.1-1.5.9" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:artoolkitplus:windows-x86:2.3.1-1.5.9" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:artoolkitplus:windows-x86_64:2.3.1-1.5.9" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:tesseract:5.3.4-1.5.10" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:tesseract:android-arm64:5.3.4-1.5.10" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:tesseract:android-x86_64:5.3.4-1.5.10" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:tesseract:linux-arm64:5.3.4-1.5.10" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:tesseract:linux-ppc64le:5.3.4-1.5.10" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:tesseract:linux-x86_64:5.3.4-1.5.10" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:tesseract:macosx-arm64:5.3.4-1.5.10" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:tesseract:macosx-x86_64:5.3.4-1.5.10" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:tesseract:windows-x86_64:5.3.4-1.5.10" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:leptonica:1.84.1-1.5.10" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:leptonica:android-arm64:1.84.1-1.5.10" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:leptonica:android-x86_64:1.84.1-1.5.10" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:leptonica:linux-arm64:1.84.1-1.5.10" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:leptonica:linux-ppc64le:1.84.1-1.5.10" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:leptonica:linux-x86_64:1.84.1-1.5.10" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:leptonica:macosx-arm64:1.84.1-1.5.10" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:leptonica:macosx-x86_64:1.84.1-1.5.10" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:leptonica:windows-x86_64:1.84.1-1.5.10" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:javacpp:1.5.10" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:javacpp:android-arm64:1.5.10" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:javacpp:android-x86_64:1.5.10" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:javacpp:ios-arm64:1.5.10" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:javacpp:ios-x86_64:1.5.10" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:javacpp:linux-arm64:1.5.10" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:javacpp:linux-ppc64le:1.5.10" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:javacpp:linux-x86_64:1.5.10" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:javacpp:macosx-arm64:1.5.10" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:javacpp:macosx-x86_64:1.5.10" level="project" />
+    <orderEntry type="library" name="Gradle: org.bytedeco:javacpp:windows-x86_64:1.5.10" level="project" />
+    <orderEntry type="library" name="Gradle: org.springframework.security:spring-security-crypto:6.3.1" level="project" />
+    <orderEntry type="library" name="Gradle: com.fasterxml.jackson.core:jackson-annotations:2.17.2" level="project" />
+    <orderEntry type="library" name="Gradle: com.fasterxml.jackson.core:jackson-core:2.17.2" level="project" />
+    <orderEntry type="library" name="Gradle: org.attoparser:attoparser:2.0.7.RELEASE" level="project" />
+    <orderEntry type="library" name="Gradle: org.unbescape:unbescape:1.1.6.RELEASE" level="project" />
+    <orderEntry type="library" name="Gradle: ch.qos.logback:logback-core:1.5.6" level="project" />
+    <orderEntry type="library" name="Gradle: org.apache.logging.log4j:log4j-api:2.23.1" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: org.springframework.boot:spring-boot-devtools:3.3.2" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: io.github.cdimascio:dotenv-java:2.2.3" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: io.grpc:grpc-protobuf-lite:1.65.1" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: com.google.android:annotations:4.1.1.4" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: org.codehaus.mojo:animal-sniffer-annotations:1.24" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: io.grpc:grpc-util:1.65.1" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: io.perfmark:perfmark-api:0.27.0" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: io.grpc:grpc-googleapis:1.65.1" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: io.grpc:grpc-xds:1.65.1" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: io.opencensus:opencensus-proto:0.2.0" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: io.grpc:grpc-services:1.65.1" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: com.google.re2j:re2j:1.7" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: org.hibernate.common:hibernate-commons-annotations:6.0.6.Final" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: io.smallrye:jandex:3.1.2" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: net.bytebuddy:byte-buddy:1.14.18" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: org.glassfish.jaxb:jaxb-runtime:4.0.5" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: jakarta.xml.bind:jakarta.xml.bind-api:4.0.2" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: jakarta.inject:jakarta.inject-api:2.0.1" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: org.hdrhistogram:HdrHistogram:2.2.2" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: org.latencyutils:LatencyUtils:2.0.3" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: org.glassfish.jaxb:jaxb-core:4.0.5" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: jakarta.activation:jakarta.activation-api:2.1.3" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: org.eclipse.angus:angus-activation:2.0.2" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: org.glassfish.jaxb:txw2:4.0.5" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: com.sun.istack:istack-commons-runtime:4.1.2" level="project" />
+  </component>
+</module>
