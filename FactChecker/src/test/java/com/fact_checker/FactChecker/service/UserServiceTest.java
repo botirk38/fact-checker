@@ -56,7 +56,7 @@ class UserServiceTest {
         });
 
         // Act
-        User result = userService.registerUser(username, password, email, fullName);
+        User result = userService.registerUser(username, password, email, fullName, "LOCAL");
 
         // Assert
         assertNotNull(result);
@@ -80,7 +80,7 @@ class UserServiceTest {
 
         // Act & Assert
         assertThrows(UserAlreadyExistsException.class, () ->
-                userService.registerUser(username, password, email, fullName)
+                userService.registerUser(username, password, email, fullName, "LOCAL")
         );
     }
 
@@ -97,7 +97,7 @@ class UserServiceTest {
 
         // Act & Assert
         assertThrows(UserAlreadyExistsException.class, () ->
-                userService.registerUser(username, password, email, fullName)
+                userService.registerUser(username, password, email, fullName, "LOCAL")
         );
     }
 
@@ -105,28 +105,28 @@ class UserServiceTest {
     void registerUser_EmptyInput_ThrowsIllegalArgumentException() {
         // Act & Assert
         assertThrows(IllegalArgumentException.class, () ->
-                userService.registerUser("", "password", "test@example.com", "Test User")
+                userService.registerUser("", "password", "test@example.com", "Test User", "LOCAL")
         );
         assertThrows(IllegalArgumentException.class, () ->
-                userService.registerUser("testuser", "", "test@example.com", "Test User")
+                userService.registerUser("testuser", "", "test@example.com", "Test User", "LOCAL")
         );
         assertThrows(IllegalArgumentException.class, () ->
-                userService.registerUser("testuser", "password", "", "Test User")
+                userService.registerUser("testuser", "password", "", "Test User", "LOCAL")
         );
         assertThrows(IllegalArgumentException.class, () ->
-                userService.registerUser("testuser", "password", "test@example.com", "")
+                userService.registerUser("testuser", "password", "test@example.com", "", "LOCAL")
         );
     }
 
     @Test
-    void findByUsernameOrEmail_UserExists_ReturnsUser() {
+    void findByUsername_UserExists_ReturnsUser() {
         // Arrange
         String username = "testuser";
         User user = new User();
         when(userRepository.findByUsername(username)).thenReturn(Optional.of(user));
 
         // Act
-        Optional<User> result = userService.findByUsernameOrEmail(username);
+        Optional<User> result = userService.findByUsername(username);
 
         // Assert
         assertTrue(result.isPresent());
@@ -134,30 +134,34 @@ class UserServiceTest {
     }
 
     @Test
-    void findByUsernameOrEmail_EmailExists_ReturnsUser() {
+    void finByEmail_UserExists_ReturnsUser() {
         // Arrange
         String email = "test@example.com";
         User user = new User();
-        when(userRepository.findByUsername(email)).thenReturn(Optional.empty());
         when(userRepository.findByEmail(email)).thenReturn(Optional.of(user));
 
-        // Act
-        Optional<User> result = userService.findByUsernameOrEmail(email);
 
+        // Act
+
+
+        Optional<User> result = userService.findByEmail(email);
         // Assert
+
+
         assertTrue(result.isPresent());
         assertEquals(user, result.get());
     }
+
+
 
     @Test
     void findByUsernameOrEmail_UserNotFound_ReturnsEmptyOptional() {
         // Arrange
         String usernameOrEmail = "nonexistent";
         when(userRepository.findByUsername(usernameOrEmail)).thenReturn(Optional.empty());
-        when(userRepository.findByEmail(usernameOrEmail)).thenReturn(Optional.empty());
 
         // Act
-        Optional<User> result = userService.findByUsernameOrEmail(usernameOrEmail);
+        Optional<User> result = userService.findByUsername(usernameOrEmail);
 
         // Assert
         assertFalse(result.isPresent());

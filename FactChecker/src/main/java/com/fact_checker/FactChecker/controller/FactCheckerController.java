@@ -1,24 +1,21 @@
 package com.fact_checker.FactChecker.controller;
 
+import com.fact_checker.FactChecker.model.User;
 import com.fact_checker.FactChecker.model.Video;
 import com.fact_checker.FactChecker.service.UserService;
 import com.fact_checker.FactChecker.service.VideoService;
 import com.fact_checker.FactChecker.model.TermItem;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.web.servlet.error.ErrorController;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.security.core.Authentication;
 import java.util.List;
 
 @Controller
@@ -27,6 +24,7 @@ public class FactCheckerController implements ErrorController {
 
   private final VideoService videoService;
   private final UserService userService;
+  private static final Logger logger = LoggerFactory.getLogger(FactCheckerController.class);
 
   public FactCheckerController(VideoService videoService, UserService userService) {
     this.videoService = videoService;
@@ -58,20 +56,21 @@ public class FactCheckerController implements ErrorController {
       return "redirect:/signup";
     }
 
-    userService.registerUser(username, password, email, fullName);
+    userService.registerUser(username, password, email, fullName, "LOCAL");
     model.addAttribute("success", "User created successfully");
 
     return "redirect:/login";
   }
 
   @GetMapping("/error")
-  public String handleError(HttpServletRequest request, Model model) {
+  public String handleError(HttpServletRequest request, Model model) throws InterruptedException {
     Object status = request.getAttribute(RequestDispatcher.ERROR_STATUS_CODE);
     Object error = request.getAttribute(RequestDispatcher.ERROR_MESSAGE);
 
     model.addAttribute("error", error);
     model.addAttribute("status", status);
 
+    Thread.sleep(3000);
     return "error";
   }
 
@@ -126,7 +125,7 @@ public class FactCheckerController implements ErrorController {
 
   @PostMapping("/fact-check-video")
   public String factCheckVideo(@RequestParam("videoFile") MultipartFile videoFile,
-      RedirectAttributes redirectAttributes) {
+                               RedirectAttributes redirectAttributes, @AuthenticationPrincipal User user) {
     if (videoFile.isEmpty() || videoFile.getSize() == 0 || videoFile.getOriginalFilename() == null) {
       redirectAttributes.addFlashAttribute("message", "Please upload a valid video file.");
       return "redirect:/fact-check-video";
@@ -138,12 +137,15 @@ public class FactCheckerController implements ErrorController {
       return "redirect:/fact-check-video";
     }
 
+    if (user == null) {
+        redirectAttributes.addFlashAttribute("message", "Please login to upload a video.");
+        return "redirect:/fact-check-video";
+    }
 
-
-    try {
+      try {
       redirectAttributes.addFlashAttribute("message", "Processing video, please wait! ⌛");
 
-      Video video = videoService.processAndSaveVideo(videoFile).join();
+      Video video = videoService.processAndSaveVideo(videoFile, user).join();
       String extractedText = video.getTranscriptionText();
 
       if (extractedText == null) {
@@ -166,6 +168,29 @@ public class FactCheckerController implements ErrorController {
     return "home";
 
   }
+
+  @GetMapping("/videos/{id}")
+  public String getVideo(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
+    try {
+      Video video = videoService.getVideo(id);
+      if (video == null) {
+        redirectAttributes.addAttribute("error", "Video not found");
+        return "redirect:/error";
+      }
+
+      model.addAttribute("video", video);
+      model.addAttribute("username", video.getUser().getUsername());
+      model.addAttribute("processedAt", video.getProcessedAt());
+
+      return "video-details";
+    } catch (Exception e) {
+      redirectAttributes.addAttribute("error", "An error occurred while retrieving the video");
+      // Log the exception
+      logger.error("Error retrieving video with id: " + id, e);
+      return "redirect:/error";
+    }
+  }
+
 
 
 }

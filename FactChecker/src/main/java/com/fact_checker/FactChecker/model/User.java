@@ -1,14 +1,12 @@
 package com.fact_checker.FactChecker.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -19,7 +17,7 @@ import java.util.stream.Collectors;
 @Table(name = "users")
 @Data
 @NoArgsConstructor
-public class User implements Serializable, UserDetails {
+public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,6 +36,10 @@ public class User implements Serializable, UserDetails {
     @Column
     private String fullName;
 
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private AuthProvider provider;
+
 
     // @Column(columnDefinition = "VECTOR(256)")
     // private byte[] recommendationVector;
@@ -54,35 +56,13 @@ public class User implements Serializable, UserDetails {
 
 
 
-    public User(String username, String email, String password, String fullName, Set<String> roles) {
+    public User(String username, String email, String password, String fullName, Set<String> roles, String provider) {
         this.username = username;
         this.email = email;
         this.password = password;
         this.fullName = fullName;
         this.roles = roles;
-    }
-
-
-
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return true;
+        this.provider = AuthProvider.valueOf(provider);
     }
 
     @Override

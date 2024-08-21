@@ -1,11 +1,51 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
-    <title>Error</title>
+    <title>Video Error</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/css/tailwind-output.css}"/>
 </head>
-<body>
-<h1>Oops! Something went wrong.</h1>
-<p th:text="${error}">Error message</p>
-<p th:text="${status}">Status code</p>
+<body class="bg-background">
+<div class="flex min-h-screen flex-col items-center justify-center bg-background px-4 py-12 sm:px-6 lg:px-8">
+    <div class="mx-auto max-w-md text-center space-y-4">
+        <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="mx-auto h-20 w-20 text-primary"
+        >
+            <path d="m16 13 5.223 3.482a.5.5 0 0 0 .777-.416V7.87a.5.5 0 0 0-.752-.432L16 10.5"></path>
+            <rect x="2" y="6" width="14" height="12" rx="2"></rect>
+        </svg>
+
+        <h1 class="mt-4 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+            Oops, something went wrong with the video!
+        </h1>
+
+        <p class="mt-4 text-muted-foreground">
+            We're sorry, but an unexpected error has occurred while playing the video. Please try again later or contact
+            support if the issue persists.
+        </p>
+
+        <p class="mt-2 text-muted-foreground" th:text="${error}">Error message</p>
+        <p class="text-muted-foreground" th:text="${status}">Status code</p>
+
+        <div class="mt-6">
+            <a
+                    class="inline-flex items-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-sm transition-colors hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                    th:href="@{/home}"
+            >
+                Go to Home
+            </a>
+        </div>
+    </div>
+</div>
 </body>
 </html>
