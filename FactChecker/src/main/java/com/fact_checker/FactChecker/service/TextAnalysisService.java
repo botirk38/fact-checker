@@ -7,6 +7,7 @@ import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.regex.Matcher;
@@ -24,12 +25,20 @@ public class TextAnalysisService {
         this.apiKey = apiKey;
     }
     
-    public int analyzeText(Video video) {
+    public double analyzeText(Video video) {
         StringBuilder sb = new StringBuilder(video.getTranscriptionText());
+        System.out.println("sb: " + sb);
         StringBuilder statements = generateClaimsSeparatedByAsterisks(sb);
+        System.out.println("statements: " + statements);
         StringBuilder statScore = rateClaimsByFacts(statements);
-        List<Double> scores = extractScores(statScore.toString());
-        return sumList(scores) / scores.size();
+        System.out.println("statScore: " + statScore);
+        HashMap<String, Double> scoresMap = extractScores(statScore.toString());
+        System.out.println("scoresMap: " + scoresMap);
+
+        return scoresMap.values().stream()
+                .mapToDouble(Double::doubleValue)
+                .average()
+                .orElse(0.0);
     }
 
     public int sumList(List<Double> list) {
@@ -39,21 +48,18 @@ public class TextAnalysisService {
         }
         return sum;
     }
-    public ArrayList<Double> extractScores(String input) {
-        ArrayList<Double> numbersList = new ArrayList<>();
-        Pattern pattern = Pattern.compile(":\\s*(\\d+(?:\\.\\d+)?)");
+    public HashMap<String, Double> extractScores(String input) {
+        HashMap<String, Double> scoresMap = new HashMap<>();
+        Pattern pattern = Pattern.compile("\"(.*?)\":\\s*(\\d+(?:\\.\\d+)?)");
         Matcher matcher = pattern.matcher(input);
 
-
         while (matcher.find()) {
-            String numberStr = matcher.group(1);
-            if (Double.parseDouble(numberStr) > 50) {
-
-            }
-            numbersList.add(Double.parseDouble(numberStr));
+            String statement = matcher.group(1);
+            Double score = Double.parseDouble(matcher.group(2));
+            scoresMap.put(statement, score);
         }
 
-        return numbersList;
+        return scoresMap;
     }
 
 
@@ -73,8 +79,8 @@ public class TextAnalysisService {
                                           "statement3": 54.4
                                         }
                                         Important notes:
-                                        - Each key should be labeled as "statement" followed by its sequence number (e.g., "statement1").
-                                        - The value for each key should be a float or integer representing the factual score.
+                                        - Each key should be labeled by the actual statement followed by its sequence number (e.g., "the sky is blue 1").
+                                        - The value for each key should be a float or integer representing the factual score.(ex" 11.01)
                                         - No additional text or explanations should be included in the output; only the JSON object.
                                         Text to analyse:                                      
                                         """ + sb.toString()

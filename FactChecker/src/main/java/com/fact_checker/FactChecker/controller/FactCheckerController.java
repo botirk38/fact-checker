@@ -152,10 +152,10 @@ public class FactCheckerController implements ErrorController {
         return "redirect:/fact-check-video";
       }
 
-      float factCheckPercentage = textAnalysisService.analyzeText(video);
+//      float factCheckPercentage = textAnalysisService.analyzeText(video);
 
 
-      redirectAttributes.addFlashAttribute("message", "Successfully uploaded file. " + extractedText+ " Fact Check Percentage: " + factCheckPercentage + "%");
+      redirectAttributes.addFlashAttribute("message", "Successfully uploaded file. " + extractedText+ " Fact Check Percentage: " );
     } catch (Exception e) {
       redirectAttributes.addFlashAttribute("message", "Could not upload file." + e.getMessage());
       return "redirect:/fact-check-video";

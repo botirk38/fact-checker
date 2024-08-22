@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import static org.mockito.Mockito.*;
@@ -41,7 +42,8 @@ public class TextAnalysisServiceTest {
         video.setTranscriptionText("The sky is blue. The earth is flat.");
         System.out.println("API Key in Test: " + apiKey);
         String text = "The sky is blue. The earth is flat.";
-        int result = textAnalysisService.analyzeText(video);
+        double result = textAnalysisService.analyzeText(video);
+        System.out.println("Result: " + result);
         assertTrue(result >= 0 && result <= 100, "Result was: " + result);
     }
 
@@ -68,10 +70,10 @@ public class TextAnalysisServiceTest {
     @Test
     public void testExtractScores() {
         String jsonString = "{\"statement1\": 11.01, \"statement2\": 98, \"statement3\": 54.4}";
-        List<Double> scores = textAnalysisService.extractScores(jsonString);
-        System.out.println("Scores: " + scores.toString());
-        assertNotNull(scores, "Scores should not be null");
-        assertFalse(scores.isEmpty(), "Scores should not be empty");
+        HashMap<String, Double> scoresMap = textAnalysisService.extractScores(jsonString);
+        System.out.println("Scores: " + scoresMap.toString());
+        assertNotNull(scoresMap, "Scores should not be null");
+        assertFalse(scoresMap.isEmpty(), "Scores should not be empty");
     }
 
     @Test
