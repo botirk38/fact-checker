@@ -129,6 +129,9 @@ public class TextAnalysisService {
                 resultMap.put(entry.getKey(), ((JsonNumber) entry.getValue()).doubleValue());
             }
             return resultMap;
+        } catch (Exception e) {
+            logger.error("Error while converting json to map", e);
+            return null;
         }
     }
     private List<String> generateClaimsSeparatedByAsterisks(String text) {
