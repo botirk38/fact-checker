@@ -27,10 +27,10 @@
                 </svg>
             </button>
             <div th:if="${param.error}" class="mt-4 p-4 bg-red-100 text-red-700 rounded-md" role="alert">
-                <p th:text="${param.error[0]}"></p>
+                <p th:text="${param.error[1]}"></p>
             </div>
             <div th:if="${param.success}" class="mt-4 p-4 bg-green-100 text-green-700 rounded-md" role="alert">
-                <p th:text="${param.success[0]}"></p>
+                <p th:text="${param.success[1]}"></p>
             </div>
         </form>
         <div class="p-6">

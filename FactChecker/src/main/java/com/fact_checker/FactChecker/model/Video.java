@@ -77,6 +77,10 @@ public class Video {
     @Column(name = "fact_percentage", nullable = false)
     private double  factPercentage;
 
+    /**
+     * The list of false statements extracted from the video content.
+     */
+
     @Column(name="false_statements")
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String> falseStatements;
