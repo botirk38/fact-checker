@@ -98,7 +98,7 @@ public class TextAnalysisService {
                                             
                                             }
                                             Important notes:
-                                            - Each key should be labeled as "statement" followed by its sequence number (e.g., "statement1").
+                                            - Each key should be labeled as the actual statement followed by its sequence number (e.g., ""The flour is made of water": 100,").
                                             - The value for each key should be a float or integer representing the factual score.
                                             - No additional text or explanations should be included in the output; only the JSON object.
                                             Text to analyse:                                      
