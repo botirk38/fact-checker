@@ -54,7 +54,7 @@ public class TextAnalysisService {
 
         return scoredClaims.entrySet()
                 .stream()
-                .filter(entry -> entry.getValue() < LOW_PERCENTAGE_THRESHOLD)
+                .filter(entry -> entry.getValue() < LOW_PERCENTAGE_THRESHOLD * 100)
                 .map(Map.Entry::getKey)
                 .toList();
 

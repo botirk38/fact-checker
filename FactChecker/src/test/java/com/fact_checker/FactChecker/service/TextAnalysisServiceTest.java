@@ -92,21 +92,29 @@ class TextAnalysisServiceTest {
         Video video = new Video();
         video.setTranscriptionText("Test transcription");
 
-        when(apiClient.createChatCompletionAsync(any()))
+        // Mock the API client to simulate an error
+        when(apiClient.createChatCompletionAsync(any(JsonObject.class)))
                 .thenReturn(Single.error(new RuntimeException("API Error")));
 
-        // Act & Assert
-        assertThrows(RuntimeException.class, () -> textAnalysisService.analyzeText(video));
-    }
+        // Act
+        double result = textAnalysisService.analyzeText(video);
 
+        // Assert
+        assertEquals(0.0, result, 0.001);
+        assertEquals(0.0, video.getFactPercentage(), 0.001);
+        assertTrue(video.getFalseStatements().isEmpty());
+
+        // Verify that the API was called
+        verify(apiClient, times(2)).createChatCompletionAsync(any(JsonObject.class));
+    }
     @Test
     void getFalseClaims_shouldReturnCorrectClaims() {
         // Arrange
         Map<String, Double> scoredClaims = Map.of(
-                "Claim 1", 0.8,
-                "Claim 2", 0.4,
-                "Claim 3", 0.6,
-                "Claim 4", 0.3
+                "Claim 1", 80.0,
+                "Claim 2", 40.0,
+                "Claim 3", 60.0,
+                "Claim 4", 30.0
         );
 
         // Act
