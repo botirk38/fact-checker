@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * Represents a video entity in the fact-checking system.
@@ -74,7 +75,11 @@ public class Video {
      */
 
     @Column(name = "fact_percentage", nullable = false)
-    private float  factPercentage;
+    private double  factPercentage;
+
+    @Column(name="false_statements")
+    @ElementCollection(fetch = FetchType.EAGER)
+    private List<String> falseStatements;
 
 
 }

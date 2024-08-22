@@ -1,91 +1,168 @@
 package com.fact_checker.FactChecker.service;
 
 import com.fact_checker.FactChecker.model.Video;
+import io.reactivex.rxjava3.core.Single;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import javax.json.*;
+import java.io.StringReader;
+import java.util.Arrays;
 import java.util.List;
-
-import static org.mockito.Mockito.*;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
-@SpringBootTest
-public class TextAnalysisServiceTest {
+@ExtendWith(MockitoExtension.class)
+class TextAnalysisServiceTest {
 
-
-
-    @Autowired
-    private TextAnalysisService textAnalysisService;
-
-
-    @Autowired
+    @Mock
     private IGroqApiClient apiClient;
 
-    @Value("${groq.api.key}")
-    private String apiKey;
+    private TextAnalysisService textAnalysisService;
 
     @BeforeEach
-    void setup() {
-        apiKey = System.getenv("GROQ_API_KEY");
+    void setUp() {
+        textAnalysisService = new TextAnalysisService(apiClient, "test-api-key");
     }
 
     @Test
-    public void testAnalyzeText() {
-        // Mock the API responses
+    void analyzeText_shouldReturnCorrectAverageScore() {
+        // Arrange
         Video video = new Video();
-        video.setTranscriptionText("The sky is blue. The earth is flat.");
-        System.out.println("API Key in Test: " + apiKey);
-        String text = "The sky is blue. The earth is flat.";
+        video.setTranscriptionText("Test transcription");
+
+        mockApiResponses("Claim 1*Claim 2",
+                "{\"Claim 1\": 80, \"Claim 2\": 60}");
+
+        // Act
         double result = textAnalysisService.analyzeText(video);
-        System.out.println("Result: " + result);
-        assertTrue(result >= 0 && result <= 100, "Result was: " + result);
-    }
 
-
-    @Test
-    public void testRateClaimsByFacts() {
-        System.out.println("API Key in Test: " + apiKey);
-        String text = "the sky is blue but some people say it is green";
-        StringBuilder sb = new StringBuilder(text);
-        StringBuilder statements = textAnalysisService.rateClaimsByFacts(sb);
-        System.out.println("Statements: " + statements.toString());
-        assertNotNull(statements, "Statements should not be null");
+        // Assert
+        assertEquals(70.0, result, 0.01);
+        assertEquals(70.0, video.getFactPercentage(), 0.01);
+        assertEquals(0, video.getFalseStatements().size());
     }
 
     @Test
-    public void testGenerateClaimsSeparatedByAsterisks() {
-        String text = "the sky is blue but some people say it is green";
-        StringBuilder sb = new StringBuilder(text);
-        StringBuilder claims = textAnalysisService.generateClaimsSeparatedByAsterisks(sb);
-        System.out.println("Claims: " + claims.toString());
-        assertNotNull(claims, "Claims should not be null");
+    void analyzeText_shouldIdentifyFalseClaims() {
+        // Arrange
+        Video video = new Video();
+        video.setTranscriptionText("Test transcription");
+
+        mockApiResponses("Claim 1*Claim 2*Claim 3",
+                "{\"Claim 1\": 80, \"Claim 2\": 40, \"Claim 3\": 30}");
+
+        // Act
+        double result = textAnalysisService.analyzeText(video);
+
+        // Assert
+        assertEquals(50.0, result, 0.01);
+        assertEquals(50.0, video.getFactPercentage(), 0.01);
+        assertEquals(2, video.getFalseStatements().size());
+        assertTrue(video.getFalseStatements().contains("Claim 2"));
+        assertTrue(video.getFalseStatements().contains("Claim 3"));
     }
 
     @Test
-    public void testExtractScores() {
-        String jsonString = "{\"statement1\": 11.01, \"statement2\": 98, \"statement3\": 54.4}";
-        HashMap<String, Double> scoresMap = textAnalysisService.extractScores(jsonString);
-        System.out.println("Scores: " + scoresMap.toString());
-        assertNotNull(scoresMap, "Scores should not be null");
-        assertFalse(scoresMap.isEmpty(), "Scores should not be empty");
+    void analyzeText_shouldHandleEmptyTranscription() {
+        // Arrange
+        Video video = new Video();
+        video.setTranscriptionText("");
+
+        mockApiResponses("", "{}");
+
+        // Act
+        double result = textAnalysisService.analyzeText(video);
+
+        // Assert
+        assertEquals(0.0, result, 0.01);
+        assertEquals(0.0, video.getFactPercentage(), 0.01);
+        assertTrue(video.getFalseStatements().isEmpty());
     }
 
     @Test
-    void testSumList() {
-        List<Double> list = new ArrayList<>();
-        list.add(10.0);
-        list.add(20.0);
-        list.add(30.0);
+    void analyzeText_shouldHandleApiErrors() {
+        // Arrange
+        Video video = new Video();
+        video.setTranscriptionText("Test transcription");
 
-        double sum = textAnalysisService.sumList(list);
-        assertEquals(60.0, sum, 0.001);
+        when(apiClient.createChatCompletionAsync(any()))
+                .thenReturn(Single.error(new RuntimeException("API Error")));
+
+        // Act & Assert
+        assertThrows(RuntimeException.class, () -> textAnalysisService.analyzeText(video));
     }
 
+    @Test
+    void getFalseClaims_shouldReturnCorrectClaims() {
+        // Arrange
+        Map<String, Double> scoredClaims = Map.of(
+                "Claim 1", 0.8,
+                "Claim 2", 0.4,
+                "Claim 3", 0.6,
+                "Claim 4", 0.3
+        );
 
+        // Act
+        List<String> falseClaims = textAnalysisService.getFalseClaims(scoredClaims);
+
+        // Assert
+        assertEquals(2, falseClaims.size());
+        assertTrue(falseClaims.contains("Claim 2"));
+        assertTrue(falseClaims.contains("Claim 4"));
+    }
+
+    @Test
+    void getAverageScore_shouldCalculateCorrectly() {
+        // Arrange
+        Map<String, Double> scoredClaims = Map.of(
+                "Claim 1", 0.8,
+                "Claim 2", 0.4,
+                "Claim 3", 0.6
+        );
+
+        // Act
+        double averageScore = textAnalysisService.getAverageScore(scoredClaims);
+
+        // Assert
+        assertEquals(0.6, averageScore, 0.01);
+    }
+
+    @Test
+    void convertJsonToMap_shouldParseCorrectly() {
+        // Arrange
+        String jsonString = "{\"Claim 1\": 80.5, \"Claim 2\": 60.0}";
+
+        // Act
+        Map<String, Double> result = textAnalysisService.convertJsonToMap(jsonString);
+
+        // Assert
+        assertEquals(2, result.size());
+        assertEquals(80.5, result.get("Claim 1"), 0.01);
+        assertEquals(60.0, result.get("Claim 2"), 0.01);
+    }
+
+    private void mockApiResponses(String claimsResponse, String scoresResponse) {
+        JsonObject claimsResult = createMockJsonResponse(claimsResponse);
+        JsonObject scoresResult = createMockJsonResponse(scoresResponse);
+
+        when(apiClient.createChatCompletionAsync(any()))
+                .thenReturn(Single.just(claimsResult))
+                .thenReturn(Single.just(scoresResult));
+    }
+
+    private JsonObject createMockJsonResponse(String content) {
+        return Json.createObjectBuilder()
+                .add("choices", Json.createArrayBuilder()
+                        .add(Json.createObjectBuilder()
+                                .add("message", Json.createObjectBuilder()
+                                        .add("content", content))))
+                .build();
+    }
 }
