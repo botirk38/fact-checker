@@ -49,6 +49,8 @@ public class FactCheckerController implements ErrorController {
   public String signup(@RequestParam String username, @RequestParam String password, @RequestParam String email,
       @RequestParam String fullName, @RequestParam String confirmPassword, Model model) {
 
+    try {
+
     if (username == null || password == null || email == null || fullName == null) {
       model.addAttribute("error", "Please fill out all fields");
       return "redirect:/signup";
@@ -61,6 +63,10 @@ public class FactCheckerController implements ErrorController {
 
     userService.registerUser(username, password, email, fullName, "LOCAL");
     model.addAttribute("success", "User created successfully");
+    } catch (Exception e) {
+      model.addAttribute("error", e.getMessage());
+      return "redirect:/error/authentication";
+    }
 
     return "redirect:/login";
   }
@@ -74,6 +80,17 @@ public class FactCheckerController implements ErrorController {
     model.addAttribute("status", status);
 
     return "error";
+  }
+
+  @GetMapping("/error/authentication")
+  public String handleAuthenticationError(HttpServletRequest request, Model model) {
+    Object status = request.getAttribute(RequestDispatcher.ERROR_STATUS_CODE);
+    Object error = request.getAttribute(RequestDispatcher.ERROR_MESSAGE);
+
+    model.addAttribute("error", error);
+    model.addAttribute("status", status);
+
+    return "auth-error";
   }
 
   @GetMapping("/privacy-policy")
