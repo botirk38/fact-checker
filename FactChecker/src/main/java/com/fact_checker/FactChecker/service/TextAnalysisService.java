@@ -78,8 +78,6 @@ public class TextAnalysisService {
         Map<String, Double> scoredClaims = rateClaimsByFacts(claims);
 
         if (scoredClaims == null) {
-            video.setFactPercentage(0);
-            video.setFalseStatements(new ArrayList<>());
             return 0;
         }
 

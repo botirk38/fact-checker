@@ -149,22 +149,23 @@
          }"
                         ></div>
                     </div>
-                    <span id="percentageValue" class="text-lg font-semibold" th:text="${#numbers.formatDecimal(video.factPercentage, 1, 1) + '%'}"></span>
+                    <span id="percentageValue" class="text-lg font-semibold" th:text="${video.factPercentage != null ? #numbers.formatDecimal(video.factPercentage, 1, 1) + '%' : 'Failed to analyze video'}"></span>
+
                 </div>
 
-
-
-                    <h3 class="font-bold text-muted-foreground">False Statements</h3>
+                <h3 class="font-bold text-muted-foreground">False Statements</h3>
+                <div th:if="${not #lists.isEmpty(video.falseStatements)}">
                     <ul th:each="falseStatement: ${video.falseStatements}">
-
                         <li class="flex gap-4 items-center">
-                                <p>
-                                    <span class="text-muted-foreground" th:text="${falseStatement}">Text</span>
-                                </p>
+                            <p>
+                                <span class="text-muted-foreground" th:text="${falseStatement}">Text</span>
+                            </p>
                         </li>
-
-
                     </ul>
+                </div>
+                <div th:unless="${not #lists.isEmpty(video.falseStatements)}" class="text-muted-foreground italic">
+                    No false statements found for this video.
+                </div>
             </div>
         </div>
 

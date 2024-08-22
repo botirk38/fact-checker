@@ -74,7 +74,7 @@ public class Video {
      * The fact percentage of the video content.
      */
 
-    @Column(name = "fact_percentage", nullable = false)
+    @Column(name = "fact_percentage")
     private double  factPercentage;
 
     /**
