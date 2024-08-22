@@ -1,5 +1,6 @@
 package com.fact_checker.FactChecker.service;
 import com.fact_checker.FactChecker.model.Video;
+import com.fact_checker.FactChecker.repository.VideoRepository;
 import io.reactivex.rxjava3.core.Single;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,11 +21,13 @@ public class TextAnalysisService {
     private final String apiKey;
     private static final Logger logger = LoggerFactory.getLogger(TextAnalysisService.class);
     private static final double LOW_PERCENTAGE_THRESHOLD = 0.5;
+    private final VideoRepository videoRepository;
 
     // Inject IGroqApiClient and API key via constructor
-    public TextAnalysisService(IGroqApiClient apiClient, @Value("${groq.api.key}") String apiKey ) {
+    public TextAnalysisService(IGroqApiClient apiClient, @Value("${groq.api.key}") String apiKey, VideoRepository videoRepository) {
         this.apiClient = apiClient;
         this.apiKey = apiKey;
+        this.videoRepository = videoRepository;
     }
     
     public double analyzeText(Video video) {
@@ -45,6 +48,8 @@ public class TextAnalysisService {
         List<String> falseClaims = getFalseClaims(scoredClaims);
 
         video.setFalseStatements(falseClaims);
+
+        videoRepository.save(video);
 
         return averageScore;
 
@@ -99,7 +104,7 @@ public class TextAnalysisService {
                                                 "The flour is made of water": 100,
                                             }
                                             Important notes:
-                                            - Each key should be labeled as "statement" followed by its sequence number (e.g., "statement1").
+                                            - Each key should be labeled as its own statement.
                                             - The value for each key should be a float or integer representing the factual score.
                                             - No additional text or explanations should be included in the output; only the JSON object.
                                             Text to analyse:                                      
