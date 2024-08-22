@@ -71,15 +71,20 @@ public class TextAnalysisService {
     }
 
 
+    private static final int MAX_RETRIES = 3;
+    private static final long RETRY_DELAY_MS = 1000; // 1 second
+
     private Map<String, Double> rateClaimsByFacts(List<String> claims) {
-        try {
-            System.out.println("api key" + apiKey);
-            JsonObject request = Json.createObjectBuilder()
-                    .add("model", "Llama-3.1-8b-Instant")
-                    .add("messages", Json.createArrayBuilder()
-                            .add(Json.createObjectBuilder()
-                                    .add("role", "user")
-                                    .add("content", """
+        int retries = 0;
+        while (retries < MAX_RETRIES) {
+            try {
+                System.out.println("api key" + apiKey);
+                JsonObject request = Json.createObjectBuilder()
+                        .add("model", "Llama-3.1-8b-Instant")
+                        .add("messages", Json.createArrayBuilder()
+                                .add(Json.createObjectBuilder()
+                                        .add("role", "user")
+                                        .add("content", """
                                             Analyze the following text and evaluate the factual accuracy of each statement, assigning a score between 1 and 100. Return the results in a JSON object where each statement is represented as a key (e.g., "statement1", "statement2", etc.), and its corresponding factual score as the value.
                                             The output should strictly follow this format:
                                             {
@@ -87,41 +92,63 @@ public class TextAnalysisService {
                                               "<statement>": 98,
                                               "<statement>": 54.4
                                             }
-                                            
                                             Example Response:
-                                            
                                             {
                                                 "The moon is made of cheese": 80.05,
                                                 "The cheese is made of flour": 100,
                                                 "The flour is made of water": 100,
-                                            
                                             }
                                             Important notes:
-                                            - Each key should be labeled as the actual statement followed by its sequence number (e.g., ""The flour is made of water": 100,").
+                                            - Each key should be labeled as "statement" followed by its sequence number (e.g., "statement1").
                                             - The value for each key should be a float or integer representing the factual score.
                                             - No additional text or explanations should be included in the output; only the JSON object.
                                             Text to analyse:                                      
                                             """
-                                    ))
-                            .add(Json.createObjectBuilder()
-                                    .add("role", "user")
-                                    .add("content", claims.toString())))
-                    .build();
+                                        ))
+                                .add(Json.createObjectBuilder()
+                                        .add("role", "user")
+                                        .add("content", claims.toString())))
+                        .build();
 
-            JsonObject result = fetchSingleResponse(request);
-            JsonArray choices = result.getJsonArray("choices");
-            JsonObject firstChoice = choices.getJsonObject(0);
-            JsonObject message = firstChoice.getJsonObject("message");
-            String content = message.getString("content");
+                JsonObject result = fetchSingleResponse(request);
+                if (result == null) {
+                    throw new RuntimeException("Null response from Groq API");
+                }
 
-            logger.info("Response from Groq API: " + content);
+                JsonArray choices = result.getJsonArray("choices");
+                if (choices == null || choices.isEmpty()) {
+                    throw new RuntimeException("No choices in Groq API response");
+                }
 
-            return convertJsonToMap(content);
+                JsonObject firstChoice = choices.getJsonObject(0);
+                JsonObject message = firstChoice.getJsonObject("message");
+                String content = message.getString("content");
 
-        } catch (Exception e) {
-            logger.error("Error while fetching response from Groq API", e);
-            return null;
+                logger.info("Response from Groq API: {}", content);
+
+                Map<String, Double> scoredClaims = convertJsonToMap(content);
+                if (scoredClaims == null || scoredClaims.isEmpty()) {
+                    throw new RuntimeException("Failed to parse claims from API response");
+                }
+
+                return scoredClaims;
+
+            } catch (Exception e) {
+                logger.error("Error while fetching response from Groq API (Attempt {} of {})", retries + 1, MAX_RETRIES, e);
+                retries++;
+                if (retries < MAX_RETRIES) {
+                    try {
+                        Thread.sleep(RETRY_DELAY_MS);
+                    } catch (InterruptedException ie) {
+                        Thread.currentThread().interrupt();
+                        logger.error("Retry delay interrupted", ie);
+                    }
+                }
+            }
         }
+
+        logger.error("Failed to fetch response from Groq API after {} attempts", MAX_RETRIES);
+        return null;
     }
 
     Map<String, Double> convertJsonToMap(String content){

@@ -105,7 +105,7 @@ class TextAnalysisServiceTest {
         assertTrue(video.getFalseStatements().isEmpty());
 
         // Verify that the API was called
-        verify(apiClient, times(2)).createChatCompletionAsync(any(JsonObject.class));
+        verify(apiClient, times(4)).createChatCompletionAsync(any(JsonObject.class));
     }
     @Test
     void getFalseClaims_shouldReturnCorrectClaims() {
