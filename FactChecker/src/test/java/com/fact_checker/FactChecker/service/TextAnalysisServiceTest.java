@@ -1,6 +1,7 @@
 package com.fact_checker.FactChecker.service;
 
 import com.fact_checker.FactChecker.model.Video;
+import com.fact_checker.FactChecker.repository.VideoRepository;
 import io.reactivex.rxjava3.core.Single;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,9 +27,12 @@ class TextAnalysisServiceTest {
 
     private TextAnalysisService textAnalysisService;
 
+    @Mock
+    private VideoRepository videoRepository;
+
     @BeforeEach
     void setUp() {
-        textAnalysisService = new TextAnalysisService(apiClient, "test-api-key");
+        textAnalysisService = new TextAnalysisService(apiClient, "test-api-key", videoRepository);
     }
 
     @Test
