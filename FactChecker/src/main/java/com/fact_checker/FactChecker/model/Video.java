@@ -75,7 +75,7 @@ public class Video {
      */
 
     @Column(name = "fact_percentage")
-    private double  factPercentage;
+    private Double  factPercentage;
 
     /**
      * The list of false statements extracted from the video content.

@@ -86,8 +86,8 @@ class TextAnalysisServiceTest {
 
         // Assert
         assertEquals(0.0, result, 0.01);
-        assertEquals(0.0, video.getFactPercentage(), 0.01);
-        assertTrue(video.getFalseStatements().isEmpty());
+        assertNull(video.getFactPercentage());
+        assertNull(video.getFalseStatements());
     }
 
     @Test
@@ -105,8 +105,8 @@ class TextAnalysisServiceTest {
 
         // Assert
         assertEquals(0.0, result, 0.001);
-        assertEquals(0.0, video.getFactPercentage(), 0.001);
-        assertTrue(video.getFalseStatements().isEmpty());
+        assertNull(video.getFactPercentage());
+        assertNull(video.getFalseStatements());
 
         // Verify that the API was called
         verify(apiClient, times(6)).createChatCompletionAsync(any(JsonObject.class));
