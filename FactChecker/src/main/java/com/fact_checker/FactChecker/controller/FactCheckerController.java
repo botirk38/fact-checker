@@ -2,12 +2,12 @@ package com.fact_checker.FactChecker.controller;
 
 import com.fact_checker.FactChecker.model.User;
 import com.fact_checker.FactChecker.model.Video;
+import com.fact_checker.FactChecker.service.TextAnalysisService;
 import com.fact_checker.FactChecker.service.UserService;
 import com.fact_checker.FactChecker.service.VideoService;
 import com.fact_checker.FactChecker.model.TermItem;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -16,6 +16,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.slf4j.Logger;
 import java.util.List;
 
 @Controller
@@ -24,11 +25,13 @@ public class FactCheckerController implements ErrorController {
 
   private final VideoService videoService;
   private final UserService userService;
+  private final TextAnalysisService textAnalysisService;
   private static final Logger logger = LoggerFactory.getLogger(FactCheckerController.class);
 
-  public FactCheckerController(VideoService videoService, UserService userService) {
+  public FactCheckerController(VideoService videoService, UserService userService, TextAnalysisService textAnalysisService) {
     this.videoService = videoService;
     this.userService = userService;
+    this.textAnalysisService = textAnalysisService;
   }
 
   @GetMapping("/login")
@@ -63,14 +66,13 @@ public class FactCheckerController implements ErrorController {
   }
 
   @GetMapping("/error")
-  public String handleError(HttpServletRequest request, Model model) throws InterruptedException {
+  public String handleError(HttpServletRequest request, Model model) {
     Object status = request.getAttribute(RequestDispatcher.ERROR_STATUS_CODE);
     Object error = request.getAttribute(RequestDispatcher.ERROR_MESSAGE);
 
     model.addAttribute("error", error);
     model.addAttribute("status", status);
 
-    Thread.sleep(3000);
     return "error";
   }
 
@@ -125,7 +127,7 @@ public class FactCheckerController implements ErrorController {
 
   @PostMapping("/fact-check-video")
   public String factCheckVideo(@RequestParam("videoFile") MultipartFile videoFile,
-                               RedirectAttributes redirectAttributes, @AuthenticationPrincipal User user) {
+                               RedirectAttributes redirectAttributes , @AuthenticationPrincipal User user ){
     if (videoFile.isEmpty() || videoFile.getSize() == 0 || videoFile.getOriginalFilename() == null) {
       redirectAttributes.addFlashAttribute("message", "Please upload a valid video file.");
       return "redirect:/fact-check-video";
@@ -137,36 +139,29 @@ public class FactCheckerController implements ErrorController {
       return "redirect:/fact-check-video";
     }
 
-    if (user == null) {
-        redirectAttributes.addFlashAttribute("message", "Please login to upload a video.");
-        return "redirect:/fact-check-video";
-    }
 
-      try {
+
+    try {
       redirectAttributes.addFlashAttribute("message", "Processing video, please wait! ⌛");
 
       Video video = videoService.processAndSaveVideo(videoFile, user).join();
       String extractedText = video.getTranscriptionText();
 
-      if (extractedText == null) {
+      if (extractedText == null || extractedText.isEmpty()) {
         redirectAttributes.addFlashAttribute("message", "Could not extract text from video.");
         return "redirect:/fact-check-video";
       }
-      redirectAttributes.addFlashAttribute("message", "Successfully uploaded file. " + extractedText);
 
+      double factCheckPercentage = textAnalysisService.analyzeText(video);
+
+
+      redirectAttributes.addFlashAttribute("message", "Successfully uploaded file. " + extractedText+ " Fact Check Percentage: " + factCheckPercentage + "%");
     } catch (Exception e) {
       redirectAttributes.addFlashAttribute("message", "Could not upload file." + e.getMessage());
       return "redirect:/fact-check-video";
     }
 
     return "redirect:/fact-check-video";
-  }
-
-  @GetMapping("/home")
-  public String home(Model model) {
-    model.addAttribute("videos", videoService.getAllVideos());
-    return "home";
-
   }
 
   @GetMapping("/videos/{id}")
@@ -191,6 +186,12 @@ public class FactCheckerController implements ErrorController {
     }
   }
 
+  @GetMapping("/home")
+  public String home(Model model) {
+    model.addAttribute("videos", videoService.getAllVideos());
+    return "home";
+
+  }
 
 
 }

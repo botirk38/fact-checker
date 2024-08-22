@@ -136,6 +136,36 @@
                 <div>Uploaded by: <span th:text="${video.user.username}">Username</span></div>
                 <div th:text="${#temporals.format(video.processedAt, 'dd MMM yyyy')}">2 days ago</div>
             </div>
+
+            <div class="flex flex-col gap-4 mt-4">
+
+                <div class="flex items-center space-x-4 w-full">
+                    <div class="relative w-full h-4 bg-gray-200 rounded-full overflow-hidden">
+                        <div id="progressBar"
+                             class="h-full rounded-full transition-all duration-300 ease-in-out"
+                             th:style="'width: ' + ${video.factPercentage} + '%; background-color: ' + ${
+           video.factPercentage < 33 ? 'rgb(239, 68, 68)' :
+           (video.factPercentage < 66 ? 'rgb(234, 179, 8)' : 'rgb(34, 197, 94)')
+         }"
+                        ></div>
+                    </div>
+                    <span id="percentageValue" class="text-lg font-semibold" th:text="${#numbers.formatDecimal(video.factPercentage, 1, 1) + '%'}"></span>
+                </div>
+
+
+
+                    <h3 class="font-bold text-muted-foreground">False Statements</h3>
+                    <ul th:each="falseStatement: ${video.falseStatements}">
+
+                        <li class="flex gap-4 items-center">
+                                <p>
+                                    <span class="text-muted-foreground" th:text="${falseStatement}">Text</span>
+                                </p>
+                        </li>
+
+
+                    </ul>
+            </div>
         </div>
 
     </div>
