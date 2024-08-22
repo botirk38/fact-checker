@@ -72,7 +72,6 @@ public class TextAnalysisService {
 
 
     private Map<String, Double> rateClaimsByFacts(List<String> claims) {
-
         try {
             System.out.println("api key" + apiKey);
             JsonObject request = Json.createObjectBuilder()
@@ -103,7 +102,10 @@ public class TextAnalysisService {
                                             - No additional text or explanations should be included in the output; only the JSON object.
                                             Text to analyse:                                      
                                             """
-                                    )))
+                                    ))
+                            .add(Json.createObjectBuilder()
+                                    .add("role", "user")
+                                    .add("content", claims.toString())))
                     .build();
 
             JsonObject result = fetchSingleResponse(request);
@@ -112,13 +114,14 @@ public class TextAnalysisService {
             JsonObject message = firstChoice.getJsonObject("message");
             String content = message.getString("content");
 
+            logger.info("Response from Groq API: " + content);
+
             return convertJsonToMap(content);
 
         } catch (Exception e) {
             logger.error("Error while fetching response from Groq API", e);
             return null;
         }
-
     }
 
     Map<String, Double> convertJsonToMap(String content){
@@ -146,6 +149,7 @@ public class TextAnalysisService {
 
             JsonObject result = fetchSingleResponse(request);
             String content = result.getJsonArray("choices").getJsonObject(0).getJsonObject("message").getString("content");
+            logger.info("Claims: {}", content);
             return Arrays.asList(content.split("\\*"));
         } catch (Exception e) {
             logger.error("Error while generating claims: {} ", e.getMessage());
