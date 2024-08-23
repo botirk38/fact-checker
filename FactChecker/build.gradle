@@ -69,6 +69,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-cache'
 	implementation 'com.github.vladimir-bukhtoyarov:bucket4j-core:7.6.0'
 	implementation 'com.github.vladimir-bukhtoyarov:bucket4j-jcache:7.6.0'
+	implementation 'com.knuddels:jtokkit:1.1.0'
 
 	compileOnly 'org.projectlombok:lombok:1.18.22'
 	annotationProcessor 'org.projectlombok:lombok'
