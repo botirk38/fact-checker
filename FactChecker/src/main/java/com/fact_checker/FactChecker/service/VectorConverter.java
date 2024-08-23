@@ -3,7 +3,7 @@ import java.util.*;
 
 public class VectorConverter {
     private Map<String, Double> idf;
-    private Map<String, Map<String, Double>> documentVectors;
+    public Map<String, Map<String, Double>> documentVectors;
 
     public VectorConverter() {
             this.idf = new HashMap<>();

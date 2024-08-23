@@ -60,7 +60,6 @@ public class TextAnalysisService {
             String numberStr = matcher.group(1);
             numbersList.add(Double.parseDouble(numberStr));
         }
-
         return numbersList;
     }
 

@@ -1,16 +1,13 @@
 package com.fact_checker.FactChecker.controller;
 
+import com.fact_checker.FactChecker.model.TermItem;
 import com.fact_checker.FactChecker.model.Video;
 import com.fact_checker.FactChecker.service.TextAnalysisService;
 import com.fact_checker.FactChecker.service.UserService;
 import com.fact_checker.FactChecker.service.VideoService;
-import com.fact_checker.FactChecker.model.TermItem;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.boot.web.servlet.error.ErrorController;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.security.core.Authentication;
+
 import java.util.List;
 
 @Controller
