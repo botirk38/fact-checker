@@ -35,20 +35,33 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Service class for processing video files.
+ * This class handles video processing tasks such as extracting audio, performing speech recognition,
+ * and generating thumbnails.
+ */
 @Service
 public class VideoProcessor {
 
   private static final int BIT_RATE = 19200;
   private static final int AUDIO_QUALITY = 0;
   private static final Logger logger = LoggerFactory.getLogger(VideoProcessor.class);
+  private static final String TRANSCRIPTIONS_ENDPOINT = "audio/transcriptions";
 
   private final ExecutorService executorService;
   private final RestTemplate restTemplate;
   private final OpenAIConfig openAiConfig;
   private final String thumbnailUploadPath;
 
+  /**
+   * Constructor for VideoProcessor.
+   *
+   * @param restTemplate RestTemplate for making HTTP requests
+   * @param openAiConfig Configuration for OpenAI API
+   * @param thumbnailUploadPath Path for uploading thumbnails
+   */
   public VideoProcessor(RestTemplate restTemplate, OpenAIConfig openAiConfig,
-      @Value("${thumbnail.upload.path}") String thumbnailUploadPath) {
+                        @Value("${thumbnail.upload.path}") String thumbnailUploadPath) {
     this.executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
     this.restTemplate = restTemplate;
     this.openAiConfig = openAiConfig;
@@ -56,6 +69,10 @@ public class VideoProcessor {
     initializeThumbnailDirectory();
   }
 
+  /**
+   * Initializes the thumbnail directory.
+   * Creates the directory if it doesn't exist and checks if it's writable.
+   */
   private void initializeThumbnailDirectory() {
     Path thumbnailUploadPathDir = Paths.get(thumbnailUploadPath);
     if (!Files.exists(thumbnailUploadPathDir)) {
@@ -71,14 +88,21 @@ public class VideoProcessor {
     }
   }
 
+  /**
+   * Extracts text from speech in a video file.
+   *
+   * @param filePath Path to the video file
+   * @param filename Name of the video file
+   * @return CompletableFuture<Video> containing processed video information
+   */
   @Cacheable(value = "videos", key = "#filename")
   public CompletableFuture<Video> extractTextFromSpeech(Path filePath, String filename) {
     return CompletableFuture.supplyAsync(() -> {
       try {
-        File videoFile = filePath.toFile();
-        byte[] audioData = extractAudioFromVideo(new FileInputStream(videoFile));
+        byte[] fileBytes = Files.readAllBytes(filePath);
+        byte[] audioData = extractAudioFromVideo(new ByteArrayInputStream(fileBytes));
         String transcriptionText = performSpeechRecognition(audioData);
-        String thumbnailPath = extractThumbnail(new FileInputStream(videoFile), filename);
+        String thumbnailPath = extractThumbnail(new ByteArrayInputStream(fileBytes), filename);
 
         Video video = new Video();
         video.setFileName(filename);
@@ -95,11 +119,18 @@ public class VideoProcessor {
     }, executorService);
   }
 
+  /**
+   * Extracts audio from a video input stream.
+   *
+   * @param videoInputStream InputStream of the video file
+   * @return byte array containing the extracted audio data
+   * @throws IOException if an I/O error occurs
+   */
   @Cacheable(value = "audioExtractions", key = "#videoInputStream.hashCode()")
-  byte[] extractAudioFromVideo(InputStream videoInputStream) throws IOException {
+  public byte[] extractAudioFromVideo(InputStream videoInputStream) throws IOException {
     File tempFile = File.createTempFile("audio", ".mp3");
     try (FFmpegFrameRecorder recorder = new FFmpegFrameRecorder(tempFile, 0);
-        FFmpegFrameGrabber grabber = new FFmpegFrameGrabber(videoInputStream)) {
+         FFmpegFrameGrabber grabber = new FFmpegFrameGrabber(videoInputStream)) {
       grabber.start();
       recorder.setAudioCodec(avcodec.AV_CODEC_ID_MP3);
       recorder.setSampleRate(grabber.getSampleRate());
@@ -126,8 +157,14 @@ public class VideoProcessor {
     }
   }
 
+  /**
+   * Performs speech recognition on audio data.
+   *
+   * @param audioData byte array containing audio data
+   * @return String containing the transcribed text
+   */
   @Cacheable(value = "transcriptions", key = "#audioData.hashCode()")
-  String performSpeechRecognition(byte[] audioData) {
+  public String performSpeechRecognition(byte[] audioData) {
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.MULTIPART_FORM_DATA);
     headers.set(HttpHeaders.AUTHORIZATION, "Bearer " + openAiConfig.getApiKey());
@@ -145,10 +182,10 @@ public class VideoProcessor {
       HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
 
       ResponseEntity<TranscriptionResponse> response = restTemplate.exchange(
-          openAiConfig.getApiUrl(),
-          HttpMethod.POST,
-          requestEntity,
-          TranscriptionResponse.class);
+              openAiConfig.getApiUrl() +  TRANSCRIPTIONS_ENDPOINT,
+              HttpMethod.POST,
+              requestEntity,
+              TranscriptionResponse.class);
 
       if (!tempFile.delete()) {
         logger.warn("Failed to delete temporary speech file: {}", tempFile.getAbsolutePath());
@@ -166,17 +203,24 @@ public class VideoProcessor {
     }
   }
 
+  /**
+   * Extracts a thumbnail from a video input stream.
+   *
+   * @param videoInputStream InputStream of the video file
+   * @param filename Name of the video file
+   * @return String containing the path to the extracted thumbnail
+   * @throws IOException if an I/O error occurs
+   */
   @Cacheable(value = "thumbnails", key = "#filename")
-  String extractThumbnail(InputStream videoInputStream, String filename) throws IOException {
+  public String extractThumbnail(InputStream videoInputStream, String filename) throws IOException {
     try (FFmpegFrameGrabber grabber = new FFmpegFrameGrabber(videoInputStream);
-        Java2DFrameConverter converter = new Java2DFrameConverter()) {
+         Java2DFrameConverter converter = new Java2DFrameConverter()) {
       grabber.start();
       long durationInMicroseconds = grabber.getLengthInTime();
       if (durationInMicroseconds <= 0) {
         throw new VideoProcessingException("Unable to determine video duration", null);
       }
 
-      // Attempt to grab frame at 10% of the video duration
       long targetPosition = durationInMicroseconds / 10;
       grabber.setTimestamp(targetPosition, true);
       Frame frame = grabber.grabImage();
@@ -198,11 +242,19 @@ public class VideoProcessor {
     }
   }
 
+  /**
+   * Clears caches for a specific video file.
+   *
+   * @param filename Name of the video file
+   */
   @CacheEvict(value = { "videos", "audioExtractions", "transcriptions", "thumbnails" }, key = "#filename")
   public void clearCaches(String filename) {
     logger.info("Cleared caches for video: {}", filename);
   }
 
+  /**
+   * Shuts down the executor service.
+   */
   @PreDestroy
   public void shutdown() {
     executorService.shutdown();
@@ -216,10 +268,12 @@ public class VideoProcessor {
     }
   }
 
+  /**
+   * Inner class representing the response from the transcription service.
+   */
   @Getter
   @Setter
   protected static class TranscriptionResponse {
     private String text;
   }
 }
-

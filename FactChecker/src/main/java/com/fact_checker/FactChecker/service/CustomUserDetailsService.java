@@ -31,7 +31,6 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     /**
      * Loads a user by their username.
-     *
      * This method is used by Spring Security to load user-specific data during authentication.
      * It retrieves the user from the database based on the provided username.
      *
@@ -46,11 +45,6 @@ public class CustomUserDetailsService implements UserDetailsService {
 
         logger.debug("Loaded user: {}", username);
         logger.debug("Stored password hash: {}", user.getPassword());
-
-        // Deencode the password from the stored hash.
-
-
-
 
         return user;
     }

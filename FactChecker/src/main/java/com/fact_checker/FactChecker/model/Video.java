@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * Represents a video entity in the fact-checking system.
@@ -50,6 +51,7 @@ public class Video {
     /**
      * The date and time when the video was processed.
      */
+
     @Column(name = "processed_at", nullable = false)
     private LocalDateTime processedAt;
 
@@ -64,14 +66,24 @@ public class Video {
      * The user who uploaded the video.
      */
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     private User user;
 
+    /**
+     * The fact percentage of the video content.
+     */
+
+    @Column(name = "fact_percentage")
+    private Double  factPercentage;
 
     /**
-     * The fact percentage score of the video after text analysis.
+     * The list of false statements extracted from the video content.
      */
-    @Column(name = "fact_percentage")
-    private Integer factPercentage;
+
+    @Column(name="false_statements")
+    @ElementCollection(fetch = FetchType.EAGER)
+    private List<String> falseStatements;
+
+
 }

@@ -26,11 +26,11 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
                 </svg>
             </button>
-            <div th:if="${param.error}" class="mt-4 p-4 bg-red-100 text-red-700 rounded-md" role="alert">
-                <p th:text="${param.error[1]}"></p>
+            <div th:if="${param.message}" class="mt-4 p-4 bg-red-100 text-red-700 rounded-md" role="alert">
+                <p th:text="${param.message[0]}"></p>
             </div>
             <div th:if="${param.success}" class="mt-4 p-4 bg-green-100 text-green-700 rounded-md" role="alert">
-                <p th:text="${param.success[1]}"></p>
+                <p th:text="${param.success[0]}"></p>
             </div>
         </form>
         <div class="p-6">

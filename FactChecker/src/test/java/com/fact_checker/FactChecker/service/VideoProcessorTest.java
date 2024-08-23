@@ -102,7 +102,7 @@ class VideoProcessorTest {
         eq(HttpMethod.POST),
         any(HttpEntity.class),
         eq(VideoProcessor.TranscriptionResponse.class))).thenReturn(mockResponse);
-    when(openAIConfig.getApiUrl()).thenReturn("https://api.openai.com/v1/audio/transcriptions");
+    when(openAIConfig.getApiUrl()).thenReturn("https://api.openai.com/v1/");
     when(openAIConfig.getApiKey()).thenReturn("test-api-key");
 
     // Act

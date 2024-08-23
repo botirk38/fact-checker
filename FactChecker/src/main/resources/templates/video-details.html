@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Video Upload</title>
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" th:href="@{/css/tailwind-output.css}"/>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/tailwind-output.css}" />
+    <title>Video Page</title>
 </head>
 <body>
+
 <div class="flex flex-col min-h-dvh">
 
 
@@ -117,46 +118,82 @@
 </header>
 
 
-    <main class="flex-1 bg-muted/40 py-8 px-4 lg:px-6">
+<div class="grid grid-cols-1 md:grid-cols-[3fr_1fr] gap-6 p-4 md:p-6">
+    <div class="rounded-lg overflow-hidden">
+        <video
+                class="w-full aspect-video"
+                controls=""
+                th:src="@{'/videos-storage/' + ${video.fileName}}"
+        ></video>
 
-<form th:action="@{/fact-check-video}" method="post" enctype="multipart/form-data">
-    <div class="w-full max-w-3xl mx-auto p-6 bg-background rounded-lg shadow-md">
-        <div class="flex flex-col items-center justify-center p-6 border-2 border-dashed border-muted rounded-lg">
-            <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    class="w-12 h-12 text-muted"
-            >
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                <polyline points="17 8 12 3 7 8"></polyline>
-                <line x1="12" x2="12" y1="3" y2="15"></line>
-            </svg>
-            <p class="mt-4 text-lg text-muted-foreground">Drop your video file here or click to upload</p>
-            <input
-                    class="flex h-10 w-full border border-input text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 mt-4 px-4 py-2 bg-primary text-primary-foreground rounded-md cursor-pointer"
-                    accept="video/*"
-                    type="file"
-                    name="videoFile"
-            />
-            <button type="submit" class="mt-4 px-4 py-2 bg-primary text-primary-foreground rounded-md cursor-pointer">Upload</button>
-        </div>
+        <div>
+            <h1 class="text-2xl font-bold" th:text="${video.fileName}">Video Title</h1>
+            <p class="text-muted-foreground" th:text="${video.transcriptionText}">
+                Video transcription text goes here.
+            </p>
+            <div class="flex items-center gap-4 mt-4 text-sm text-muted-foreground">
+                <div th:text="${#temporals.format(video.processedAt, 'HH:mm')}">12:34</div>
+                <div>Uploaded by: <span th:text="${video.user.username}">Username</span></div>
+                <div th:text="${#temporals.format(video.processedAt, 'dd MMM yyyy')}">2 days ago</div>
+            </div>
 
-        <!-- Display flash message if available -->
-        <div th:if="${message}" class="mt-4 p-4 bg-green-100 text-green-700 rounded-md">
-            <p th:text="${message}"></p>
+            <div class="flex flex-col gap-4 mt-4">
+
+                <div class="flex items-center space-x-4 w-full">
+                    <div class="relative w-full h-4 bg-gray-200 rounded-full overflow-hidden">
+                        <div id="progressBar"
+                             class="h-full rounded-full transition-all duration-300 ease-in-out"
+                             th:style="'width: ' + ${video.factPercentage} + '%; background-color: ' + ${
+           video.factPercentage < 33 ? 'rgb(239, 68, 68)' :
+           (video.factPercentage < 66 ? 'rgb(234, 179, 8)' : 'rgb(34, 197, 94)')
+         }"
+                        ></div>
+                    </div>
+                    <span id="percentageValue" class="text-lg font-semibold" th:text="${video.factPercentage != null ? #numbers.formatDecimal(video.factPercentage, 1, 1) + '%' : 'Failed to analyze video'}"></span>
+
+                </div>
+
+                <h3 class="font-bold text-muted-foreground">False Statements</h3>
+                <div th:if="${not #lists.isEmpty(video.falseStatements)}">
+                    <ul th:each="falseStatement: ${video.falseStatements}">
+                        <li class="flex gap-4 items-center">
+                            <p>
+                                <span class="text-muted-foreground" th:text="${falseStatement}">Text</span>
+                            </p>
+                        </li>
+                    </ul>
+                </div>
+                <div th:unless="${not #lists.isEmpty(video.falseStatements)}" class="text-muted-foreground italic">
+                    No false statements found for this video.
+                </div>
+            </div>
         </div>
 
     </div>
-</form>
-    </main>
-
+    <div class="grid gap-6">
+        <div>
+            <h2 class="text-lg font-semibold mb-4">Related Videos</h2>
+            <div class="grid gap-4">
+                <!-- This section would ideally be populated with actual related videos -->
+                <div class="flex gap-4">
+                    <img
+                            th:src="@{'/thumbnails/' + ${video.thumbnailPath}}"
+                            width="120"
+                            height="80"
+                            alt="Thumbnail"
+                            class="rounded-md object-cover"
+                            style="aspect-ratio: 120 / 80; object-fit: cover;"
+                    />
+                    <div>
+                        <h3 class="font-medium line-clamp-2">Related Video Title</h3>
+                        <div class="text-sm text-muted-foreground">Views count</div>
+                    </div>
+                </div>
+                <!-- Repeat this structure for other related videos -->
+            </div>
+        </div>
+    </div>
+</div>
 
 <footer class="bg-background border-t px-4 lg:px-6 py-6 flex items-center justify-between">
     <div class="text-xs text-muted-foreground">© <span th:text="${#dates.year(#dates.createNow())}"></span> Fact Checker. All rights reserved.</div>
@@ -176,7 +213,6 @@
         </a>
     </nav>
 </footer>
-
 </div>
 </body>
 </html>

@@ -1,41 +1,37 @@
 # Build stage
 FROM gradle:8.5-jdk21 AS build
-RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
-    && apt-get install -y nodejs
 
-# Set the working directory
+# Install Node.js in a single layer
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
+    apt-get update && \
+    apt-get install -y nodejs && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
 WORKDIR /app
 
-# Copy package.json, package-lock.json, and tailwind.config.js
+# Copy only necessary files for npm install
 COPY package.json package-lock.json* tailwind.config.js ./
+RUN npm ci --only=production
 
-# Install npm dependencies
-RUN npm install
-
-# Copy the CSS source files
+# Copy and build CSS
 COPY src/main/resources/static/css ./src/main/resources/static/css
 COPY src/main/resources/templates ./src/main/resources/templates
-
-# Run the CSS build
 RUN npm run build-css
 
-# Copy the build files
+# Copy Gradle files and download dependencies
 COPY build.gradle settings.gradle ./
 COPY gradle ./gradle
+RUN gradle dependencies --no-daemon
 
-# Copy the Checkstyle configuration
+# Copy source code and build
 COPY config ./config
-
-# Now copy the rest of the source code
 COPY src ./src
-
-# Build the application
-RUN gradle build --no-daemon
+RUN gradle build --no-daemon -x test
 
 # Runtime stage
 FROM eclipse-temurin:21-jre-jammy
 
-# Set the working directory
 WORKDIR /app
 
 # Copy the built artifact from the build stage
@@ -48,4 +44,4 @@ EXPOSE 8080
 ENV JAVA_OPTS="-XX:+UseContainerSupport -XX:MaxRAMPercentage=75"
 
 # Run the application
-ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]
+CMD ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]
