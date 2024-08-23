@@ -46,6 +46,7 @@ public class VideoProcessor {
   private static final int BIT_RATE = 19200;
   private static final int AUDIO_QUALITY = 0;
   private static final Logger logger = LoggerFactory.getLogger(VideoProcessor.class);
+  private static final String TRANSCRIPTIONS_ENDPOINT = "audio/transcriptions";
 
   private final ExecutorService executorService;
   private final RestTemplate restTemplate;
@@ -181,7 +182,7 @@ public class VideoProcessor {
       HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
 
       ResponseEntity<TranscriptionResponse> response = restTemplate.exchange(
-              openAiConfig.getApiUrl(),
+              openAiConfig.getApiUrl() +  TRANSCRIPTIONS_ENDPOINT,
               HttpMethod.POST,
               requestEntity,
               TranscriptionResponse.class);
