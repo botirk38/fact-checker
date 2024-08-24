@@ -170,29 +170,31 @@
         </div>
 
     </div>
-    <div class="grid gap-6">
-        <div>
-            <h2 class="text-lg font-semibold mb-4">Related Videos</h2>
-            <div class="grid gap-4">
-                <!-- This section would ideally be populated with actual related videos -->
-                <div class="flex gap-4">
-                    <img
-                            th:src="@{'/thumbnails/' + ${video.thumbnailPath}}"
-                            width="120"
-                            height="80"
-                            alt="Thumbnail"
-                            class="rounded-md object-cover"
-                            style="aspect-ratio: 120 / 80; object-fit: cover;"
-                    />
-                    <div>
-                        <h3 class="font-medium line-clamp-2">Related Video Title</h3>
-                        <div class="text-sm text-muted-foreground">Views count</div>
-                    </div>
+
+    <div>
+        <h2 class="text-lg font-semibold mb-4">Related Videos</h2>
+        <div class="grid gap-4">
+            <!-- Loop over relatedVideos -->
+            <div th:each="relatedVideo : ${relatedVideos}" class="flex gap-4">
+                <a th:href="@{/videos/{id}(id=${relatedVideo.id})}" class="flex items-center gap-2">
+
+                <img
+                        th:src="@{'/thumbnails/' + ${relatedVideo.thumbnailPath}}"
+                        width="120"
+                        height="80"
+                        alt="Thumbnail"
+                        class="rounded-md object-cover"
+                        style="aspect-ratio: 120 / 80; object-fit: cover;"
+                />
+                <div>
+                    <h3 class="font-medium line-clamp-2" th:text="${relatedVideo.fileName}">Related Video Title</h3>
+                    <div class="text-sm text-muted-foreground" th:text="${randomNum}">Views count</div>
                 </div>
-                <!-- Repeat this structure for other related videos -->
+                </a>
             </div>
         </div>
     </div>
+</div>
 </div>
 
 <footer class="bg-background border-t px-4 lg:px-6 py-6 flex items-center justify-between">

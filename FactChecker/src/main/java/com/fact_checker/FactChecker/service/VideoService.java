@@ -180,6 +180,10 @@ public class VideoService {
     return videoRepository.findAll();
   }
 
+  public List<Video> findSimilarVideos(String vector) {
+    return videoRepository.findSimilarVideos(vector);
+  }
+
 
   public Video getVideo(Long id) {
         return videoRepository.findById(id).orElse(null);

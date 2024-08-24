@@ -17,6 +17,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.slf4j.Logger;
+import java.util.Random;
+
+import java.util.Arrays;
 import java.util.List;
 
 @Controller
@@ -189,10 +192,24 @@ public class FactCheckerController implements ErrorController {
         redirectAttributes.addAttribute("error", "Video not found");
         return "redirect:/error";
       }
+      double[] queryVector = video.getTranscriptionsEmbeddings();
+      String vectorString = "[" + String.join(",", Arrays.stream(queryVector)
+              .mapToObj(String::valueOf)
+              .toArray(String[]::new)) + "]";
+
+      List<Video> relatedVideos = videoService.findSimilarVideos(vectorString);
+
+      // Generate Random integer
+
+      Random rand = new Random();
+      int randomInt = rand.nextInt(0, 100000);
+
 
       model.addAttribute("video", video);
       model.addAttribute("username", video.getUser().getUsername());
       model.addAttribute("processedAt", video.getProcessedAt());
+      model.addAttribute("relatedVideos", relatedVideos);
+      model.addAttribute("randomNum", randomInt);
 
       return "video-details";
     } catch (Exception e) {
