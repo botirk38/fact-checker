@@ -34,11 +34,14 @@ class VideoProcessorTest {
   @Mock
   private OpenAIConfig openAIConfig;
 
+  @Mock
+  private VectorizationService vectorizationService;
+
   private VideoProcessor videoProcessor;
 
   @BeforeEach
   void setUp() {
-    videoProcessor = new VideoProcessor(restTemplate, openAIConfig, "test-upload-path");
+    videoProcessor = new VideoProcessor(restTemplate, openAIConfig, "test-upload-path", vectorizationService );
   }
 
   @Test
