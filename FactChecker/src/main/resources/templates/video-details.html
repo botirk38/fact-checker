@@ -32,7 +32,7 @@
             </svg>
             <span class="text-lg font-bold">Truth Lens</span>
         </a>
-        <form class="relative flex-1">
+        <form class="relative flex-1"  th:action="@{/search}" method="get">
             <div class="absolute inset-y-0 left-2 flex items-center">
                 <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -54,6 +54,7 @@
                     class="flex h-10 border border-input px-3 ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 w-full rounded-full bg-muted pl-8 pr-4 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary"
                     placeholder="Search"
                     type="search"
+                    name="query"
             />
         </form>
     </div>
