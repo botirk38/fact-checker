@@ -233,6 +233,9 @@ public class FactCheckerController implements ErrorController {
               + String.join(
                   ",", Arrays.stream(queryVector).mapToObj(String::valueOf).toArray(String[]::new))
               + "]";
+      String vectorString = "[" + String.join(",", Arrays.stream(queryVector)
+              .mapToObj(String::valueOf)
+              .toArray(String[]::new)) + "]";
 
       List<Video> relatedVideos = videoService.findSimilarVideos(vectorString);
 
@@ -240,6 +243,7 @@ public class FactCheckerController implements ErrorController {
 
       Random rand = new Random();
       int randomInt = rand.nextInt(0, 100000);
+
 
       model.addAttribute("video", video);
       model.addAttribute("username", video.getUser().getUsername());
