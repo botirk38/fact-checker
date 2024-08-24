@@ -16,13 +16,13 @@ import java.time.Duration;
 public class RateLimiterConfig {
 
     /** Maximum number of requests allowed within the refresh period. */
-    private static final int MAX_NUMBER_OF_REQUESTS = 100;
+    private static final int MAX_NUMBER_OF_REQUESTS = 200;
 
     /** Refresh period in minutes. */
     private static final int REFRESH_PERIOD = 1;
 
     /** Maximum number of tokens that can be accumulated (burst capacity). */
-    private static final long OVERDRAFT = 150;
+    private static final long OVERDRAFT = 250;
 
     /**
      * Creates and configures a new Bucket for rate limiting.
