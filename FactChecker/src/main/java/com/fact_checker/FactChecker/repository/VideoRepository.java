@@ -60,4 +60,15 @@ public interface VideoRepository extends JpaRepository<Video, Long> {
     @Modifying
     @Query("DELETE FROM Video vt WHERE vt.processedAt < :date")
     void deleteTranscriptionsOlderThan(@Param("date") LocalDateTime date);
+
+    /**
+     * Finds the 10 most similar videos to the given video by cosine similarity.
+     * @param queryVector the vector to compare the other videos to
+     * @return a List of Videos ordered by cosine similarity
+     */
+    @Query(value = "SELECT v.*, vec_cosine_distance(v.transcriptions_embeddings, CAST(?1 AS VECTOR(768))) AS distance " +
+            "FROM videos v " +
+            "ORDER BY distance " +
+            "LIMIT 10", nativeQuery = true)
+    List<Video> findSimilarVideos(String vectorString);
 }

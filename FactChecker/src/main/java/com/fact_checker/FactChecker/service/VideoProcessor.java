@@ -29,6 +29,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
@@ -52,6 +53,7 @@ public class VideoProcessor {
   private final RestTemplate restTemplate;
   private final OpenAIConfig openAiConfig;
   private final String thumbnailUploadPath;
+  private final VectorizationService vectorizationService;
 
   /**
    * Constructor for VideoProcessor.
@@ -59,13 +61,15 @@ public class VideoProcessor {
    * @param restTemplate RestTemplate for making HTTP requests
    * @param openAiConfig Configuration for OpenAI API
    * @param thumbnailUploadPath Path for uploading thumbnails
+   * @param vectorizationService Service for vectorizing text
    */
   public VideoProcessor(RestTemplate restTemplate, OpenAIConfig openAiConfig,
-                        @Value("${thumbnail.upload.path}") String thumbnailUploadPath) {
+                        @Value("${thumbnail.upload.path}") String thumbnailUploadPath, VectorizationService vectorizationService) {
     this.executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
     this.restTemplate = restTemplate;
     this.openAiConfig = openAiConfig;
     this.thumbnailUploadPath = thumbnailUploadPath;
+    this.vectorizationService = vectorizationService;
     initializeThumbnailDirectory();
   }
 
@@ -103,12 +107,14 @@ public class VideoProcessor {
         byte[] audioData = extractAudioFromVideo(new ByteArrayInputStream(fileBytes));
         String transcriptionText = performSpeechRecognition(audioData);
         String thumbnailPath = extractThumbnail(new ByteArrayInputStream(fileBytes), filename);
+        double[] transcriptionEmbeddings = vectorizationService.getEmbedding(transcriptionText, 768);
 
         Video video = new Video();
         video.setFileName(filename);
         video.setTranscriptionText(transcriptionText);
         video.setThumbnailPath(thumbnailPath);
         video.setProcessedAt(LocalDateTime.now());
+        video.setTranscriptionsEmbeddings(transcriptionEmbeddings);
 
         logger.info("Video processed successfully: {}", filename);
         return video;

@@ -1,5 +1,6 @@
 package com.fact_checker.FactChecker.model;
 
+import com.fact_checker.FactChecker.utils.VectorConverter;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -84,6 +85,13 @@ public class Video {
     @Column(name="false_statements")
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String> falseStatements;
+
+    /**
+     * The embeddings of the video content.
+     */
+    @Column(name = "transcriptions_embeddings", columnDefinition = "VECTOR(768)")
+    @Convert(converter = VectorConverter.class)
+    private double[] transcriptionsEmbeddings;
 
 
 }
