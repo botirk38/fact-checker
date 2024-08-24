@@ -22,6 +22,9 @@ jobs:
     - name: Run tests with JaCoCo
       env:
         OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        DB_URL_TEST: ${{ secrets.DB_URL_TEST}}
+        DB_USER_TEST: ${{ secrets.DB_USER_TEST}}
+        DB_PASS_TEST: ${{ secrets.DB_PASS_TEST}}
       run: ./gradlew test jacocoTestReport
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v3

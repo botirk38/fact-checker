@@ -24,6 +24,9 @@ jobs:
       - name: Build with Gradle
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          DB_URL_TEST: ${{ secrets.DB_URL_TEST}}
+          DB_USER_TEST: ${{ secrets.DB_USER_TEST}}
+          DB_PASS_TEST: ${{ secrets.DB_PASS_TEST}}
         run: ./gradlew build
 
   dependency-submission:
@@ -38,6 +41,9 @@ jobs:
       - name: Set up JDK 21
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          DB_URL_TEST: ${{ secrets.DB_URL_TEST}}
+          DB_USER_TEST: ${{ secrets.DB_USER_TEST}}
+          DB_PASS_TEST: ${{ secrets.DB_PASS_TEST}}
         uses: actions/setup-java@v4
         with:
           java-version: '21'
