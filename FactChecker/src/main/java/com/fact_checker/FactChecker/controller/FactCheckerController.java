@@ -110,7 +110,7 @@ public class FactCheckerController implements ErrorController {
   }
 
   @GetMapping("/privacy-policy")
-  public String privacyPolicy(HttpServletRequest request, Model model) {
+  public String privacyPolicy(Model model) {
     model.addAttribute(
         "introduction",
         "At Truth Lens, we value your privacy and are committed to protecting your personal information. This Privacy Policy explains how we collect, use, and disclose information about you when you use our website and services.");
@@ -135,7 +135,7 @@ public class FactCheckerController implements ErrorController {
   }
 
   @GetMapping("terms-of-service")
-  public String termsOfService(HttpServletRequest request, Model model) {
+  public String termsOfService(Model model) {
 
     model.addAttribute(
         "accountItems",
@@ -228,11 +228,6 @@ public class FactCheckerController implements ErrorController {
         return "redirect:/error";
       }
       double[] queryVector = video.getTranscriptionsEmbeddings();
-      String vectorString =
-          "["
-              + String.join(
-                  ",", Arrays.stream(queryVector).mapToObj(String::valueOf).toArray(String[]::new))
-              + "]";
       String vectorString = "[" + String.join(",", Arrays.stream(queryVector)
               .mapToObj(String::valueOf)
               .toArray(String[]::new)) + "]";
@@ -255,7 +250,7 @@ public class FactCheckerController implements ErrorController {
     } catch (Exception e) {
       redirectAttributes.addAttribute("error", "An error occurred while retrieving the video");
       // Log the exception
-      logger.error("Error retrieving video with id: " + id, e);
+      logger.error("Error retrieving video with id: {} ", id, e);
       return "redirect:/error";
     }
   }
