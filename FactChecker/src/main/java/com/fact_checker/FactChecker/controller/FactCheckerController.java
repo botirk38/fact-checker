@@ -1,9 +1,11 @@
 package com.fact_checker.FactChecker.controller;
 
+import com.fact_checker.FactChecker.exceptions.EmbeddingException;
 import com.fact_checker.FactChecker.model.User;
 import com.fact_checker.FactChecker.model.Video;
 import com.fact_checker.FactChecker.service.TextAnalysisService;
 import com.fact_checker.FactChecker.service.UserService;
+import com.fact_checker.FactChecker.service.VectorizationService;
 import com.fact_checker.FactChecker.service.VideoService;
 import com.fact_checker.FactChecker.model.TermItem;
 import jakarta.servlet.RequestDispatcher;
@@ -30,11 +32,17 @@ public class FactCheckerController implements ErrorController {
   private final UserService userService;
   private final TextAnalysisService textAnalysisService;
   private static final Logger logger = LoggerFactory.getLogger(FactCheckerController.class);
+  private final VectorizationService vectorizationService;
 
-  public FactCheckerController(VideoService videoService, UserService userService, TextAnalysisService textAnalysisService) {
+  public FactCheckerController(
+      VideoService videoService,
+      UserService userService,
+      TextAnalysisService textAnalysisService,
+      VectorizationService vectorizationService) {
     this.videoService = videoService;
     this.userService = userService;
     this.textAnalysisService = textAnalysisService;
+    this.vectorizationService = vectorizationService;
   }
 
   @GetMapping("/login")
@@ -49,23 +57,28 @@ public class FactCheckerController implements ErrorController {
 
   @PostMapping("/signup")
   // Can add other parameters here if needed
-  public String signup(@RequestParam String username, @RequestParam String password, @RequestParam String email,
-      @RequestParam String fullName, @RequestParam String confirmPassword, Model model) {
+  public String signup(
+      @RequestParam String username,
+      @RequestParam String password,
+      @RequestParam String email,
+      @RequestParam String fullName,
+      @RequestParam String confirmPassword,
+      Model model) {
 
     try {
 
-    if (username == null || password == null || email == null || fullName == null) {
-      model.addAttribute("error", "Please fill out all fields");
-      return "redirect:/signup";
-    }
+      if (username == null || password == null || email == null || fullName == null) {
+        model.addAttribute("error", "Please fill out all fields");
+        return "redirect:/signup";
+      }
 
-    if (!password.equals(confirmPassword)) {
-      model.addAttribute("error", "Passwords do not match");
-      return "redirect:/signup";
-    }
+      if (!password.equals(confirmPassword)) {
+        model.addAttribute("error", "Passwords do not match");
+        return "redirect:/signup";
+      }
 
-    userService.registerUser(username, password, email, fullName, "LOCAL");
-    model.addAttribute("success", "User created successfully");
+      userService.registerUser(username, password, email, fullName, "LOCAL");
+      model.addAttribute("success", "User created successfully");
     } catch (Exception e) {
       model.addAttribute("error", e.getMessage());
       return "redirect:/error/authentication";
@@ -97,47 +110,60 @@ public class FactCheckerController implements ErrorController {
   }
 
   @GetMapping("/privacy-policy")
-  public String privacyPolicy(HttpServletRequest request, Model model) {
-    model.addAttribute("introduction",
+  public String privacyPolicy(Model model) {
+    model.addAttribute(
+        "introduction",
         "At Truth Lens, we value your privacy and are committed to protecting your personal information. This Privacy Policy explains how we collect, use, and disclose information about you when you use our website and services.");
 
-    model.addAttribute("personalInfo",
+    model.addAttribute(
+        "personalInfo",
         "We may collect personal information such as your name, email address, and contact details when you sign up for our services, make a purchase, or contact us for support.");
 
-    model.addAttribute("usageInfo",
+    model.addAttribute(
+        "usageInfo",
         "We may collect information about how you use our website and services, such as the pages you visit, the features you use, and the time spent on our platform.");
 
-    model.addAttribute("usageOfInfo",
+    model.addAttribute(
+        "usageOfInfo",
         "We use the information we collect to provide, maintain, and improve our services, as well as to personalize your experience, communicate with you, and ensure the security of our platform.");
 
-    model.addAttribute("sharingInfo",
+    model.addAttribute(
+        "sharingInfo",
         "We may share your information with third-party service providers who perform services on our behalf, such as hosting, data analysis, and customer service. We may also share information when required by law or to protect our rights.");
 
     return "privacy-policy";
-
   }
 
   @GetMapping("terms-of-service")
-  public String termsOfService(HttpServletRequest request, Model model) {
+  public String termsOfService(Model model) {
 
-    model.addAttribute("accountItems", List.of(
-        new TermItem("Account Creation:",
-            "To use our services, you must create an account by providing accurate and complete information."),
-        new TermItem("Account Security:",
-            "You are responsible for maintaining the confidentiality of your account credentials and for any activity that occurs under your account."),
-        new TermItem("Account Termination:",
-            "We reserve the right to suspend or terminate your account at any time for any reason, including if we reasonably believe you have violated these terms.")));
+    model.addAttribute(
+        "accountItems",
+        List.of(
+            new TermItem(
+                "Account Creation:",
+                "To use our services, you must create an account by providing accurate and complete information."),
+            new TermItem(
+                "Account Security:",
+                "You are responsible for maintaining the confidentiality of your account credentials and for any activity that occurs under your account."),
+            new TermItem(
+                "Account Termination:",
+                "We reserve the right to suspend or terminate your account at any time for any reason, including if we reasonably believe you have violated these terms.")));
 
-    model.addAttribute("conductItems", List.of(
-        new TermItem("Prohibited Activities:",
-            "You will not engage in any illegal, harmful, or fraudulent activities."),
-        new TermItem("Intellectual Property:",
-            "You will respect the intellectual property rights of others and not infringe on copyrights, trademarks, or other protected assets."),
-        new TermItem("User Content:",
-            "Any content you upload or share must be your own and not violate the rights of others.")));
+    model.addAttribute(
+        "conductItems",
+        List.of(
+            new TermItem(
+                "Prohibited Activities:",
+                "You will not engage in any illegal, harmful, or fraudulent activities."),
+            new TermItem(
+                "Intellectual Property:",
+                "You will respect the intellectual property rights of others and not infringe on copyrights, trademarks, or other protected assets."),
+            new TermItem(
+                "User Content:",
+                "Any content you upload or share must be your own and not violate the rights of others.")));
 
     return "terms-of-service";
-
   }
 
   @GetMapping("/fact-check-video")
@@ -146,20 +172,23 @@ public class FactCheckerController implements ErrorController {
   }
 
   @PostMapping("/fact-check-video")
-  public String factCheckVideo(@RequestParam("videoFile") MultipartFile videoFile,
-                               RedirectAttributes redirectAttributes , @AuthenticationPrincipal User user ){
-    if (videoFile.isEmpty() || videoFile.getSize() == 0 || videoFile.getOriginalFilename() == null) {
+  public String factCheckVideo(
+      @RequestParam("videoFile") MultipartFile videoFile,
+      RedirectAttributes redirectAttributes,
+      @AuthenticationPrincipal User user) {
+    if (videoFile.isEmpty()
+        || videoFile.getSize() == 0
+        || videoFile.getOriginalFilename() == null) {
       redirectAttributes.addFlashAttribute("message", "Please upload a valid video file.");
       return "redirect:/fact-check-video";
     }
 
     if (videoFile.getSize() >= 1250000000) {
 
-      redirectAttributes.addFlashAttribute("message", "File too big, please upload a smaller file.");
+      redirectAttributes.addFlashAttribute(
+          "message", "File too big, please upload a smaller file.");
       return "redirect:/fact-check-video";
     }
-
-
 
     try {
       redirectAttributes.addFlashAttribute("message", "Processing video, please wait! ⌛");
@@ -174,8 +203,13 @@ public class FactCheckerController implements ErrorController {
 
       double factCheckPercentage = textAnalysisService.analyzeText(video);
 
-
-      redirectAttributes.addFlashAttribute("message", "Successfully uploaded file. " + extractedText+ " Fact Check Percentage: " + factCheckPercentage + "%");
+      redirectAttributes.addFlashAttribute(
+          "message",
+          "Successfully uploaded file. "
+              + extractedText
+              + " Fact Check Percentage: "
+              + factCheckPercentage
+              + "%");
     } catch (Exception e) {
       redirectAttributes.addFlashAttribute("message", "Could not upload file." + e.getMessage());
       return "redirect:/fact-check-video";
@@ -185,7 +219,8 @@ public class FactCheckerController implements ErrorController {
   }
 
   @GetMapping("/videos/{id}")
-  public String getVideo(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
+  public String getVideo(
+      @PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
     try {
       Video video = videoService.getVideo(id);
       if (video == null) {
@@ -215,7 +250,7 @@ public class FactCheckerController implements ErrorController {
     } catch (Exception e) {
       redirectAttributes.addAttribute("error", "An error occurred while retrieving the video");
       // Log the exception
-      logger.error("Error retrieving video with id: " + id, e);
+      logger.error("Error retrieving video with id: {} ", id, e);
       return "redirect:/error";
     }
   }
@@ -224,8 +259,22 @@ public class FactCheckerController implements ErrorController {
   public String home(Model model) {
     model.addAttribute("videos", videoService.getAllVideos());
     return "home";
-
   }
 
+  @GetMapping("/search")
+  public String search(Model model, @RequestParam("query") String query) throws EmbeddingException {
+    double[] queryVector = vectorizationService.getEmbedding(query, 768);
 
+    String vectorString =
+        "["
+            + String.join(
+                ",", Arrays.stream(queryVector).mapToObj(String::valueOf).toArray(String[]::new))
+            + "]";
+
+    List<Video> relatedVideos = videoService.findSimilarVideos(vectorString);
+
+    model.addAttribute("videos", relatedVideos);
+
+    return "home";
+  }
 }
