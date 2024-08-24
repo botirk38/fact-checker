@@ -66,21 +66,23 @@
         </button>
       </div>
     </header>
-    <main class="flex-1 bg-muted/40 py-8 px-4 lg:px-6">
-      <div class="container mx-auto">
-        <!-- Video grid -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          <a th:each="video : ${videos}" class="group relative rounded-lg overflow-hidden"
-            th:href="@{'/videos/' + ${video.id}}">
-            <img th:src="@{'/thumbnails/' + ${video.thumbnailPath}}" width="320" height="180" alt="Thumbnail"
-              class="w-full aspect-video object-cover" />
-
-            <div
-              class="absolute inset-0 bg-black/50 flex items-end p-4 opacity-0 group-hover:opacity-100 transition-opacity">
-              <div class="text-white text-sm font-medium line-clamp-2" th:text="${video.getFileName()}">
+    <main class="flex-1 bg-muted/40 py-8 px-4 lg:px-6 flex flex-col">
+      <div class="container mx-auto flex-grow overflow-hidden">
+        <!-- Scrollable container -->
+        <div class="h-full overflow-y-auto">
+          <!-- Video grid -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <a th:each="video : ${videos}" class="group relative rounded-lg overflow-hidden"
+               th:href="@{'/videos/' + ${video.id}}">
+              <img th:src="@{'/thumbnails/' + ${video.thumbnailPath}}" width="320" height="180" alt="Thumbnail"
+                   class="w-full aspect-video object-cover" />
+              <div
+                      class="absolute inset-0 bg-black/50 flex items-end p-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                <div class="text-white text-sm font-medium line-clamp-2" th:text="${video.getFileName()}">
+                </div>
               </div>
-            </div>
-          </a>
+            </a>
+          </div>
         </div>
       </div>
     </main>
