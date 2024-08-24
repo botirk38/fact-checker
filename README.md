@@ -23,7 +23,8 @@
 
 ## Architecture Diagram
 
-![Architecture Diagram](https://github.com/user-attachments/assets/51728a5e-f873-4c69-a82d-370765036bd3)
+![Architecture Diagram](https://github.com/user-attachments/assets/96c61437-5333-4d5b-a46a-143f1ffd77e0)
+
 
 
 ## Prerequisites
