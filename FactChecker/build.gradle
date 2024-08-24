@@ -48,7 +48,7 @@ repositories {
 dependencies {
 	implementation 'com.google.protobuf:protobuf-java:3.21.1' //
 	implementation 'javax.annotation:javax.annotation-api:1.3.2'
-	testImplementation 'org.testng:testng:7.1.0'
+	testImplementation 'org.testng:testng:7.5.1'
 	testImplementation 'junit:junit:4.13.1'// or the appropriate version
 	annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
 	implementation 'javax.json:javax.json-api:1.1.4'
