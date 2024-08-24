@@ -21,6 +21,11 @@
 - **Interactive Visualizations**: Presents analysis results through intuitive, interactive charts and graphs.
 - **API Integration**: Offers a robust API for seamless integration with other platforms and services.
 
+## Architecture Diagram
+
+![Architecture Diagram](https://github.com/user-attachments/assets/51728a5e-f873-4c69-a82d-370765036bd3)
+
+
 ## Prerequisites
 - Java 21 or higher
 - Node.js and npm (for Tailwind CSS)
